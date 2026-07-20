@@ -1,0 +1,316 @@
+﻿PM AI Platform Scoping-20260717_133251-Meeting Recording
+July 17, 2026, 8:32PM
+59m 30s
+621792274320Sean Stott started transcription
+576072292608Pier Madsen   0:03AI call center extravaganza that we've gone through. Got some more clarity on what.
+576072292608Brandon Titensor   0:04Yeah.
+576072292608Pier Madsen   0:10The desired end state is, this is coming from...From Payam directly.on what we want. And he's changed his mind a little bit, which is, he is allowed to, he is the boss. The original state was like, just like, build something, figure out if this works. And we tried and it kind of works. New state is like, let's build an AI call center that we can just hand.
+576072292608Brandon Titensor   0:24Teh.Yeah.
+576072292608Pier Madsen   0:37to the CV team.that you can use at will. Like, you can run whatever calls you want through it. You can train agents. You can, these AI agents, you can test prompts against each other and see if it's effective. If, again, like in the future, if the Philippines gets another round of hurricanes and we're down dialing for a couple of days, let's just run everything through the AI call center.So even if it's more expensive, at least we're still producing. And maybe we're just making a little bit of revenue versus what we were making before. That's the end goal is to actually have a platform where you can operate an AI call center.which is different than how it was originally presented. So that's why we didn't go with that, with this first build out. So this V2.is getting to what is that platform going to look like? What's going to make it useful to you guys? What's going to make it something that doesn't just sit in the back end and you guys never actually turn on? Like what utility do you want to see from an AI call center platform that makes it worthwhile in testing? How is how?How can we build this so that it actually moves KPIs in the right direction?Those are the big questions. Before we dive into actual scoping and figuring out what features we want and how we want it to operate, first, I just want to get quick feedback from you guys. Thoughts on what the vision is, thoughts on what execution might look like. Give me the quick rundown on that.
+576072292608Kinsey Jackson   2:15Anybody?
+576072292608Brandon Titensor   2:16If.
+576072292608Ashley Smith   2:17Well, I mean, I'm just not sure how it's different, right? We're still trying, is the difference you're saying is it's not trying to take over what we have and it's just a backup or are we still trying to build it to replace? Because if we're still trying to build it to replace, I don't necessarily understand what the difference is. So wouldn't the vision and the steps be the same?So I'm just trying to understand the difference.
+576072292608Pier Madsen   2:39Yeah, I think that the biggest difference is that originally the thought was, let's build to see if we could replace. And I think that thought is flown out the window. Like there's, I do not see a world in which Payam even is accepting of the idea that we want to get rid of these call centers. They are extremely cost effective, which the hypothesis was that they probably.they probably could have been more cost effective. And it took doing this original AI experiment to figure out, well, no, it's actually crazy hard to compete on price with what the call centers are doing. So we know that's cost effective. So now let's build something to just augment the current process. Maybe this makes it more efficient somehow. Maybe we'll learn through this internal AI call center build.how we want the call center process to function differently. Maybe this, we learned that this means that we need to fix, like how our databases are managed. Maybe we learned that we need to fix lead routing issues, but it gives us like a contained, a self-contained call center that only we operate. So if something screws up.or we want to test a new process, we're not actually affecting the big players.
+576072292608Kinsey Jackson   3:45Just to add on to that too, when this project started, Payam was very much like, I want this AI call center spun up in the next three to four weeks and I want it to replace the current CV process. So that, like Pier said, that's out the window. I think there is.Over the last few months of constant meetings with Payam and Sam on my part and Pier, I think they're starting to understand the CV product better, how it works, what it entails, how tricky it is, you know, the ins and outs of a carrier plus a dialer plus agents. SoThey just have a better understanding. The pressure is off to replace and lower costs. Yes, we want to continue to optimize where we can, but this becomes another tool instead of the thing, the thing that replaces everything else. It's a tool, really.
+576072292608Ashley Smith   4:40So one thing that I would say then that I would hope we would do is mimic exactly what we're doing, like exactly what we're doing, and try to get it to perform. And then once it's there, we could easily tweak and change, oh, we don't want to say this. What happens if we don't say this for an hour?
+576072292608Pier Madsen   4:52Mhm, mhm.
+576072292608Ashley Smith   4:59okay, that didn't work, you know, that type of a thing, because this would give us a easy playground where we're in control of swapping out how it said, what is said, taking stuff out. But I would think we would need it to be where, I mean, the reality is, is because the calls are so long, I don't know that it's.going to ever perform exactly like we are, but get it to a profitability point, right? And then say, okay, let's tweak this. Did that improve our profitability or did that lower it? Because if it improved it here, then it's definitely going to improve it over here.
+576072292608Kinsey Jackson   5:37Well, and I think there's also different use cases for this. Like, yes, we could use it as a testing environment if it's very set up very close to what we're doing now, but we could also use this to create another product. We've talked a lot about a hot transfer. What if we buy leads that aren't as old?And what if we really shorten the script and it is a 45 second script and we charge something a little different for it and see if we can get the quality is the same as our warm transfers. And this becomes an Ave. for almost a new product. So we can also use this to just innovate what we offer.
+576072292608Pier Madsen   6:15On top of that, another thought is that it's, from what I understand currently, I still don't fully understand everything that entails with the CV product, but spinning up a new vertical or a new type of lead, from what I understand, is very painful. And like you have to figure out the new call center script and you have to get the new call, like you have to.
+576072292608Brandon Titensor   6:15So...
+576072292608Pier Madsen   6:35There's a lot that entails. And the idea would be that maybe with this new AI platform, a lot of that gets simplified. So now it's just way quicker to iterate and to figure out what works and what doesn't before you push everything to these call centers for them to start working on.
+576072292608Brandon Titensor   6:51One thing, just a clarification, are we wanting, are we saying that we want this AI one to work in a similar, like work the calls a similar way as our current call center, so kind of mimic a soundboard technology where...The AI is not just where the AI follows a script, so we have a voice that sets a prescribed script each time in this call, or we going with what's currently there where the AI just kind of talks to the person.Because I kind of felt like Ashley was describing one where we are, we have a script of what the voice is saying, which is different from what's currently happening, right? Am I?
+576072292608Sean Stott   7:32Teh.
+576072292608Kinsey Jackson   7:33Yeah.
+576072292608Pier Madsen   7:38Yeah, I mean, there's multiple ways to skin that specific cat on like, how is the prompting going to work? Like, what is the AI voice going to do? Do we want it to mirror what the call centers do exactly? Yes or no? I don't know. I think that's worth testing and figuring out if that's going to be worthwhile or not. Like, if you can test on the AI playground.scripts that you would pass to the soundboard call centers. And like if you see success tweaking them on the AI side, does that translate to success on the on the soundboard call center side? My my my assumption is that they're probably not going to be similar enough that it's worthwhile testing a soundboard script with voice AI.
+576072292608Sean Stott   8:04Yeah.
+576072292608Pier Madsen   8:20But maybe, I don't know, it's worth testing. And we don't have a good way to test that right now, but we'll build the platforms that we can.
+576072292608Sean Stott   8:28Yeah, I feel like, just real quick, I feel like having that AI layer is sort of like the fun thing to play with after we build all the hard stuff. And I think actually mimicking the back end of it is going to be way more of a lift in terms of, you know, we have a VoIP carrier, what is it, Telnix, and actually, you know, hooking up all the back end to our services. I think that will be a lot more of the work than that.
+576072292608Brandon Titensor   8:28Cause like, yeah, this.
+576072292608Sean Stott   8:50AI portion of it personally.
+576072292608Brandon Titensor   8:52Yeah, well, this could also impact the back end a little bit if we want to, because like the way that I see it is that if we have a script, then that's something that's a variable that needs to be stored in a database that the AI decides between different prompts of like, based off of the response that the customer.is giving, it needs to decide on this thing to say versus what it currently is saying where it's like it listens and then it just says whatever it's going to say, right? There's no stored things.
+576072292608Pier Madsen   9:22Yeah, right now, right now it has like an end goal and like general guidelines, but it can say anything within those guidelines rather than say exactly these things.
+576072292608Brandon Titensor   9:26Yeah.So, yeah.So if we wanted to like have options to choose between A, B, and C, then we need to have somewhere to store A, B, and C and be able to quickly iterate. We could, somewhere where we could quickly move, change A, B, and C as well. So that would be something we need to consider as well as an option.
+576072292608Pier Madsen   9:42Mhm.Aged.
+576072292608Sean Stott   9:53Yeah, I think that's like implementation details back-end stuff that we're going to have to figure out as we build it out. But I'm hoping that we get here is a little bit more of the feature scope that we actually need for it to be a finished product.
+576072292608Pier Madsen   9:54Um...I think, I think Brandon, you nailed that that is 1 feature that we need to include is.Like what does the, like what kind of prompting mechanisms do we want for this AI? Do we want like hard-coded responses that the AI is choosing between? Or do we want generalized rules? And how do we test between them? So that is a feature that definitely should be included.The rest of this conversation, I think, please add in your own additional thoughts, needs to fall around how should this be built.What does the setup look like? What feature set does it need to include?with the idea being that we're building something that has some, like that it ties back to increasing revenue. Whether that means like that this product itself is going to produce revenue, or at least this product is going to teach us how to optimize over here so that we can fix revenue over here.So in terms of when you're thinking about features, think about things that will either make the AI convert calls better or at least give you the information from.However, the AI is performing that you will then use to then adjust call centers to then make call centers perform better. That includes things like lead routing or like understanding which leads need to go to what call centers or like which leads have like a better conversion rate or dial cadence that perform better on different dial cadences, like all sorts of different ways.in which we can optimize different KPIs. So maybe...as a structure, I haven't read Sean's document.Maybe a good place to start is to talk through like what those main KPIs are that you guys are currently adjusting around and what adjustments you're making to affect those KPIs. And that can be like a good feature set for us to start talking through.So if we can like, I know we care a lot about sales per hour, but what does sales, like what feeds sales per hour and what do we change on the call center side to increase sales per hour?
+576072292608Kinsey Jackson   12:02Okay.Yeah.Yeah. You.
+576072292608Pier Madsen   12:12And that'll help us understand at least a couple of features that we need.
+576072292608Kinsey Jackson   12:15Do you want us to start throwing out?Like I would say, Brandon, Ashley, Alex, let's throw like sales per hour, right?
+576072292608Pier Madsen   12:24Hang on, hang on. I don't know if I'm recording this call yet. We definitely need to be. Okay, are we? Sweet. All right, let's go.
+576072292608Sean Stott   12:26I am.
+576072292608Kinsey Jackson   12:27Okay.
+576072292608Brandon Titensor   12:27It is, yeah.
+576072292608Kinsey Jackson   12:30So data points that we look at that, okay, number one, sales per hour, we're always looking at sales per hour. What feeds into sales per hour?Dials per hour.Contacts per dial, so like the contact rate.Lead consumption, like how many leads are we actually using to every single day or per hour or per queue? What else?
+576072292608Sean Stott   12:54Mhm.
+576072292608Kinsey Jackson   13:00You're muted, Ashley.
+576072292608Brandon Titensor   13:01Completes, we'd also want to know what is, how many leads complete each day or each hour. So we'd kind of want to know when a lead is completed.
+576072292608Kinsey Jackson   13:03No.Yep.Yeah.
+576072292608Ashley Smith   13:13So I think we should share a dashboard. I think we've maybe shared it with you before, Pier, but the daily dashboard that I look at, we should share that because we want all of those. But if we're saying, how is this, what do we want in addition that would help us make
+576072292608Brandon Titensor   13:13Um...
+576072292608Ashley Smith   13:33tweaks and changes is then there are things that Brandon, Alex and I have been talking about as far as being able to, now we know that contacts per dial isn't as reliable as my whole career, it's been very reliable. But now with the IVAs and things like that, it's not as reliable. Sohaving another way to break out the contacts and say, were those real contacts or fake contacts, right, is going to be a huge player in what we do. Because if we're replacing DIDs that have lower contact percentage, but really their contact percentage has less IDAs, thennot really lower, right? And it's better and it's getting those spam and things out there. So I think we want everything that's in the daily dashboard. I don't think there's a metric right now that isn't used often to tweak or change things, but there are things that we'd like to be able to slice and dice on a daily basis.that now takes a lot of effort to try to get that information.
+576072292608Brandon Titensor   14:46Yeah, and something with like the daily dashboard, because Alex and I have been working on kind of like trying to do an automation of it. And like the other thing is that like our dash, like daily dashboard, we have a daily dashboard and we have a weekly dashboard. And like the difference between a daily, the daily dashboard and the weekly dashboard.is like we could create the weekly dashboard from the daily dashboard, except for in our daily dashboard data pulls, we don't have how many leads we give to the call center, each call center each day. And so that's why we have to have two separate data pulls, one daily, one weekly.So like if we could have like everything just be daily, then that would also help us so that we could go from a really great, so like, I'd almost suggest like we want our data to be as granular as possible so that we can take it and aggregate it ourselves, but we can always go back to more granular state to find.more data because that's like one thing that's been kind of a difficult thing currently is that a lot of the reports we get from our call centers are aggregated results. We get, you know, based off of the FS code or something like that. And then it's kind of hard to go deeper into it like.You know, like, is it be like, is it beyond the FS code? Like, are there's multiple calls in that FS code, but they're in different geos, so how we can't really break it down on geos that way.
+576072292608Sean Stott   16:16Is it?Is it aggregated because the source data is aggregated or just because like it's so slow if you didn't aggregate it when you pull it?
+576072292608Brandon Titensor   16:24It's aggregated because it's a lot of data. And so, and that's maybe something where we want to improve our back end so that we can put all that data into a database instead of having to work with it in Excel.
+576072292608Sean Stott   16:26OK.Yeah, like it doesn't have to only live in like the MySQL slow database. We could always push it to Snowflake or something in a daily batch. When we have the ability to do that, no problem. It'd be way easier to run data from there, especially big data.
+576072292608Brandon Titensor   16:45Yeah.Yeah, well, yeah, and even MySQL would be an upgrade, because right now it's all currently housed in Excel files. And so that's our biggest limitation is Excel files. So if we could have some sort of integration with this product into a database, that would also be awesome.
+576072292608Sean Stott   16:59Mm.For sure.
+576072292608Pier Madsen   17:11I love that.
+576072292608Sean Stott   17:12It just, while we're talking about that, one thing we were looking at is, you know, Vic Dial is completely open source free. That's why Bear Tell and Jane Tell use it, I guess. So, like, that could be something that we would take off the shelf and edit that and just put in our own, you know, herbs and spices, but like...Is that, I was curious if there's any like hesitation to use Vic dial. Ashley, I assume you would know, Ashley, and just I wanted to put that out there. I don't think that's in this document or it's been covered at all.
+576072292608Ashley Smith   17:45I would say 75% of the call centers that we have worked with have used Vic Diputado. So it is a very popular one because one, it'sVery cheap, right? And because you can make and change it into your own, not each Vici is created equal. So the smarter you are, the better you are, the more things you can make Vici do.
+576072292608Sean Stott   18:12And there's so many case studies out there for it that we could easily ingest into like the AI. Like it would make it very easy for us to.
+576072292608Ashley Smith   18:19I gotta go.
+576072292608Sean Stott   18:23you know, understand how it works as opposed to building it up.
+576072292608Kinsey Jackson   18:23She meant.Teh.She's like the chief of the fire. She's like chief fire person. So when she says I gotta go, usually she gets called on a fire. Just so you know. Anyway.
+576072292608Sean Stott   18:36Yeah.
+576072292608Brandon Titensor   18:37Wait, she's is she like a volunteer firefighter or something like that?
+576072292608Kinsey Jackson   18:41She is, but she's like the chief. Yeah, but she, oh, no, no, but it was like last year, she, I think it was last year, the old chief resigned and they put Ashley in that spot. So she, whatever, she lives in a small town, whatever their fire department is, it's volunteers, but she is like,
+576072292608Sean Stott   18:43Oh, she actually is. I thought you meant like a metaphorical fire.
+576072292608Pier Madsen   18:46I did too. Oh, that's interesting.
+576072292608Kinsey Jackson   19:03the chief fire person. So no, she'll get called on a fire something and she's gotta go. So just heads up. Ashley's freaking amazing. She really is. She's awesome.
+576072292608Sean Stott   19:10Wow.
+576072292608Brandon Titensor   19:10Dang, that's crazy. She's insane.
+576072292608Sean Stott   19:15Yeah, my brother is a firefighter and he sits on his *** like 95% of the day and gets paid really good for it in Philadelphia. But every once in a while they do actually go have to run into a flaming building. So.
+576072292608Kinsey Jackson   19:19Yeah.
+576072292608Brandon Titensor   19:23Yeah.
+576072292608Kinsey Jackson   19:27Yeah.
+576072292608Pier Madsen   19:28Yeah, Joseph.
+576072292608Kinsey Jackson   19:29Well, there's a lot of fires here right now, so, but anyway.
+576072292608Pier Madsen   19:33From your perspective, Joseph, your interface with call centers is all like through.
+576072292608Kinsey Jackson   19:35Yeah.
+576072292608Pier Madsen   19:41you know, the data they send back and forth and the API calls that they're making. I assume that's.
+576072292608Sean Stott   19:46e-mail extracts.
+576072292608Pier Madsen   19:48Yeah, of how you interact with them. This is the chance to determine like your optimal way.of working with a call center. Like how exactly if you had everything you could ever dream of in a call center, how would they function? What information would you see from them? What's the dream?
+576072292608Joseph Yordan   20:12Can you hear me?
+576072292608Pier Madsen   20:14Yeah.
+576072292608Kinsey Jackson   20:14Yeah.
+576072292608Joseph Yordan   20:15Yeah.Amazingly is.It's more of being post kind of stuff that.Can.synchronize the information fromtheir end to our end so that we don't need to get reports from them or live interaction with the LeadOps.But, with that in mind, it's going to...make the call slower because we cannot say that there's not a single lag on our servers or latency stuff. SoWe cannot get a perfect.Um...workflow, but what we have now with our call centers is currently working, which is asynchronous.So, yeah, it's more of getting the live information without bugging them, creating stuff or Jenna.
+576072292608Pier Madsen   21:52O that.So when you need to request reports from these call centers.
+576072292608Joseph Yordan   21:54Yeah, and...
+576072292608Pier Madsen   21:58My assumption is that we have to, you have to request these reports because during their normal dialing month, they're not sending back information that they should be. And so then we get to the end of the month, we're like, oh, we don't have this info. Hey, send us a report of everything that happened.So is the, first of all, am I thinking about that the right way? Second, is the fix, like for this new call center that we're building, just defining like exactly what information we need to send before and after every single call?
+576072292608Joseph Yordan   22:33I think what I can say is that we don't have full visibility of what's on their end.So, that's just it.
+576072292608Pier Madsen   22:47So, I'm looking at Sean's sheet, the second bullet point, this is analytics. What data must the platform emit in what shape for reporting and analysis? Yeah, but that, but it, I mean, it's...
+576072292608Sean Stott   22:57Which is such a claudism.
+576072292608Pier Madsen   23:03Claude, I think does nail this one. Like, what? Because we're requesting reports from call centers, that means we're not getting some stuff that we need from them, which can be fixed if they just send us the full picture after every single call. However, is that how we want it? Like, first of all, that's a ton of data, you know, that's...6 to 10 million lines in a database from every call center. Is that too much? Do we need to handle that differently? And then for every one of those lines, like what's included in that? Just like.
+576072292608Joseph Yordan   23:24Teh.Yeah.Maybe we can just get temporary data and then just dump it over time so that tool not set. Yeah, yeah.
+576072292608Sean Stott   23:44Mmh.Or aggregate it as it gets old.
+576072292608Brandon Titensor   23:49Because.For us, for Alex and I for building reports, it would be super awesome to have a date at like every single call we have information on what happened. So like the call date, the only number, the disposition at what, how long the call was, who the agent was, what the...that like if we need more like what the script was, what call center was doing it, all this type of stuff, like it would be great to have every single call, every single dial made, what happened on that dial. And that would lead to over 62 million lines of data every single month.
+576072292608Pier Madsen   24:28Mhm.
+576072292608Brandon Titensor   24:29Um, so...
+576072292608Sean Stott   24:30Which I think that's manageable though. Like back on the auto web side, like we log all the impression data. So when you go on auto web, any single ad that loads, any single, you know, module that we load, it's all stored in the database back end so we could pull it. It's not aggregated and it's probably just as much data. I mean, it's a ton of data. So like.
+576072292608Brandon Titensor   24:33Yeah.Yeah.
+576072292608Sean Stott   24:50We run all that in Snowflake and the queries you run on it are really performant. It's built for that. So I think that's definitely reasonable.
+576072292608Brandon Titensor   24:59Yeah, because like that, if we can have that, we literally, I don't think we need any other data. Like if we can have every single, like if we can have the call data every from every single call, any other data can be built off of that data, right?
+576072292608Sean Stott   25:12Right. Because like all the data that you have today, you basically have to have it because you don't have direct access to the, you know, the line by line level data in the database in a quick manner. If you had that, you could build everything else you needed.
+576072292608Brandon Titensor   25:24Exactly.Yeah.
+576072292608Joseph Yordan   25:28Yeah.
+576072292608Pier Madsen   25:29I have to jump off here in 2 minutes, but I hope that you guys can spend the rest of this time. I think Sean will do a great job at covering this on like figuring out.like defining exactly what needs to be built, what feature, not only feature sets, but also like what does the back-end infrastructure look like.And that will help direct how we end up building the front end. So the rest of this call for the next however long you guys have, please do a deep dive into what exactly, this is your dream call center that you will be building. Tell us everything that you want us to know.Okay, I got to jump off, but I will follow up with you guys afterwards. I hope that it doesn't end the meeting or end the recording when I leave. I've never actually been the meeting owner when something's getting recorded.
+576072292608Sean Stott   26:14I don't believe it does. If it does, I'm going to restart the meeting though.
+576072292608Pier Madsen   26:19All right, take care, guys.
+576072292608Sean Stott   26:20But I don't think it does.
+576072292608Brandon Titensor   26:21By Pier.
+576072292608Sean Stott   26:25Good, still going.Okay, yeah, so that was, we're talking about analytics. I mean, anything we're going to derive from the data, we should be able to, kind of like Brandon was saying, we'll store it at the most granular level possible, and we can like keep the most recent data, you know, easily accessible.Indexed on stuff like or something, so you can query it.So like, yeah, I personally don't worry too much about the analytics if we control the data. I feel like us not controlling the data now is why we have problems getting the analytics.So...So yeah, I mean, I don't want to go through a whole laundry list, but I mean, maybe we just hit some of these checks really quick because I mean, everything we say is just captured as bullet points in the recording and it's really easy for us to then summarize it into action items or requirements for this build. So it's really helpful. So like for integrations, what has to.plug in cleanly on day one, lead delivery confirmation. So, you know, definitely some kind of command center upload, which would utilize the lead conduit engine, I believe. That would be interesting to kind of talk through this a little bit, how we would integrate with that, because if we're not, then it's sort of a separate thing. It's going to be hard to put.Push data to it.we would use lead conduit, right?
+576072292608Brandon Titensor   27:51I think.I think that would be Joseph.
+576072292608Kinsey Jackson   27:56Yep.
+576072292608Brandon Titensor   27:57I, yeah, the question is, how do we currently push fresh data to our call centers? Is that through lead conduit and can we add that to our new call center?
+576072292608Joseph Yordan   28:07Yes, it's true. It can do it.Yeah, to be precise, it's in record ending.
+576072292608Kinsey Jackson   28:21And I think, Joseph, correct me if I'm wrong, since we already have this set up with multiple call centers, it's almost like we would set it up the same way, but feed into this machine instead of BearTel or TopDial, correct?
+576072292608Joseph Yordan   28:37Yes, as long as there is an API endpoint, we can point it to them.
+576072292608Kinsey Jackson   28:44Teh.
+576072292608Brandon Titensor   28:44Hey, Joseph, I've got a question on...Does the old data that Alex and Joy revives past leads from, does that, do all those leads live in lead conduit? And is that where they pull their data to revive leads?
+576072292608Joseph Yordan   29:04No, lead content will just store it for three months and then it's gone. So after that, the only data you're going to have is what's in our server.
+576072292608Brandon Titensor   29:20Okay, so our server and our database currently contains every lead for the past like five years or something like that.
+576072292608Joseph Yordan   29:28Yes.Yes.
+576072292608Brandon Titensor   29:31Okay.
+576072292608Sean Stott   29:32And so we would just use that plumbing out, you know, to extract it out of lead conduit to you ongoing. But we would just have to hook it up to lead conduit to begin with. What is like the, what separates, for example, like the leads that go to bear tail versus the ones that go to top dial? What is that mechanism right now?that says these guys go here and then these ones go there.
+576072292608Joseph Yordan   29:56Right now, it's manual in for top dial, it's a manual upload. They have this FD server, I think.So, Joy, before she was just sending it to the tap dial, and then for KB, we created a feature that will upload the revive leads soon directly to KB, because it's kind of...manual thing that they want us to upload it to Vic Dial, log into their server, or log into their site, and then upload it manually with a limit of 20,000, I guess. So what we did was create a feature tojust upload the whole 100K rows of leads to them so that there's no need to log into their site and manual upload that.
+576072292608Sean Stott   31:03And what's the?
+576072292608Brandon Titensor   31:03And for the fresh ones, it's just a setting in command center that Joseph created that Alex sets from like 50% here, 50% there. And I don't know how that one works on the back end, but.
+576072292608Joseph Yordan   31:14Yes, correct.And.
+576072292608Sean Stott   31:18Oh, you're saying there's a way to actually like decide the proportion that each one gets.
+576072292608Brandon Titensor   31:24Yeah.
+576072292608Sean Stott   31:24At some, like, some grain of, you know, vertical zip code.
+576072292608Alex Lin   31:24Yeah, I...
+576072292608Joseph Yordan   31:25Teh.
+576072292608Alex Lin   31:30It's just a fresh lead routing, so it's just a set percentage, so like currently 100% of...
+576072292608Joseph Yordan   31:33The.
+576072292608Alex Lin   31:38Like, home warranty goes to KomBea, 100% of bathroom goes to Canada Direct, 100% of Windows goes to Subdial for fresh. Like, that's just the currently routing. And then Ashley just messages if and when she wants that changed based on, I think, what inventory they have at the call centers, I assume, as well as performance and things like that.
+576072292608Sean Stott   31:55And.And how do we ensure that the same lead doesn't go to two different call centers?
+576072292608Joseph Yordan   32:05If it's going to have an error, it's not going to send to other call centers, so it's just one.A call center at a time.
+576072292608Sean Stott   32:21I, I mean, like, like yours, I'm a little confused, like...Are we making sure that the two different call centers we're sending leads to right now don't get the same leads?Is that a business requirement?
+576072292608Joseph Yordan   32:34Yes.Yeah, that's what we are trying to do, or that's what we are doing right now.
+576072292608Sean Stott   32:45Basically, within whatever the grain is, you're just doing a round robin or something to just dole them out.
+576072292608Joseph Yordan   32:52For the calculations, just percentage of which chances are. So percentage for chances are 30% or 100% of specific call center. SoNot just round Rowland, but that kind of.Logic.Pier.
+576072292608Sean Stott   33:20OK, and your go ahead, Kinsey.
+576072292608Kinsey Jackson   33:20How do, how do, yeah, I was just gonna say, how does it work though, Joseph? Like, we might get a batch and it's 120,000 that's accepted. Does it just say, okay, 30% of this batch, you just chunk out 30% and then that's routed to top dial and the other 70 goes to KB?Is that all the logic does? Yeah, like...
+576072292608Brandon Titensor   33:39Like the 1st 30%?
+576072292608Joseph Yordan   33:43Uh, right now we can...Because of the process we have that it will ask first for which call center before it was validated if it was already a DNC or not. That's why we cannot calculate it.For Round Rob and which call center is it targeted to so?Right now, the only calculation we have is the...Chances of percentage, and...Yu.
+576072292608Sean Stott   34:27So when you get the data cut upstream, you're just splitting it per the 50% or whatever, and then it gets routed, and then from there it goes down through the different layers.
+576072292608Joseph Yordan   34:31Mhm.Yes, yes.
+576072292608Sean Stott   34:39OK.
+576072292608Joseph Yordan   34:40That's the process we have is limited based on how it is structured already in LeadOps, so...
+576072292608Sean Stott   34:50Right. Yeah, I mean, as long as we're continually getting in leads, I don't think that matters. You know, we're just splitting them upstream instead of lower down. Like I, that's fine. We just have to now add in this source too.
+576072292608Joseph Yordan   34:51Yeah.Correct.Mhm.
+576072292608Kinsey Jackson   35:04It.
+576072292608Sean Stott   35:04which will obviously start out really small, and then we'll see how much volume we can siphon. But that'll be gated by, you know, how well it's doing too.Okay, are there any other integrations we should be looking out for besides Lee Conduit, Control Center, Command Center, or other?No.
+576072292608Joseph Yordan   35:29Um...Yeah, I think this, that's it, that's it.
+576072292608Sean Stott   35:34Okay.We don't, well, I guess we have Kinsey media or BD. What would you want visible or controlled at today's call center still want to give you? Go ahead, Joseph.
+576072292608Joseph Yordan   35:41With.Is this a new vertical?Or.
+576072292608Sean Stott   35:49That's a good question.We'll probably start with one of the other verticals. I think that would be the easiest way to compare performance.
+576072292608Joseph Yordan   35:58Mhm.Okay.
+576072292608Sean Stott   36:01Yeah. I mean, there was a moment where we wanted to do hardware with this. Not hardware, I see HW, I see hardware, home warranty, just because of like the lower stakes of it. And we have so much supply on there. But I think if we do that, we're not going to really be able to make a great comparison.
+576072292608Joseph Yordan   36:21Mm.
+576072292608Sean Stott   36:22Or we could, we can always see how it works once we get the engine built.Any media BD stuff we want to talk about?
+576072292608Kinsey Jackson   36:33I don't know. I mean, I think if we're in an ideal world, when we think about media going into the call center, we really have no control. Like here's the batch of leads and it goes and they dial it. But like I'm talking to Sunrun right now. They will only allow us to dial leads that have come fromURLs that they approve. Well, that's really hard for us to build right now, but it's like, oh gosh, wouldn't it be nice to have a real handle on what leads perform best where and then be able to route those to the right spot. So I don't know, like we don't really have that kind of control right now if we could build a system.
+576072292608Sean Stott   37:00Mhm.Yeah.
+576072292608Kinsey Jackson   37:18where we had more control over how we dialed and where we dialed, we might actually be able to squeeze more out of the media we buy.
+576072292608Sean Stott   37:27Mm-hmm.
+576072292608Kinsey Jackson   37:28So.
+576072292608Brandon Titensor   37:28Wouldn't that also rely on like what the media partners give us? Like they would have to give us like a URL for each lead that they give us in the batch?
+576072292608Sean Stott   37:37Do they?
+576072292608Kinsey Jackson   37:39Yeah, but we can also look at sub source. Like this sub source performs really well on Windows and it's horrible on bathrooms. And then moving forward, we only use that sub source for Windows. You know, stuff like that. Or...
+576072292608Sean Stott   37:43M.
+576072292608Brandon Titensor   37:45Okay.
+576072292608Sean Stott   37:48Yeah.
+576072292608Brandon Titensor   37:49So like using the FS code more.
+576072292608Sean Stott   37:50That's the kind of stuff that's like hard to ask bear tail for. But if we own the data, it will be easy for us to query and ask questions on.
+576072292608Kinsey Jackson   37:53Yeah.
+576072292608Brandon Titensor   37:55Gotcha.
+576072292608Kinsey Jackson   37:58Yeah, but it's same thing with geos. Like if this subsource does phenomenally well in Florida, it's like, okay, we go to them and say, hey, give us as much as you can in Florida and we dial that only in home warranty or whatever it is. We could just, we could be more picky about how we use the data. Right now we throw it at the call centers, they dial it all and we.
+576072292608Sean Stott   38:12Mhm.Yeah.
+576072292608Kinsey Jackson   38:20Cross our fingers, so...I know that would be interesting.
+576072292608Sean Stott   38:25Yeah, that's super helpful context.And.
+576072292608Kinsey Jackson   38:30From A BD perspective, I don't know, Alex, like when we think about media and the things that we discuss with Joy, what would we want to be more visible or controllable from a media perspective?
+576072292608Alex Lin   38:46I mean...I think maybe like what you were saying on if we had more visibility into like sub source type things, would probably be one as well as like what Brandon was saying of just like if we have the data on the calls, we can use that in different ways. I would imagine or think that.
+576072292608Kinsey Jackson   38:56Teh.
+576072292608Alex Lin   39:12Like.Given the limits on supply, the best lever would just be routing.leads that we get which have different sub sources to different verticals or different call centers like that, that type of thing. Since we don't just have like an excess of supply that we get to kind of like pick and choose from, we kind of take as much as we can get. And then I think, so I think the sub source, if there was some optimization there.would be maybe that best step currently.
+576072292608Sean Stott   39:46Mhm.
+576072292608Kinsey Jackson   39:46Yeah, yeah.
+576072292608Joseph Yordan   39:48Speaking of supply, are we including fresh?
+576072292608Brandon Titensor   39:57And this for this data center, we we'd want to do fresh as well, right?
+576072292608Kinsey Jackson   40:00Yeah, eventually. I mean, right now we're just testing on revive, but eventually we want both.
+576072292608Brandon Titensor   40:02No.
+576072292608Sean Stott   40:06Yeah, I think we would want to build it so we can control that switch.
+576072292608Kinsey Jackson   40:09Ops.
+576072292608Sean Stott   40:11For sure.
+576072292608Kinsey Jackson   40:11Yeah.
+576072292608Joseph Yordan   40:11M.
+576072292608Kinsey Jackson   40:12Yeah.
+576072292608Sean Stott   40:13And then we can decide later which one works better or both, but at least we definitely want to build it so that it can easily be switched. Or have both of them.
+576072292608Kinsey Jackson   40:20Yeah.This feeds into the command center and I guess in the command center or somewhere in our system, we have what we call transfer priorities, which allows us to sort of control how much volume goes to what client. So if we have four clients in Florida, we could say give this clientI don't know, 80% give this, 10 give this, whatever the math is. I'm guessing this would plug into that same system, right?
+576072292608Sean Stott   40:48Mmh.Yeah, it definitely should.
+576072292608Kinsey Jackson   40:56Okay.
+576072292608Joseph Yordan   40:56Yeah.
+576072292608Sean Stott   40:57Yeah, any of the controls that we have, we should, we will want to have like an emulated function right on our our box that does that same thing, so absolutely.
+576072292608Kinsey Jackson   40:57Okay.Does that transfer priority piece?That allows us, I guess for me, I'm trying to figure out how do we more evenly distribute leads.in heavily overlapped areas, both from, like we have 3 bathroom clients in these areas, but also we have 3 bathroom and three windows in these same areas. How do we more evenly distribute?cues. So I think that's something for us to solve. You'll see in our data, it's like Chicago Gland gets, you know, 400 leads and this person has three and they'll be in the same set of zips, maybe not identical, but.
+576072292608Sean Stott   41:53That's crazy.
+576072292608Kinsey Jackson   41:54Yeah.
+576072292608Sean Stott   41:55I would assume that it will get round-robined out until the caps are met, and then whoever remains just keeps getting them.
+576072292608Kinsey Jackson   42:03Teh.
+576072292608Brandon Titensor   42:03So I thought that ours was currently round robin, right?
+576072292608Sean Stott   42:04Oh.
+576072292608Kinsey Jackson   42:08I don't know if it, I don't, we had it turned on like that, then we turned it off and Joseph rebuilt it. So it would be interesting to go just audit it and see if it's happening.We used to have to like turn certain zips off in order to force supplies somewhere else, but even in against categories. Like I was on the phone with LEI, they want more volume, but they overlap with new bath. Most of it's going, I think it's new bath, I could be getting this wrong, but most of the volume we send over here in bathrooms. And in order for us to.
+576072292608Joseph Yordan   42:21Yeah.
+576072292608Kinsey Jackson   42:43evenly distribute to LEI, then.Alex has to go, okay, on revive batches, I'm purposely going to put more of this in Windows in hopes that LEI gets it. So it just, it just makes it difficult. Yeah.
+576072292608Sean Stott   42:52M.Yeah, we could even do bids. We could even do bids, like whoever is the highest RPL gets it. I mean, we could build that too.
+576072292608Kinsey Jackson   43:02Yeah.Yeah, I'm just like thinking, how do we automate this more so it doesn't require a human saying, these four clients need more volume because of that, I gotta go do these tweaks and revive differently and, you know, adjust these transfer priorities. Like how do we make it so the system automatically knows it?I don't know.
+576072292608Sean Stott   43:24Yeah.
+576072292608Brandon Titensor   43:24And also one thing from what Pier was talking about, from what Pier has told me about building the call center, currently our process requires us every time before we dial a number, we hit one of our endpoints here in our back end.and ask, like, and then our endpoint returns which client this lead would go to before we even know if it's going to be a sale. And so I think that's where the round robin is happening. So each, so the round robin is making sure that every client is having equal opportunity at getting a sale.
+576072292608Kinsey Jackson   43:52Yeah.
+576072292608Sean Stott   43:53Mm.
+576072292608Joseph Yordan   43:57Yes, correct.
+576072292608Brandon Titensor   44:04But not every one of those things is a sale. So then the sales are not rounds robin, but the leads called on them are round robin.
+576072292608Kinsey Jackson   44:14Right, right. I like that distinction because that.
+576072292608Joseph Yordan   44:14Yes.
+576072292608Kinsey Jackson   44:19That could be the reason why actual sales aren't evenly distributed.
+576072292608Sean Stott   44:25Yeah, I would think it could make it a little bit more random, but not whatever those numbers were you said for Chicagoland random. That's kind of crazy.
+576072292608Brandon Titensor   44:25Yeah.
+576072292608Kinsey Jackson   44:33So here's something to think about as we are kind of in this state of innovation.Branding calls is nice. Branding a call is not required by our clients. They don't say, hey, we're only going to take a call if you say, I have a client, Chicagoland, we'll transfer you now. That's not a client requirement. That's something that we offer. We've talked a lot over the last four years.Should we cancel branding?But it does a couple of things in that round robin. It actually, it actually eliminates that, oh, this could go here and here. And really, it's Chicago's land to get a sale. It's a sale goes to Chicago. Now it's New Bath's turn to get a sale. It's a sale goes to New Bath. Like, because there's no branding, it could actually go wherever.
+576072292608Sean Stott   45:21Mhm.
+576072292608Kinsey Jackson   45:21wherever. And on tech setup, we're not waiting a week for branding and branding combinations. We can just set them up, turn them live and go because we don't actually need to say, I have new bath on the line. Let me connect you. You say, oh, I have a client on the line, a trusted client or one of our trusted partners.They'd love to talk to you, whatever the script says. So we might want to actually consider getting rid of branding altogether in the system, because again, it's not a requirement of our clients. It's not even really a sales point.
+576072292608Sean Stott   45:56Yeah, curious if the clothes is better or not.
+576072292608Kinsey Jackson   45:57Sam.
+576072292608Brandon Titensor   46:00That would be great because like, we've been waiting on branding.
+576072292608Sean Stott   46:02But I don't think having branding versus not having branding changes the, you know, the issue of round robining out the sales. I mean, because even if you decide when you start the call, if you're going to do it non-branded or branded, you could, you would still know beforehand who your ideal client to send it to is, you know.
+576072292608Brandon Titensor   46:21Well...
+576072292608Kinsey Jackson   46:21But there, yeah, go ahead, Brandon.
+576072292608Sean Stott   46:23Unless I'm missing a nuance there.
+576072292608Brandon Titensor   46:23But...Yeah, so like it does kind of affect it because when we start the call, when we start dialing, we're saying that it's going to go to new bath. And so if that call...decides that it's not going to be a call, then new bath doesn't, I mean, is not going to be qualified. The new bath does not get that sale and the next call goes to the next client. So then new bath gets skipped on it.
+576072292608Sean Stott   46:53Yeah, I think the next call should go to New Bath and whoever's paying the most.
+576072292608Brandon Titensor   46:55Yeah.
+576072292608Kinsey Jackson   46:55Yeah, yeah.
+576072292608Brandon Titensor   46:58Yeah, and also we've been...
+576072292608Kinsey Jackson   46:59So, that's...
+576072292608Sean Stott   46:59Which I feel like that's the kind of stuff that's not going to be too hard for us to figure out on the Vic dial side. That's just a, you know, the way we're ordering these lists and stuff, but I don't know for sure.
+576072292608Brandon Titensor   47:08Well, yeah, and that's on our that's on our site. That's the our API. It that's the one that brings that back. And also like for the branding thing, like we just got back some branding from Bryan and it's been a month since we sent it to him. So.
+576072292608Kinsey Jackson   47:23Yeah, I, that guy, we should have fired him like three years ago. Like, he's just a joke. So I've even said, Ashley, can we start recording these brandings with like AI voice? It's one word, Bath Planet of Chicagoland. But Bryan just matches. Yeah.
+576072292608Sean Stott   47:29I.Who?Oh, he's the voice actor or the voiceover.
+576072292608Kinsey Jackson   47:42And he's just awful.So...
+576072292608Sean Stott   47:45Teh.
+576072292608Brandon Titensor   47:45Yeah.
+576072292608Kinsey Jackson   47:46He really is. I mean, like, this list of excuses this guy gives every single time we request something, it's like, oh, I'm in the hospital. Oh, I broke my toe. Oh, something broke at my toe.
+576072292608Brandon Titensor   47:47Uh...
+576072292608Sean Stott   47:55Oh my gosh. I feel like if you're in a job where you're primed to get taken over by AI, you should at least have good customer service, you know.
+576072292608Kinsey Jackson   48:04Yeah, for real. So I don't know. I, Joseph, I don't know what it would take to just disable branding and do a generic, a generic like, thank you, we have a client or we have a trusted partner. I don't know. I don't know if that's easy.
+576072292608Joseph Yordan   48:18This.Does that affect the script?
+576072292608Sean Stott   48:25A little.
+576072292608Joseph Yordan   48:29And if...
+576072292608Brandon Titensor   48:29We'd have, yeah, we'd have to change the script for each call center.
+576072292608Kinsey Jackson   48:33Mm.
+576072292608Joseph Yordan   48:34Yeah, if we're going to remove the branding and yeah, it's including this.Script.I think we're going.Bring me to...Have a change in our workflow.Because, as Brandon said earlier,It's pre-authentication client, so call center will just select a client first before they start calling a lead, and then either it's if it's a qualified, then it's a sale; if it's not, then the selected client.Will not get a Sam, so.We're going to move the getting the client after they're going to qualify the lead. Is that correct?
+576072292608Brandon Titensor   49:35Well, we could, and we could also have it so that when the when the call center pre-authenticates the lead, we give them a list of client A, B, and C. These ones are available in this client at the zip in these in the zip that the...
+576072292608Sean Stott   49:35Ideally.
+576072292608Brandon Titensor   49:54lead is in and at this time. And here are the transfer priorities, one, two, three. If this is a sale, then it goes to this person and then that gets updated. The problem, I guess, would be ifthe call takes longer, then technically those transfer priorities could change between the time that they pre-authenticate and the time that it makes it into a sale.
+576072292608Joseph Yordan   50:17Yes.Yes, that's the reason why we made it a pre-authenticate is because the...The call is, there's too many calls during at the time, so there's possible that other agents may have qualified in the on other zip or client, but the one that are still in a call.is still in progress until it's being qualified or not.
+576072292608Brandon Titensor   50:58Is there a way, do you think, Joseph, that we could have so that the authentication request doesn't happen before the call, but it happens when they reach a certain point in the script? So at, you know, question six of...
+576072292608Joseph Yordan   50:58So...
+576072292608Brandon Titensor   51:17them being qualified or something like that. Or I don't know how the script works, but if at like some point in the call or like, okay, this is more likely to become a sale, can they send a request to us and we authenticate it then? Or is that possible?
+576072292608Joseph Yordan   51:18Teh.Teh.The only thing that I can recommend is that we can...Still.will not remove the pre-authenticate the client that is being selected. It's more of a default client.And then, cheering or after it's after the lead is being confirmed as qualified or sale, then...they will request again for a new client or request again for a client. And if it's a new one, then they're going to use that. If ever there's an issue with...The API, or there's a delay too long, then they can use the default client that was selected in pre-authenticate, so that, so that there is a fallback.
+576072292608Brandon Titensor   52:38That makes sense.
+576072292608Joseph Yordan   52:43For.
+576072292608Brandon Titensor   52:44That's a good idea.
+576072292608Sean Stott   52:53Okay.That's A lot.Um...One thing that I was kind of curious about is, you know, on these calls on, well, both of the call centers, they have, you know, closers. Somebody who's actually good at closing the sale, once they get interested. And I'm assuming that that kind of stuff is totally out of scope for a true AI call center.If we want it to be, you know, a true AI call center, not, you know, this hybrid thing.
+576072292608Brandon Titensor   53:26Well, the closer currently works only with KomBea AI. Everyone else is in effect a closer. Like all our human agents that do too are, like, in the way we're talking about it, they all close sales as well. Sorry, Ashley.
+576072292608Sean Stott   53:27Ohh.
+576072292608Ashley Smith   53:32Yeah.Anyone?
+576072292608Sean Stott   53:45Let me rephrase then, like having a human person.
+576072292608Ashley Smith   53:47So, so hold on one second. I want to go back to your sorry, I see Pier in progress at the.Anyways, at a funeral. So, I'm back. I'm so sorry.
+576072292608Brandon Titensor   53:59It wasn't the dead guy, right?
+576072292608Ashley Smith   54:01It wasn't the dead guy, and this lady, and this lady is on her way to the hospital and was talking, so...
+576072292608Brandon Titensor   54:07Teh.There we go.
+576072292608Ashley Smith   54:10It has been a bad day today for calls. Anyways, back, I was listening as I was driving back home to the other question, so I just wanted to jump in real quick. You guys were talking about when we ping the system, right?
+576072292608Sean Stott   54:27Sure.
+576072292608Ashley Smith   54:27So...For the call centers, we actually set up when to ping the system. Like Joseph doesn't tell us when to ask the question. So that's why sometimes we get NI7s and you don't get another type of disposition because we wait until almost like the very last minute.to try to ask who for the transfer number.Is that so, so the call?
+576072292608Brandon Titensor   54:57Oh, so it doesn't have to be before they call?
+576072292608Ashley Smith   55:03So again, I kind of came in late. So I guess it depends on which ping you're talking about. But for branding, we're into the call and then we ping who should we brand? And then later we ping, okay, now out of those, who should I transfer to?
+576072292608Sean Stott   55:18M.
+576072292608Ashley Smith   55:21But it's not at the very beginning. Our calls for KomBea, Canada Direct or Top Dial. But I know it is for the AI call. I believe in talking to Pier, he said that they set it up where it asked all of it at the very first. He didn't originally do that.because not all calls are going to make it to that point. So we would be pinging the system so often when a call isn't even eligible and it would weigh down the system if that many calls was always asking who it should brand and who it should transfer to.
+576072292608Brandon Titensor   55:57How?
+576072292608Sean Stott   55:57That makes sense. Because there's no reason to ask until you need to transfer it to somebody.
+576072292608Ashley Smith   56:02Yeah.
+576072292608Brandon Titensor   56:03I don't know if Pier knows that.
+576072292608Sean Stott   56:05Well, he will now.
+576072292608Ashley Smith   56:05So I told, I did have a conversation with him because we were confused because he was telling me he wasn't pinging the system. And so we actually got on a call with Joseph. And the reason that they had set it up that way was because of the low amount of calls.
+576072292608Brandon Titensor   56:21Oh, okay.
+576072292608Ashley Smith   56:23And it was fine. And then I believe, I believe that they said later if he got to a higher volume, then they would address it and adjust it, but.We used to ping for all of them, and it really burdened the system, so...
+576072292608Sean Stott   56:38That makes sense. Really quick, Ashley, before I forget, we talked a little bit about the benefit of branded versus unbranded on these calls. I mean, do you have an opinion on that?
+576072292608Brandon Titensor   56:39Gotcha.
+576072292608Ashley Smith   56:51We did a test. It's been so long ago, but we saw an uptick in our quality, not only for the clients, but as well as it brought like...I would be guessing, but our quality with our clients went up, whether that was attributed to that or not. But we did see an increase in our sales. And what we assumed was it is bringing like validity to like when you say clients, they're like, oh, this is a real thing. But right now, mostly why your brand is because we tell clients that we are, but we did test.
+576072292608Sean Stott   57:18Right.Hamm.
+576072292608Ashley Smith   57:29branding and not branding and that was the conclusion we came to is that it did give us an uptick whether that was because it was more believable or...
+576072292608Sean Stott   57:42That's good to know. And I mean, the branding can be so minimal with if we're doing true AI. It's just going to say the name of the store, but then...Yeah, I think we can work that out somehow.And.Okay, so...We're at time, right?I think.Do we have this for an hour, hour and a half?
+576072292608Ashley Smith   58:08We had it for an hour.
+576072292608Sean Stott   58:09Yeah, we're at time. So what I'm going to do is I will summarize everything that we have so far and send it out as sort of like things that we've already agreed upon. And then I'll also have, you know, what's left that we need to talk about. And just depending on how big it is, maybe I'll see if we can get back together on Monday or Tuesday.to keep this going. Otherwise, if it's just, I think it's going to be a lot of stuff, I think we'll probably want another session. So I'll talk to Pier about that and try to get it on the calendars early, early next week.
+576072292608Kinsey Jackson   58:46Sweet.
+576072292608Sean Stott   58:46That's okay with everybody.
+576072292608Ashley Smith   58:46And I'm so sorry. I'll try to look through the stuff you guys went over and respond. We just have very few responders in town today, so I had to jump off, but I'll look through and if there's any other information, I'll try to send it to you.
+576072292608Sean Stott   58:57Yeah.And if you wait like, I don't know, 20 minutes, I'll get a summary of what we looked at specifically in the meeting. So you don't have to go piece by piece. I'll tell you what we basically outlined that's, you know, already quasi-decided versus, you know, what we haven't talked about at all. So.Try to make that easy for you.
+576072292608Kinsey Jackson   59:20Awesome. Thanks, everyone.
+576072292608Sean Stott   59:21All right. All right. You guys have a great weekend.
+576072292608Kinsey Jackson   59:24YouTube.
+576072292608Brandon Titensor   59:25Bye.
+576072292608Sean Stott   59:25Right.
+576072292608Ashley Smith   59:25Thank you.
+576072292608Joseph Yordan   59:26Bye.
+621792274320Sean Stott stopped transcription
+
