@@ -1,0 +1,82 @@
+{
+  "note": "Hosts and labels only. Credentials come from env vars CCDB_<CENTER>_USER / CCDB_<CENTER>_PASS \u2014 never store them in this file.",
+  "call_centers": {
+    "baretel": {
+      "alias": "KB",
+      "platform": "vicidial",
+      "port": 3306,
+      "credential_env": {
+        "user": "CCDB_BARETEL_USER",
+        "password": "CCDB_BARETEL_PASS"
+      },
+      "servers": [
+        {
+          "alias": "fsbr",
+          "replica_name": "fsbr-sldb",
+          "host": "162.212.58.148",
+          "business_line": "bathroom",
+          "lead_type": "fresh"
+        },
+        {
+          "alias": "fsbrv",
+          "replica_name": "fsbrv-sldb",
+          "host": "23.29.126.231",
+          "business_line": "bathroom",
+          "lead_type": "revive"
+        },
+        {
+          "alias": "fshw",
+          "replica_name": "fshw-sldb",
+          "host": "107.155.67.132",
+          "business_line": "home_warranty",
+          "lead_type": "combined"
+        },
+        {
+          "alias": "fswn",
+          "replica_name": "fswn-sldb",
+          "host": "162.213.194.18",
+          "business_line": "windows",
+          "lead_type": "fresh"
+        },
+        {
+          "alias": "fswr",
+          "replica_name": "fswr-sldb",
+          "host": "199.16.190.185",
+          "business_line": "windows",
+          "lead_type": "revive"
+        }
+      ]
+    },
+    "topdial": {
+      "alias": "TD",
+      "platform": "vicidial",
+      "port": 3306,
+      "credential_env": {
+        "user": "CCDB_TOPDIAL_USER",
+        "password": "CCDB_TOPDIAL_PASS"
+      },
+      "servers": [
+        {
+          "alias": "td-bathroom",
+          "host": "142.132.197.142",
+          "business_line": "bathroom",
+          "lead_type": "combined"
+        },
+        {
+          "alias": "td-windows",
+          "host": "116.202.196.60",
+          "business_line": "windows",
+          "lead_type": "combined"
+        },
+        {
+          "alias": "td-solar",
+          "host": "207.188.12.153",
+          "business_line": "solar",
+          "lead_type": "combined",
+          "note": "Solar not active right now (2026-07). Known from techss_reporting.CC_BehindMaster; never profiled; separate access account. Reactivate + profile if solar resumes.",
+          "status": "dormant"
+        }
+      ]
+    }
+  }
+}

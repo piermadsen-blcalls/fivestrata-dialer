@@ -1,0 +1,4799 @@
+{
+ "asterisk.call_log.channel_group": [
+  "",
+  "DID_INBOUND",
+  "Local Channel Line"
+ ],
+ "asterisk.call_log.type": [
+  "Local",
+  "SIP"
+ ],
+ "asterisk.custom_202.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_202.CallDispo": [
+  "",
+  "Qualified",
+  "Transfer"
+ ],
+ "asterisk.custom_202.ExDispo": [
+  "",
+  "No Transfer Client",
+  "Transfer Declined",
+  "Transfer Failed (Client Not Av",
+  "Transfer Failed (Customer Hung",
+  "Transfer Success"
+ ],
+ "asterisk.custom_202.spcode": [
+  ""
+ ],
+ "asterisk.custom_203.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_203.CallDispo": [
+  "",
+  "Qualified",
+  "Transfer"
+ ],
+ "asterisk.custom_203.ExDispo": [
+  "",
+  "No Transfer Client",
+  "Transfer Declined",
+  "Transfer Failed (Client Not Av",
+  "Transfer Failed (Customer Hung",
+  "Transfer Success"
+ ],
+ "asterisk.custom_203.spcode": [
+  ""
+ ],
+ "asterisk.custom_204.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_204.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_204.ExDispo": [
+  "",
+  "No Transfer Client",
+  "Transfer Declined",
+  "Transfer Failed (Client Not Av",
+  "Transfer Failed (Customer Hung",
+  "Transfer Success"
+ ],
+ "asterisk.custom_204.spcode": [
+  ""
+ ],
+ "asterisk.custom_205.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_205.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_205.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_205.spcode": [
+  ""
+ ],
+ "asterisk.custom_206.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_206.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_206.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_206.spcode": [
+  ""
+ ],
+ "asterisk.custom_207.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_207.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_207.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_207.spcode": [
+  ""
+ ],
+ "asterisk.custom_208.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_208.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_208.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_208.spcode": [
+  ""
+ ],
+ "asterisk.custom_209.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_209.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_209.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_209.spcode": [
+  ""
+ ],
+ "asterisk.custom_210.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_210.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_210.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_210.spcode": [
+  ""
+ ],
+ "asterisk.custom_211.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_211.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_211.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_211.spcode": [
+  ""
+ ],
+ "asterisk.custom_212.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_212.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_212.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_212.spcode": [
+  ""
+ ],
+ "asterisk.custom_213.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_213.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_213.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_213.spcode": [
+  ""
+ ],
+ "asterisk.custom_214.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_214.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_214.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_214.spcode": [
+  ""
+ ],
+ "asterisk.custom_215.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_215.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_215.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_215.spcode": [
+  ""
+ ],
+ "asterisk.custom_216.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_216.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_216.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_216.spcode": [
+  ""
+ ],
+ "asterisk.custom_217.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_217.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_217.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_217.spcode": [
+  ""
+ ],
+ "asterisk.custom_218.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_218.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_218.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_218.spcode": [
+  ""
+ ],
+ "asterisk.custom_302.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_302.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_302.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_302.spcode": [
+  ""
+ ],
+ "asterisk.custom_303.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_303.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_303.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_303.spcode": [
+  ""
+ ],
+ "asterisk.custom_304.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_304.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_304.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_304.spcode": [
+  ""
+ ],
+ "asterisk.custom_305.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_305.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_305.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_305.FSCode1": [
+  "",
+  " VT:HW PD:1 CH:HS SC:ARA CP:HWAD ",
+  " VT:HW PD:1 CH:HS SC:ARO CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:BEE CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:BOO CP:HWAD ",
+  " VT:HW PD:1 CH:HS SC:BRR CP:30MD ",
+  " VT:HW PD:1 CH:HS SC:CNX CP:HORT ",
+  " VT:HW PD:1 CH:HS SC:COM CP:Tier3 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:HOAD ",
+  " VT:HW PD:1 CH:HS SC:CVD CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:DPP CP:HWAD ",
+  " VT:HW PD:1 CH:HS SC:ENC CP:QQAD ",
+  " VT:HW PD:1 CH:HS SC:FM CP:HO ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:HO ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:QQ ",
+  " VT:HW PD:1 CH:HS SC:IQ CP:HO ",
+  " VT:HW PD:1 CH:HS SC:IQ CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:LP CP:HO ",
+  " VT:HW PD:1 CH:HS SC:MAD CP:HWAD ",
+  " VT:HW PD:1 CH:HS SC:MAS CP:HWAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HVAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:RFAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:WRAD ",
+  " VT:HW PD:1 CH:HS SC:SFT CP:HO ",
+  " VT:HW PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:HW PD:1 CH:HS SC:STC CP:SLAD ",
+  " VT:HW PD:1 CH:HS SC:STC CP:WIAD ",
+  " VT:HW PD:1 CH:HS SC:UE CP:HO ",
+  " VT:HW PD:1 CH:HS SC:VCN CP:HWAD ",
+  " VT:HW PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:ZM CP:HO ",
+  " VT:HW PD:1 CH:HS SC:ZM CP:HWRT",
+  "VT:HW PD:1 CH:HS SC:ARA CP:HWAD",
+  "VT:HW PD:1 CH:HS SC:ARO CP:HWRT",
+  "VT:HW PD:1 CH:HS SC:AWL CP:HOIAD",
+  "VT:HW PD:1 CH:HS SC:BEE CP:HWRT",
+  "VT:HW PD:1 CH:HS SC:BRR CP:30MD",
+  "VT:HW PD:1 CH:HS SC:CNX CP:HORT",
+  "VT:HW PD:1 CH:HS SC:COM CP:Tier3",
+  "VT:HW PD:1 CH:HS SC:CTD CP:HOAD",
+  "VT:HW PD:1 CH:HS SC:CVD CP:HWRT",
+  "VT:HW PD:1 CH:HS SC:DPP CP:HWAD",
+  "VT:HW PD:1 CH:HS SC:FM CP:HO",
+  "VT:HW PD:1 CH:HS SC:FTO CP:HO",
+  "VT:HW PD:1 CH:HS SC:FTO CP:QQ",
+  "VT:HW PD:1 CH:HS SC:IQ CP:HO",
+  "VT:HW PD:1 CH:HS SC:LP CP:HO",
+  "VT:HW PD:1 CH:HS SC:MAS CP:HWAD",
+  "VT:HW PD:1 CH:HS SC:PX CP:AIAD",
+  "VT:HW PD:1 CH:HS SC:PX CP:HIAD",
+  "VT:HW PD:1 CH:HS SC:PX CP:HVAD",
+  "VT:HW PD:1 CH:HS SC:PX CP:WRAD",
+  "VT:HW PD:1 CH:HS SC:SFT CP:HO",
+  "VT:HW PD:1 CH:HS SC:STC CP:MOAD",
+  "VT:HW PD:1 CH:HS SC:STC CP:SLAD",
+  "VT:HW PD:1 CH:HS SC:STC CP:WIAD",
+  "VT:HW PD:1 CH:HS SC:UE CP:HO",
+  "VT:HW PD:1 CH:HS SC:VCN CP:HWAD",
+  "VT:HW PD:1 CH:HS SC:WBC CP:HWRT",
+  "VT:HW PD:1 CH:HS SC:WIH CP:HW",
+  "VT:HW PD:1 CH:HS SC:ZM CP:HO",
+  "VT:HW PD:1 CH:HS SC:ZM CP:HWRT"
+ ],
+ "asterisk.custom_305.spcode": [
+  ""
+ ],
+ "asterisk.custom_306.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_306.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_306.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_306.FSCode1": [
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:BEE CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:BRR CP:30MD ",
+  " VT:HW PD:1 CH:HS SC:COM CP:Tier3 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:HOAD ",
+  " VT:HW PD:1 CH:HS SC:DPP CP:HWAD ",
+  " VT:HW PD:1 CH:HS SC:FM CP:HO ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:HO ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:QQ ",
+  " VT:HW PD:1 CH:HS SC:IQ CP:HO ",
+  " VT:HW PD:1 CH:HS SC:LP CP:HO ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HVAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:WRAD ",
+  " VT:HW PD:1 CH:HS SC:SFT CP:HO ",
+  " VT:HW PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:HW PD:1 CH:HS SC:UE CP:HO ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:ZM CP:HO ",
+  "VT:HW PD:1 CH:HS SC:AWL CP:HOIAD",
+  "VT:HW PD:1 CH:HS SC:BEE CP:HWRT",
+  "VT:HW PD:1 CH:HS SC:BRR CP:30MD",
+  "VT:HW PD:1 CH:HS SC:COM CP:Tier3",
+  "VT:HW PD:1 CH:HS SC:CTD CP:HOAD",
+  "VT:HW PD:1 CH:HS SC:FM CP:HO",
+  "VT:HW PD:1 CH:HS SC:FTO CP:HO",
+  "VT:HW PD:1 CH:HS SC:FTO CP:QQ",
+  "VT:HW PD:1 CH:HS SC:IQ CP:HO",
+  "VT:HW PD:1 CH:HS SC:LP CP:HO",
+  "VT:HW PD:1 CH:HS SC:OPG CP:AUAD",
+  "VT:HW PD:1 CH:HS SC:PX CP:HVAD",
+  "VT:HW PD:1 CH:HS SC:PX CP:WRAD",
+  "VT:HW PD:1 CH:HS SC:SFT CP:HO",
+  "VT:HW PD:1 CH:HS SC:UE CP:HO",
+  "VT:HW PD:1 CH:HS SC:WIH CP:HW",
+  "VT:HW PD:1 CH:HS SC:ZM CP:HO"
+ ],
+ "asterisk.custom_306.spcode": [
+  ""
+ ],
+ "asterisk.custom_401.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_401.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_401.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_401.spcode": [
+  ""
+ ],
+ "asterisk.custom_402.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_402.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_402.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_402.spcode": [
+  ""
+ ],
+ "asterisk.custom_403.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_403.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_403.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_403.spcode": [
+  ""
+ ],
+ "asterisk.custom_404.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_404.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_404.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_404.spcode": [
+  ""
+ ],
+ "asterisk.custom_405.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_405.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_405.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_405.spcode": [
+  ""
+ ],
+ "asterisk.custom_406.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_406.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_406.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_406.spcode": [
+  ""
+ ],
+ "asterisk.custom_407.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_407.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_407.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_407.spcode": [
+  ""
+ ],
+ "asterisk.custom_408.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_408.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_408.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_408.spcode": [
+  ""
+ ],
+ "asterisk.custom_409.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_409.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_409.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_409.spcode": [
+  ""
+ ],
+ "asterisk.custom_410.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_410.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_410.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_410.spcode": [
+  ""
+ ],
+ "asterisk.custom_411.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_411.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_411.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_411.spcode": [
+  ""
+ ],
+ "asterisk.custom_412.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_412.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_412.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_412.spcode": [
+  ""
+ ],
+ "asterisk.custom_413.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_413.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_413.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_413.spcode": [
+  ""
+ ],
+ "asterisk.custom_414.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_414.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_414.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_414.spcode": [
+  ""
+ ],
+ "asterisk.custom_415.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_415.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_415.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_415.spcode": [
+  ""
+ ],
+ "asterisk.custom_416.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_416.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_416.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_416.spcode": [
+  ""
+ ],
+ "asterisk.custom_417.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_417.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_417.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_417.spcode": [
+  ""
+ ],
+ "asterisk.custom_418.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_418.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_418.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_418.spcode": [
+  ""
+ ],
+ "asterisk.custom_419.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_419.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_419.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_419.spcode": [
+  ""
+ ],
+ "asterisk.custom_420.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_420.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_420.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_420.spcode": [
+  ""
+ ],
+ "asterisk.custom_500.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_500.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_500.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_500.FSCode1": [
+  "",
+  "|VT:BR|PD:1|CH:HS|SC:CTD|CP:MOLD|",
+  "|VT:BR|PD:1|CH:HS|SC:CTD|CP:SLAD15|",
+  "|VT:HW|PD:1|CH:HS|SC:CTD|CP:SLAD15|",
+  "|VT:WI|PD:1|CH:HS|SC:ALI|CP:RFAD|",
+  "|VT:WI|PD:1|CH:HS|SC:AQC|CP:HOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:AWL|CP:HOIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:BYR|CP:HOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:CNX|CP:HWRTJ|",
+  "|VT:WI|PD:1|CH:HS|SC:COM|CP:TIER3|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MOAD2-C0_2|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MOAD2|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MOLDRS|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MOLD|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MORS|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLAD15|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLAD2|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLAD30|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLLDRS|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLLD|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLRS|",
+  "|VT:WI|PD:1|CH:HS|SC:FM|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:JLM|CP:HOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:MAD|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:MAL|CP:HIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:MAL|CP:HOAD20|",
+  "|VT:WI|PD:1|CH:HS|SC:MAL|CP:HOAD30|",
+  "|VT:WI|PD:1|CH:HS|SC:MAL|CP:HRAD|",
+  "|VT:WI|PD:1|CH:HS|SC:OPG|CP:AUAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PNT|CP:HOAD10|",
+  "|VT:WI|PD:1|CH:HS|SC:PNT|CP:SLAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PRM|CP:SLAD2|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:ADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:AD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:AIADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:AIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:GTADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:GTAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HIADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HOIADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HOIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HSADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HVACAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:MOADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:MOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:RFADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:RFAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:SDADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:SDAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:SLAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:WINADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:WINAD|",
+  "|VT:WI|PD:1|CH:HS|SC:SFM|CP:HOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:SFT|CP:HORT05|",
+  "|VT:WI|PD:1|CH:HS|SC:SFT|CP:HORT10|",
+  "|VT:WI|PD:1|CH:HS|SC:SFT|CP:RPC|",
+  "|VT:WI|PD:1|CH:HS|SC:SFT|CP:RP|",
+  "|VT:WI|PD:1|CH:HS|SC:SGA|CP:HO10|",
+  "|VT:WI|PD:1|CH:HS|SC:SGA|CP:HO15|",
+  "|VT:WI|PD:1|CH:HS|SC:SGA|CP:HO20|",
+  "|VT:WI|PD:1|CH:HS|SC:SGA|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:BRAD|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:MDAD10|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:MOAD10|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:MOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:RFAD10|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:RFAD|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:SLAD10|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:SLAD|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:WIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:UE|CP:HOIAD10|",
+  "|VT:WI|PD:1|CH:HS|SC:UE|CP:HOIAD20|",
+  "|VT:WI|PD:1|CH:HS|SC:UE|CP:HOIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:WBC|CP:HWRT|",
+  "|VT:WI|PD:1|CH:HS|SC:WIH|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:WIH|CP:HW|"
+ ],
+ "asterisk.custom_500.spcode": [
+  ""
+ ],
+ "asterisk.custom_501.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_501.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_501.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_501.spcode": [
+  ""
+ ],
+ "asterisk.custom_502.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_502.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_502.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_502.spcode": [
+  ""
+ ],
+ "asterisk.custom_503.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_503.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_503.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_503.spcode": [
+  ""
+ ],
+ "asterisk.custom_504.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_504.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_504.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_504.spcode": [
+  ""
+ ],
+ "asterisk.custom_505.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_505.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_505.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_505.spcode": [
+  ""
+ ],
+ "asterisk.custom_506.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_506.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_506.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_506.spcode": [
+  ""
+ ],
+ "asterisk.custom_507.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_507.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_507.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_507.spcode": [
+  ""
+ ],
+ "asterisk.custom_508.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_508.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_508.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_508.spcode": [
+  ""
+ ],
+ "asterisk.custom_509.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_509.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_509.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_509.spcode": [
+  ""
+ ],
+ "asterisk.custom_510.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_510.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_510.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_510.spcode": [
+  ""
+ ],
+ "asterisk.custom_511.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_511.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_511.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_511.spcode": [
+  ""
+ ],
+ "asterisk.custom_512.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_512.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_512.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_512.spcode": [
+  ""
+ ],
+ "asterisk.custom_513.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_513.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_513.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_513.spcode": [
+  ""
+ ],
+ "asterisk.custom_514.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_514.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_514.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_514.spcode": [
+  ""
+ ],
+ "asterisk.custom_515.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_515.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_515.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_515.spcode": [
+  ""
+ ],
+ "asterisk.custom_516.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_516.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_516.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_516.spcode": [
+  ""
+ ],
+ "asterisk.custom_517.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_517.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_517.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_517.spcode": [
+  ""
+ ],
+ "asterisk.custom_518.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_518.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_518.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_518.spcode": [
+  ""
+ ],
+ "asterisk.custom_519.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_519.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_519.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_519.spcode": [
+  ""
+ ],
+ "asterisk.custom_520.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_520.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_520.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_520.spcode": [
+  ""
+ ],
+ "asterisk.custom_600.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_600.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_600.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_600.FSCode1": [
+  "",
+  "|VT:BR|PD:1|CH:HS|SC:WIH|CP:HW|",
+  "|VT:WI|PD:1|CH:HS|SC:AQC|CP:HOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:ASL|CP:HOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:AWB|CP:AUAD|",
+  "|VT:WI|PD:1|CH:HS|SC:BYR|CP:HOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:HOAD10|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:HOAD20|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:HOAD30|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MOAD2|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MOLDRS|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MOLD|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MORS|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLAD15|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLAD2|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLAD30|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLLDRS|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLLD|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:SLRS|",
+  "|VT:WI|PD:1|CH:HS|SC:FM|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:JLM|CP:HOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:MAD|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:MAL|CP:HOAD20|",
+  "|VT:WI|PD:1|CH:HS|SC:MAL|CP:HOAD30|",
+  "|VT:WI|PD:1|CH:HS|SC:OHP|CP:HOLF15|",
+  "|VT:WI|PD:1|CH:HS|SC:OHP|CP:HOLF30|",
+  "|VT:WI|PD:1|CH:HS|SC:OPG|CP:AUAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PNT|CP:HOAD10|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP: AD |",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP: ADB |",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP: HSADB |",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP: HVACAD |",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP: RFAD |",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP: RFADB |",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP: WINAD |",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP: WINADB |",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:ADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:AD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:AIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:GTADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:GTAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HOIADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HOIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HSADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HSAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HVACADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:HVACAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:MOADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:MOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:RFADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:RFAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:SDADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:SDAD|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:WINADB|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:WINAD|",
+  "|VT:WI|PD:1|CH:HS|SC:SFT|CP:HORT10|",
+  "|VT:WI|PD:1|CH:HS|SC:SGA|CP:HO10|",
+  "|VT:WI|PD:1|CH:HS|SC:SGA|CP:HO15|",
+  "|VT:WI|PD:1|CH:HS|SC:SGA|CP:HO20|",
+  "|VT:WI|PD:1|CH:HS|SC:SGA|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:SON|CP:HORT|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:BRAD|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:MDAD|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:MOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:RFAD|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:SLAD|",
+  "|VT:WI|PD:1|CH:HS|SC:STC|CP:WIAD|",
+  "|VT:WI|PD:1|CH:HS|SC:UE|CP:HOAD15|",
+  "|VT:WI|PD:1|CH:HS|SC:UE|CP:HOAD20|",
+  "|VT:WI|PD:1|CH:HS|SC:WBC|CP:HWRT|",
+  "|VT:WI|PD:1|CH:HS|SC:WIH|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:WIH|CP:HW|"
+ ],
+ "asterisk.custom_600.spcode": [
+  ""
+ ],
+ "asterisk.custom_601.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_601.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_601.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_601.spcode": [
+  ""
+ ],
+ "asterisk.custom_602.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_602.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_602.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_602.spcode": [
+  ""
+ ],
+ "asterisk.custom_603.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_603.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_603.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_603.spcode": [
+  ""
+ ],
+ "asterisk.custom_604.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_604.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_604.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_604.spcode": [
+  ""
+ ],
+ "asterisk.custom_605.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_605.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_605.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_605.spcode": [
+  ""
+ ],
+ "asterisk.custom_606.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_606.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_606.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_606.spcode": [
+  ""
+ ],
+ "asterisk.custom_607.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_607.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_607.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_607.spcode": [
+  ""
+ ],
+ "asterisk.custom_608.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_608.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_608.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_608.spcode": [
+  ""
+ ],
+ "asterisk.custom_609.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_609.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_609.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_609.spcode": [
+  ""
+ ],
+ "asterisk.custom_610.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_610.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_610.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_610.spcode": [
+  ""
+ ],
+ "asterisk.custom_611.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_611.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_611.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_611.spcode": [
+  ""
+ ],
+ "asterisk.custom_612.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_612.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_612.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_612.spcode": [
+  ""
+ ],
+ "asterisk.custom_613.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_613.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_613.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_613.spcode": [
+  ""
+ ],
+ "asterisk.custom_614.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_614.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_614.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_614.spcode": [
+  ""
+ ],
+ "asterisk.custom_615.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_615.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_615.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_615.spcode": [
+  ""
+ ],
+ "asterisk.custom_616.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_616.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_616.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_616.spcode": [
+  ""
+ ],
+ "asterisk.custom_617.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_617.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_617.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_617.spcode": [
+  ""
+ ],
+ "asterisk.custom_618.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_618.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_618.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_618.spcode": [
+  ""
+ ],
+ "asterisk.custom_619.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_619.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_619.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_619.spcode": [
+  ""
+ ],
+ "asterisk.custom_620.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_620.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_620.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_620.spcode": [
+  ""
+ ],
+ "asterisk.custom_701.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_701.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_701.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_701.spcode": [
+  ""
+ ],
+ "asterisk.custom_703.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_703.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_703.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_703.spcode": [
+  ""
+ ],
+ "asterisk.custom_705.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_705.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_705.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_705.spcode": [
+  ""
+ ],
+ "asterisk.custom_706.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_706.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_706.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_706.spcode": [
+  ""
+ ],
+ "asterisk.custom_707.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_707.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_707.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_707.spcode": [
+  ""
+ ],
+ "asterisk.custom_708.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_708.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_708.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_708.spcode": [
+  ""
+ ],
+ "asterisk.custom_709.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_709.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_709.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_709.spcode": [
+  ""
+ ],
+ "asterisk.custom_710.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_710.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_710.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_710.FSCode1": [
+  "",
+  " VT:SL PD:1 CH:HS SC:TRC CP:HOAD ",
+  "VT:SL PD:1 CH:HS SC:TRC CP:HOAD"
+ ],
+ "asterisk.custom_710.FSCode2": [
+  "",
+  " SS:BATCH SA:FILE C0:TD ",
+  " SS:TD SA:AB C0:KB ",
+  " SS:TD SA:AB C0:TD ",
+  " SS:TD SA:FILE C0:TD ",
+  "SS:TD SA:AB C0:TD",
+  "SS:TD SA:FILE C0:TD"
+ ],
+ "asterisk.custom_710.spcode": [
+  ""
+ ],
+ "asterisk.custom_801.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_801.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_801.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_801.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:BR PD:1 CH:HS SC:CNX CP:HWRTS ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:BR PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:BR PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:PNT CP:HOAD10 ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:SLAD ",
+  " VT:BR PD:1 CH:HS SC:SFT CP:HORT10 ",
+  " VT:BR PD:1 CH:HS SC:SGA CP:HO ",
+  " VT:BR PD:1 CH:HS SC:SGA CP:HO20 ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:ARA CP:HORT ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:BYR CP:HOAD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLAD30 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:HW PD:1 CH:HS SC:ESP CP:HIMPAD ",
+  " VT:HW PD:1 CH:HS SC:FM CP:HO ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:HO ",
+  " VT:HW PD:1 CH:HS SC:MAS CP:MDAD ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HVACAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:WRAD ",
+  " VT:HW PD:1 CH:HS SC:SFT CP:HORT05 ",
+  " VT:HW PD:1 CH:HS SC:TBM CP:BRRT ",
+  " VT:HW PD:1 CH:HS SC:TBM CP:HOAD ",
+  " VT:HW PD:1 CH:HS SC:TBM CP:RFRT ",
+  " VT:HW PD:1 CH:HS SC:TGM CP:HOAD ",
+  " VT:HW PD:1 CH:HS SC:UE CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:VCN CP:HOAD ",
+  " VT:HW PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:RF PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:RF PD:1 CH:HS SC:PX CP:RFAD ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:SL PD:1 CH:HS SC:FTO CP:T4 ",
+  " VT:SL PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:SL PD:1 CH:HS SC:PX CP:AD ",
+  " VT:SL PD:1 CH:HS SC:SFT CP:HORT05 ",
+  " VT:SL PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:SL PD:1 CH:HS SC:TWC CP:MOAD ",
+  " VT:SL PD:1 CH:HS SC:UE CP:GOAD ",
+  " VT:SL PD:1 CH:HS SC:WIH CP:HO ",
+  " VT:WI PD:1 CH:HS SC:ARA CP:HORT ",
+  " VT:WI PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MORS305 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:WI PD:1 CH:HS SC:ESP CP:HIMPAD ",
+  " VT:WI PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:WI PD:1 CH:HS SC:MAL CP:HRAD ",
+  " VT:WI PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:ADB ",
+  " VT:WI PD:1 CH:HS SC:PX CP:AIADB ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:MOAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:RFADB ",
+  " VT:WI PD:1 CH:HS SC:PX CP:SLAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:WINAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:WINADB ",
+  " VT:WI PD:1 CH:HS SC:SGA CP:HO15 ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:RFRT ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:WIRT ",
+  " VT:WI PD:1 CH:HS SC:TGM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:UE CP:HOAD15 ",
+  " VT:WI PD:1 CH:HS SC:VCN CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HO ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HW ",
+  "VT:BR PD:1 CH:HS SC:CNX CP:HWRTJ",
+  "VT:HW PD:1 CH:HS SC:AWL CP:HOIAD",
+  "VT:HW PD:1 CH:HS SC:CTD CP:MOAD2",
+  "VT:WI PD:1 CH:HS SC:CTD CP:MOLD",
+  "VT:WI PD:1 CH:HS SC:SGA CP:HO20"
+ ],
+ "asterisk.custom_801.spcode": [
+  ""
+ ],
+ "asterisk.custom_802.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_802.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_802.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_802.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:BR PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:PNT CP:HOAD10 ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:HW PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:RFADB ",
+  " VT:HW PD:1 CH:HS SC:SFT CP:HORT05 ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:SL PD:1 CH:HS SC:PX CP:ADB ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLD-C0_1 ",
+  " VT:WI PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:WI PD:1 CH:HS SC:PNT CP:HOAD20 ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HO "
+ ],
+ "asterisk.custom_802.spcode": [
+  ""
+ ],
+ "asterisk.custom_803.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_803.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_803.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_803.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:BR PD:1 CH:HS SC:MAL CP:HOAD20 ",
+  " VT:BR PD:1 CH:HS SC:PNT CP:HOAD20 ",
+  " VT:BR PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:BR PD:1 CH:HS SC:SFT CP:HORT05 ",
+  " VT:BR PD:1 CH:HS SC:STC CP:WIAD ",
+  " VT:BR PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:BYR CP:HOAD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:HW PD:1 CH:HS SC:FM CP:HO ",
+  " VT:HW PD:1 CH:HS SC:PX CP:ADB ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:SL PD:1 CH:HS SC:PX CP:AD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MORS ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MORS305 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD30 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:WI PD:1 CH:HS SC:PNT CP:HOAD20 ",
+  " VT:WI PD:1 CH:HS SC:PX CP:ADB ",
+  " VT:WI PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:STC CP:SLAD "
+ ],
+ "asterisk.custom_803.spcode": [
+  ""
+ ],
+ "asterisk.custom_804.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_804.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_804.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_804.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:AQC CP:HOAD ",
+  " VT:BR PD:1 CH:HS SC:COM CP:TIER3 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MORS ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:BR PD:1 CH:HS SC:FM CP:HO ",
+  " VT:BR PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:BR PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:PNT CP:HOAD20 ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIADB ",
+  " VT:BR PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:MOADB ",
+  " VT:BR PD:1 CH:HS SC:SGA CP:HO ",
+  " VT:BR PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:BR PD:1 CH:HS SC:UE CP:HOIAD ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HOIADB ",
+  " VT:HW PD:1 CH:HS SC:PX CP:RFADB ",
+  " VT:HW PD:1 CH:HS SC:SFT CP:HORT05 ",
+  " VT:SL PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLAD1 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLADT2 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:SL PD:1 CH:HS SC:MAL CP:HRAD ",
+  " VT:SL PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:SL PD:1 CH:HS SC:PX CP:AD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD30 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:WI PD:1 CH:HS SC:MAL CP:HOAD20 ",
+  " VT:WI PD:1 CH:HS SC:MAL CP:HRAD ",
+  " VT:WI PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:ADB ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIADB ",
+  " VT:WI PD:1 CH:HS SC:PX CP:WINADB ",
+  " VT:WI PD:1 CH:HS SC:SGA CP:HO ",
+  " VT:WI PD:1 CH:HS SC:STC CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HW ",
+  "VT:SL PD:1 CH:HS SC:CTD CP:SLADT2",
+  "VT:WI PD:1 CH:HS SC:JLM CP:HOAD"
+ ],
+ "asterisk.custom_804.spcode": [
+  ""
+ ],
+ "asterisk.custom_805.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_805.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_805.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_805.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:COM CP:TIER3 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:BR PD:1 CH:HS SC:FM CP:HO ",
+  " VT:BR PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:BR PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:BR PD:1 CH:HS SC:MAL CP:HOAD20 ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:PNT CP:HOAD10 ",
+  " VT:BR PD:1 CH:HS SC:PNT CP:HOAD20 ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:ADB ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIADB ",
+  " VT:BR PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:RFADB ",
+  " VT:BR PD:1 CH:HS SC:SGA CP:HO ",
+  " VT:BR PD:1 CH:HS SC:STC CP:MDAD ",
+  " VT:BR PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:BR PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MORS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:HW PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HOIADB ",
+  " VT:HW PD:1 CH:HS SC:PX CP:RFADB ",
+  " VT:RF PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:RF PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:RF PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:RF PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:RF PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:RF PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:RF PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:RF PD:1 CH:HS SC:PX CP:HIADB ",
+  " VT:SL PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLAD ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLADT2 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:SL PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:SL PD:1 CH:HS SC:PX CP:AD ",
+  " VT:SL PD:1 CH:HS SC:PX CP:ADB ",
+  " VT:WI PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:WI PD:1 CH:HS SC:BYR CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MORS305 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD30 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:WI PD:1 CH:HS SC:FM CP:HO ",
+  " VT:WI PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:WI PD:1 CH:HS SC:MAL CP:HOAD20 ",
+  " VT:WI PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:WI PD:1 CH:HS SC:PNT CP:HOAD10 ",
+  " VT:WI PD:1 CH:HS SC:PNT CP:HOAD20 ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:RFADB ",
+  " VT:WI PD:1 CH:HS SC:PX CP:SDADB ",
+  " VT:WI PD:1 CH:HS SC:PX CP:WINADB ",
+  " VT:WI PD:1 CH:HS SC:STC CP:BRAD ",
+  " VT:WI PD:1 CH:HS SC:STC CP:SLAD ",
+  " VT:WI PD:1 CH:HS SC:STC CP:WIAD ",
+  " VT:WI PD:1 CH:HS SC:STC CP:WIAD10 ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HW ",
+  "VT:BR PD:1 CH:HS SC:CTD CP:MOLDRS",
+  "VT:BR PD:1 CH:HS SC:PX CP:HIAD",
+  "VT:WI PD:1 CH:HS SC:PX CP:HIAD"
+ ],
+ "asterisk.custom_805.spcode": [
+  ""
+ ],
+ "asterisk.custom_806.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_806.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_806.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_806.spcode": [
+  ""
+ ],
+ "asterisk.custom_807.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_807.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_807.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_807.spcode": [
+  ""
+ ],
+ "asterisk.custom_808.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_808.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_808.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_808.spcode": [
+  ""
+ ],
+ "asterisk.custom_809.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_809.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_809.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_809.spcode": [
+  ""
+ ],
+ "asterisk.custom_810.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_810.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_810.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_810.spcode": [
+  ""
+ ],
+ "asterisk.custom_811.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_811.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_811.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_811.spcode": [
+  ""
+ ],
+ "asterisk.custom_812.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_812.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_812.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_812.spcode": [
+  ""
+ ],
+ "asterisk.custom_813.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_813.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_813.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_813.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:BR PD:1 CH:HS SC:CNX CP:HWRTJ ",
+  " VT:BR PD:1 CH:HS SC:CNX CP:HWRTS ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD30 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:BR PD:1 CH:HS SC:ESP CP:HIMPAD ",
+  " VT:BR PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:BR PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:BR PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:BR PD:1 CH:HS SC:STC CP:MOAD10 ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:ARA CP:HORT ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:CNX CP:HWRTS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HVACAD ",
+  " VT:HW PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:HW PD:1 CH:HS SC:SFT CP:RPC ",
+  " VT:HW PD:1 CH:HS SC:STC CP:HIAD ",
+  " VT:HW PD:1 CH:HS SC:STC CP:MDAD10 ",
+  " VT:HW PD:1 CH:HS SC:STC CP:MOAD10 ",
+  " VT:HW PD:1 CH:HS SC:STC CP:WIAD10 ",
+  " VT:HW PD:1 CH:HS SC:UE CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:SL PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:MOAD1 ",
+  " VT:SL PD:1 CH:HS SC:FTO CP:GYTS ",
+  " VT:SL PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:WI PD:1 CH:HS SC:ALI CP:SLAD ",
+  " VT:WI PD:1 CH:HS SC:ARA CP:HORT ",
+  " VT:WI PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:WI PD:1 CH:HS SC:CNX CP:HORT ",
+  " VT:WI PD:1 CH:HS SC:CNX CP:HWRTJ ",
+  " VT:WI PD:1 CH:HS SC:COM CP:TIER3 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD30 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:WI PD:1 CH:HS SC:DPP CP:HORT ",
+  " VT:WI PD:1 CH:HS SC:DPP CP:MDAD ",
+  " VT:WI PD:1 CH:HS SC:ESP CP:HIMPAD ",
+  " VT:WI PD:1 CH:HS SC:FM CP:HO ",
+  " VT:WI PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:WI PD:1 CH:HS SC:MAS CP:MDAD ",
+  " VT:WI PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:WI PD:1 CH:HS SC:PRE CP:AIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:AD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:MOAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:WINAD ",
+  " VT:WI PD:1 CH:HS SC:SFT CP:HORT20 ",
+  " VT:WI PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:WI PD:1 CH:HS SC:SGA CP:HO ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:BRRT ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:RFRT ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:SLRT ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:WIRT ",
+  " VT:WI PD:1 CH:HS SC:TGM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:UE CP:HOIAD ",
+  " VT:WI PD:1 CH:HS SC:VCN CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HO ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HW ",
+  "VT:BR PD:1 CH:HS SC:AWL CP:HOIAD",
+  "VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS",
+  "VT:WI PD:1 CH:HS SC:CTD CP:MOLD",
+  "VT:WI PD:1 CH:HS SC:IQ CP:SLRT",
+  "VT:WI PD:1 CH:HS SC:WIH CP:HW"
+ ],
+ "asterisk.custom_813.spcode": [
+  ""
+ ],
+ "asterisk.custom_814.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_814.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_814.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_814.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:AQC CP:MEDAD ",
+  " VT:BR PD:1 CH:HS SC:ARA CP:HORT ",
+  " VT:BR PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:BR PD:1 CH:HS SC:BVS CP:BRRT ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:BR PD:1 CH:HS SC:FM CP:HO ",
+  " VT:BR PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:BR PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:PNT CP:SLAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:BR PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:BR PD:1 CH:HS SC:STC CP:MOAD10 ",
+  " VT:BR PD:1 CH:HS SC:TGM CP:HOAD ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:LIAD ",
+  " VT:HW PD:1 CH:HS SC:BEE CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:CNX CP:HORT ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MORS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:HO ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:HW PD:1 CH:HS SC:STC CP:SLAD10 ",
+  " VT:HW PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:SL PD:1 CH:HS SC:COM CP:Tier3 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLAD1 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLADT2 ",
+  " VT:SL PD:1 CH:HS SC:FTO CP:HO1 ",
+  " VT:SL PD:1 CH:HS SC:FTO CP:T2 ",
+  " VT:SL PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:SL PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:WI PD:1 CH:HS SC:ARA CP:HORT ",
+  " VT:WI PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:WI PD:1 CH:HS SC:CNX CP:HOLGJ ",
+  " VT:WI PD:1 CH:HS SC:CNX CP:HWRTJ ",
+  " VT:WI PD:1 CH:HS SC:COM CP:TIER3 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD15 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLAD30 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:DPP CP:HORT ",
+  " VT:WI PD:1 CH:HS SC:ESP CP:HIMPAD ",
+  " VT:WI PD:1 CH:HS SC:FM CP:HO ",
+  " VT:WI PD:1 CH:HS SC:IQ CP:SLRT ",
+  " VT:WI PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:WI PD:1 CH:HS SC:MAL CP:HRAD ",
+  " VT:WI PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:WI PD:1 CH:HS SC:PNT CP:SLAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:AD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:WINAD ",
+  " VT:WI PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:RFRT ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:WIRT ",
+  " VT:WI PD:1 CH:HS SC:TGM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:UE CP:HOIAD ",
+  " VT:WI PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HO ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HW ",
+  "VT:BR PD:1 CH:HS SC:SFT CP:RP",
+  "VT:HW PD:1 CH:HS SC:OPG CP:AUAD",
+  "VT:SL PD:1 CH:HS SC:FTO CP:HOAD",
+  "VT:WI PD:1 CH:HS SC:OPG CP:AUAD",
+  "VT:WI PD:1 CH:HS SC:WIH CP:HW"
+ ],
+ "asterisk.custom_814.spcode": [
+  ""
+ ],
+ "asterisk.custom_815.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_815.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_815.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_815.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:BR PD:1 CH:HS SC:AWL CP:NOLIAD ",
+  " VT:BR PD:1 CH:HS SC:CNX CP:HWRTJ ",
+  " VT:BR PD:1 CH:HS SC:COM CP:TIER3 ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:BR PD:1 CH:HS SC:ESP CP:HIMPAD ",
+  " VT:BR PD:1 CH:HS SC:FM CP:HO ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:CNX CP:HORT ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MORS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:STC CP:HIAD ",
+  " VT:HW PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLAD3 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLADT2 ",
+  " VT:SL PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:SL PD:1 CH:HS SC:TRE CP:YTSHO24 ",
+  " VT:SL PD:1 CH:HS SC:UE CP:GOAD ",
+  " VT:SL PD:1 CH:HS SC:WIH CP:HO ",
+  " VT:WI PD:1 CH:HS SC:ARA CP:HORT ",
+  " VT:WI PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:WI PD:1 CH:HS SC:CNX CP:HOLGJ ",
+  " VT:WI PD:1 CH:HS SC:COM CP:TIER3 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:ESP CP:HIMPAD ",
+  " VT:WI PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:WI PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:WI PD:1 CH:HS SC:STC CP:RFAD ",
+  " VT:WI PD:1 CH:HS SC:STC CP:SLAD10 ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:BRRT ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:RFRT ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:WIRT ",
+  " VT:WI PD:1 CH:HS SC:VCN CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HW ",
+  "VT:HW PD:1 CH:HS SC:CTD CP:SLRS"
+ ],
+ "asterisk.custom_815.spcode": [
+  ""
+ ],
+ "asterisk.custom_816.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_816.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_816.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_816.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:CNX CP:HWRTJ ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:BR PD:1 CH:HS SC:MAL CP:HRAD ",
+  " VT:BR PD:1 CH:HS SC:SFT CP:RPC ",
+  " VT:BR PD:1 CH:HS SC:SGA CP:HO ",
+  " VT:BR PD:1 CH:HS SC:TBM CP:RFRT ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:HW PD:1 CH:HS SC:FM CP:HO ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:HO ",
+  " VT:HW PD:1 CH:HS SC:WBC CP:HWRT ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:SL PD:1 CH:HS SC:COM CP:Tier3 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:SL PD:1 CH:HS SC:UE CP:GOAD ",
+  " VT:WI PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:WI PD:1 CH:HS SC:SFT CP:RPC ",
+  " VT:WI PD:1 CH:HS SC:VCN CP:HOAD "
+ ],
+ "asterisk.custom_816.spcode": [
+  ""
+ ],
+ "asterisk.custom_817.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_817.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_817.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_817.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:SLAD ",
+  " VT:BR PD:1 CH:HS SC:STC CP:BRAD ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:COM CP:Tier3 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:HO ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:SL PD:1 CH:HS SC:COM CP:Tier3 ",
+  " VT:SL PD:1 CH:HS SC:CVD CP:HO ",
+  " VT:SL PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:WI PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:WI PD:1 CH:HS SC:COM CP:TIER3 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOAD2 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:MAD CP:HO ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:MOAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:SLAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:WINAD ",
+  "VT:HW PD:1 CH:HS SC:CTD CP:MOLD",
+  "VT:WI PD:1 CH:HS SC:CTD CP:MOLD"
+ ],
+ "asterisk.custom_817.spcode": [
+  ""
+ ],
+ "asterisk.custom_818.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_818.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_818.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_818.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:SLAD2 ",
+  " VT:BR PD:1 CH:HS SC:MAL CP:HRAD2 ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:HW PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:HW PD:1 CH:HS SC:PX CP:MOAD ",
+  " VT:HW PD:1 CH:HS SC:STC CP:MOAD ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:SL PD:1 CH:HS SC:FTO CP:GYTSAD ",
+  " VT:SL PD:1 CH:HS SC:FTO CP:T2 ",
+  " VT:SL PD:1 CH:HS SC:PX CP:AD ",
+  " VT:SL PD:1 CH:HS SC:STC CP:SLAD ",
+  " VT:SL PD:1 CH:HS SC:TWC CP:AINAD ",
+  " VT:SL PD:1 CH:HS SC:UE CP:HO56 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:FM CP:HO ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:SLAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:WINAD ",
+  " VT:WI PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HW "
+ ],
+ "asterisk.custom_818.spcode": [
+  ""
+ ],
+ "asterisk.custom_819.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_819.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_819.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_819.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:BR PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:BR PD:1 CH:HS SC:TBM CP:BRRT ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:HO ",
+  " VT:HW PD:1 CH:HS SC:MAX CP:HWAD ",
+  " VT:HW PD:1 CH:HS SC:SFT CP:RPC ",
+  " VT:HW PD:1 CH:HS SC:SGA CP:HO ",
+  " VT:SL PD:1 CH:HS SC:CTD CP:MOAD3 ",
+  " VT:SL PD:1 CH:HS SC:MAS CP:AD ",
+  " VT:SL PD:1 CH:HS SC:WIH CP:HO ",
+  " VT:WI PD:1 CH:HS SC:CNX CP:HWRTJ ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLD ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:IQ CP:SLRT ",
+  " VT:WI PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:HOAD ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:SLRT ",
+  "VT:WI PD:1 CH:HS SC:PX CP:WINAD"
+ ],
+ "asterisk.custom_819.spcode": [
+  ""
+ ],
+ "asterisk.custom_820.CDispoTS": [
+  ""
+ ],
+ "asterisk.custom_820.CallDispo": [
+  ""
+ ],
+ "asterisk.custom_820.ExDispo": [
+  ""
+ ],
+ "asterisk.custom_820.FSCode1": [
+  " VT:BR PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:BR PD:1 CH:HS SC:CNX CP:HOLGJ ",
+  " VT:BR PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:BR PD:1 CH:HS SC:JLM CP:HOAD ",
+  " VT:BR PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:BR PD:1 CH:HS SC:TBM CP:HOAD ",
+  " VT:BR PD:1 CH:HS SC:TBM CP:RFRT ",
+  " VT:BR PD:1 CH:HS SC:TBM CP:WIRT ",
+  " VT:BR PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:HW PD:1 CH:HS SC:AWL CP:HOIAD ",
+  " VT:HW PD:1 CH:HS SC:COM CP:TIER3 ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:MOLD ",
+  " VT:HW PD:1 CH:HS SC:CTD CP:SLAD30 ",
+  " VT:HW PD:1 CH:HS SC:FTO CP:HO ",
+  " VT:HW PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:HW PD:1 CH:HS SC:WIH CP:HW ",
+  " VT:RF PD:1 CH:HS SC:PX CP:AIAD ",
+  " VT:RF PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:SL PD:1 CH:HS SC:SFT CP:RP ",
+  " VT:SL PD:1 CH:HS SC:WIH CP:HO ",
+  " VT:WI PD:1 CH:HS SC:COM CP:TIER3 ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLLDRS ",
+  " VT:WI PD:1 CH:HS SC:CTD CP:SLRS ",
+  " VT:WI PD:1 CH:HS SC:OPG CP:AUAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:HIAD ",
+  " VT:WI PD:1 CH:HS SC:PX CP:WINAD ",
+  " VT:WI PD:1 CH:HS SC:TBM CP:RFRT ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HO ",
+  " VT:WI PD:1 CH:HS SC:WIH CP:HW "
+ ],
+ "asterisk.custom_820.spcode": [
+  ""
+ ],
+ "asterisk.fs_dispos.DispoCode": [
+  "A",
+  "AA",
+  "AB",
+  "ADC",
+  "AFTHRS",
+  "AUTOHU",
+  "B",
+  "BAD",
+  "BUSY",
+  "CB",
+  "CBHOLD",
+  "CBL",
+  "DA",
+  "DISPO",
+  "DNC",
+  "DNCC",
+  "DNCR",
+  "DROP",
+  "ERI",
+  "HUP",
+  "INBLK",
+  "INCALL",
+  "LB",
+  "LRERR",
+  "MAX",
+  "N",
+  "NA",
+  "NANQUE",
+  "NEW",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NOBEEP",
+  "NQ",
+  "NQA",
+  "NQD",
+  "NQH",
+  "NQS",
+  "NQT",
+  "PDROP",
+  "PU",
+  "Q1",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "QUEUE",
+  "SCA",
+  "SCE",
+  "SCM",
+  "TIMEOT",
+  "WN"
+ ],
+ "asterisk.fs_dispos.DispoDetail": [
+  "After Hours",
+  "Agent Error",
+  "Agent Not Available",
+  "Answering Machine",
+  "Answering Machine Au",
+  "Auto Callback",
+  "Auto Hungup",
+  "Bad,Fax,Dispo,etc",
+  "Busy",
+  "Busy Auto",
+  "Busy Signal",
+  "Call Back Hold",
+  "Callback Later",
+  "Cust Hungup",
+  "Cust Pickup",
+  "DNC Request",
+  "DO NOT CALL",
+  "Dead Air",
+  "Disconnected Number",
+  "Dispo",
+  "Empty Queue",
+  "Inbound Call Drop Timeout",
+  "Language Barrier",
+  "Lead Being Called",
+  "Lead To Be Called",
+  "Max Attempt",
+  "NEW Lead",
+  "NO BEEP",
+  "NOT QUALIFIED",
+  "No Answer",
+  "No Answer Auto Dial",
+  "Not Interested Brand",
+  "Not Interested Conse",
+  "Not Interested Greet",
+  "Not Interested Intro",
+  "Not Interested Pitch",
+  "Not Interested Survey",
+  "Not Qualified - Already Have S",
+  "Not Qualified - Not Homeowner",
+  "Not Qualified - Not Single fam",
+  "Not Qualified - Transfer",
+  "Not Qualified - Transfer Decli",
+  "Outbound Local Channel",
+  "Outbound Pre-Routing",
+  "Qualified No Xfer At",
+  "Qualified No Xfer Cl",
+  "Qualified Special Xfer Request",
+  "Qualified Xfer Decli",
+  "Qualified Xfer Fail",
+  "Qualified Xfer Succe",
+  "Spec CB Afternoon",
+  "Spec CB Evening",
+  "Spec CB Morning",
+  "Wrong Number"
+ ],
+ "asterisk.park_log.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.park_log.channel_group": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.park_log.status": [
+  "GRABBED",
+  "HUNGUP",
+  "PARKED"
+ ],
+ "asterisk.phones.active": [
+  "Y"
+ ],
+ "asterisk.phones.call_out_number_group": [
+  "Zap/g2/"
+ ],
+ "asterisk.phones.codecs_list": [
+  ""
+ ],
+ "asterisk.phones.codecs_with_template": [
+  "0"
+ ],
+ "asterisk.phones.login_campaign": [
+  "",
+  ""
+ ],
+ "asterisk.phones.nva_new_status": [
+  "NVAINS"
+ ],
+ "asterisk.phones.peer_status": [
+  "REGISTERED",
+  "UNKNOWN",
+  "UNREGISTERED"
+ ],
+ "asterisk.phones.status": [
+  "ACTIVE"
+ ],
+ "asterisk.phones.user_group": [
+  "---ALL---",
+  "5Strata",
+  "ADMIN",
+  "Agent"
+ ],
+ "asterisk.phones_alias.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.recording_live_log.recording_status": [
+  "FINISHED CHECK",
+  "FINISHED END-CALL",
+  "FINISHED FILE-MERGE"
+ ],
+ "asterisk.recording_live_log.recording_type": [
+  "MONO_LEGACY",
+  "MONO_LEGACY_RIR"
+ ],
+ "asterisk.servers.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.servers.active_agent_login_server": [
+  "N",
+  "Y"
+ ],
+ "asterisk.servers.active_asterisk_server": [
+  "N",
+  "Y"
+ ],
+ "asterisk.servers.carrier_logging_active": [
+  "Y"
+ ],
+ "asterisk.servers.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.servers.vicidial_balance_active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.system_settings.agentonly_callback_campaign_lock": [
+  "1"
+ ],
+ "asterisk.system_settings.allow_manage_active_lists": [
+  "0"
+ ],
+ "asterisk.system_settings.anyone_callback_inactive_lists": [
+  "default"
+ ],
+ "asterisk.system_settings.campaign_cid_areacodes_enabled": [
+  "1"
+ ],
+ "asterisk.system_settings.default_codecs": [
+  ""
+ ],
+ "asterisk.system_settings.enable_agc_dispo_log": [
+  "0"
+ ],
+ "asterisk.system_settings.enable_did_entry_list_id": [
+  "0"
+ ],
+ "asterisk.system_settings.enable_pause_code_limits": [
+  "0"
+ ],
+ "asterisk.system_settings.expired_lists_inactive": [
+  "0"
+ ],
+ "asterisk.system_settings.hide_inactive_lists": [
+  "0"
+ ],
+ "asterisk.system_settings.label_entry_list_id": [
+  ""
+ ],
+ "asterisk.system_settings.label_list_id": [
+  ""
+ ],
+ "asterisk.system_settings.label_status": [
+  ""
+ ],
+ "asterisk.system_settings.list_status_modification_confirmation": [
+  "0"
+ ],
+ "asterisk.system_settings.outbound_autodial_active": [
+  "1"
+ ],
+ "asterisk.system_settings.pllb_grouping_limit": [
+  "100"
+ ],
+ "asterisk.system_settings.qc_features_active": [
+  "0"
+ ],
+ "asterisk.system_settings.queuemetrics_callstatus": [
+  "1"
+ ],
+ "asterisk.system_settings.queuemetrics_dispo_pause": [
+  ""
+ ],
+ "asterisk.system_settings.queuemetrics_pause_type": [
+  "0"
+ ],
+ "asterisk.system_settings.queuemetrics_pausereason": [
+  "STANDARD"
+ ],
+ "asterisk.system_settings.sounds_central_control_active": [
+  "1"
+ ],
+ "asterisk.system_settings.test_campaign_calls": [
+  "0"
+ ],
+ "asterisk.system_settings.user_codes_admin": [
+  "0"
+ ],
+ "asterisk.system_settings.user_territories_active": [
+  "0"
+ ],
+ "asterisk.system_settings.vdc_agent_api_active": [
+  "1"
+ ],
+ "asterisk.user_call_log.call_type": [
+  "XFER_3WAY"
+ ],
+ "asterisk.user_call_log.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.user_call_log.group_alias_id": [
+  ""
+ ],
+ "asterisk.user_call_log_archive.call_type": [
+  "MAIN",
+  "MANUAL_DIALFAST",
+  "MANUAL_DIALNOW",
+  "MANUAL_OVERRIDE",
+  "XFER_3WAY",
+  "XFER_OVERRIDE"
+ ],
+ "asterisk.user_call_log_archive.campaign_id": [
+  "",
+  "SOLAR_RE",
+  "TESTCAMP",
+  "WI5S",
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.user_call_log_archive.group_alias_id": [
+  ""
+ ],
+ "asterisk.vicibox.server_type": [
+  "Database",
+  "Telephony",
+  "Web"
+ ],
+ "asterisk.vicidial_admin_log.event_type": [
+  "",
+  "ADD",
+  "CLEAR",
+  "COPY",
+  "DELETE",
+  "EXPORT",
+  "LOAD",
+  "LOGIN",
+  "LOGOUT",
+  "MODIFY",
+  "OTHER",
+  "RESET",
+  "SEARCH"
+ ],
+ "asterisk.vicidial_admin_log.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_agent_function_log.caller_code": [
+  ""
+ ],
+ "asterisk.vicidial_agent_function_log.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_agent_function_log.user_group": [
+  "5Strata",
+  "QA",
+  "TEAM1",
+  "TEAM10",
+  "TEAM11",
+  "TEAM12",
+  "TEAM2",
+  "TEAM3",
+  "TEAM5",
+  "TEAM6",
+  "TEAM7",
+  "TEAM9"
+ ],
+ "asterisk.vicidial_agent_log.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_agent_log.pause_type": [
+  "ADMIN",
+  "AGENT",
+  "SYSTEM"
+ ],
+ "asterisk.vicidial_agent_log.status": [
+  "",
+  "A",
+  "AM",
+  "BAD",
+  "CB",
+  "DA",
+  "DAIR",
+  "DNC",
+  "IVA",
+  "LB",
+  "NI",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NQ",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "WN"
+ ],
+ "asterisk.vicidial_agent_log.sub_status": [
+  "",
+  "1stBrk",
+  "2ndBrk",
+  "BIO",
+  "LAGGED",
+  "LAR",
+  "LOGIN",
+  "Lunch",
+  "Note",
+  "Off",
+  "OneCL"
+ ],
+ "asterisk.vicidial_agent_log.user_group": [
+  "5Strata",
+  "TEAM1",
+  "TEAM10",
+  "TEAM11",
+  "TEAM12",
+  "TEAM2",
+  "TEAM3",
+  "TEAM4",
+  "TEAM6"
+ ],
+ "asterisk.vicidial_agent_log_archive.campaign_id": [
+  "TESTCAMP",
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_agent_log_archive.pause_type": [
+  "ADMIN",
+  "AGENT",
+  "SYSTEM"
+ ],
+ "asterisk.vicidial_agent_log_archive.status": [
+  "",
+  "A",
+  "AM",
+  "B",
+  "BAD",
+  "CALLBK",
+  "CB",
+  "CBL",
+  "DA",
+  "DAIR",
+  "DC",
+  "DNC",
+  "INBLK",
+  "IVA",
+  "LB",
+  "NARD",
+  "NI",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NP",
+  "NQ",
+  "NQH",
+  "NQS",
+  "NQT",
+  "PU",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "WN"
+ ],
+ "asterisk.vicidial_agent_log_archive.sub_status": [
+  "",
+  "1stBrk",
+  "2ndBrk",
+  "BIO",
+  "Coach",
+  "LAA",
+  "LAC",
+  "LAGGED",
+  "LAR",
+  "LOGIN",
+  "Lunch",
+  "Note",
+  "Off",
+  "OneCL",
+  "TeamHD",
+  "Tech"
+ ],
+ "asterisk.vicidial_agent_log_archive.user_group": [
+  "5Strata",
+  "ADMIN",
+  "QA",
+  "Supervisor",
+  "SystemAdmin",
+  "TEAM1",
+  "TEAM10",
+  "TEAM11",
+  "TEAM12",
+  "TEAM2",
+  "TEAM3",
+  "TEAM4",
+  "TEAM5",
+  "TEAM6",
+  "TEAM7",
+  "TEAM9"
+ ],
+ "asterisk.vicidial_amd_log.AMDSTATUS": [
+  "HUMAN",
+  "MACHINE",
+  "NOTSURE"
+ ],
+ "asterisk.vicidial_amd_log_archive.AMDSTATUS": [
+  "HUMAN",
+  "MACHINE",
+  "NOTSURE"
+ ],
+ "asterisk.vicidial_api_log.result_reason": [
+  "Invalid Source",
+  "add_dnc_phone DNC NUMBER ALREADY EXISTS",
+  "add_dnc_phone DNC NUMBER HAS BEEN ADDED",
+  "add_lead CUSTOM FIELDS VALUES ADDED",
+  "add_lead DUPLICATE PHONE NUMBER IN LIST",
+  "add_lead LEAD HAS BEEN ADDED",
+  "add_lead PHONE NUMBER IN CAMPAIGN DNC",
+  "add_lead PHONE NUMBER IN DNC",
+  "agent_user does not have a live call",
+  "agent_user is not logged in",
+  "blind_monitor HAS BEEN LAUNCHED",
+  "external_status function set",
+  "transfer_conference function set"
+ ],
+ "asterisk.vicidial_api_log.source": [
+  "",
+  "5Strata",
+  "realtime"
+ ],
+ "asterisk.vicidial_api_log_archive.result_reason": [
+  "Invalid Source",
+  "PHONE NUMBER IS ALREADY ON THE DNC LIST",
+  "PHONE NUMBERS ADDED TO THE DNC LIST",
+  "add_dnc_phone DNC NUMBER ALREADY EXISTS",
+  "add_dnc_phone DNC NUMBER HAS BEEN ADDED",
+  "add_lead CUSTOM FIELDS VALUES ADDED",
+  "add_lead DUPLICATE PHONE NUMBER IN LIST",
+  "add_lead LEAD HAS BEEN ADDED",
+  "add_lead PHONE NUMBER IN CAMPAIGN DNC",
+  "add_lead PHONE NUMBER IN DNC",
+  "agent_user does not have a live call",
+  "agent_user is not logged in",
+  "blind_monitor HAS BEEN LAUNCHED",
+  "external_status function set",
+  "transfer_conference function set",
+  "update_campaign CAMPAIGN DOES NOT EXIST"
+ ],
+ "asterisk.vicidial_api_log_archive.source": [
+  "",
+  "5Strata",
+  "realtime"
+ ],
+ "asterisk.vicidial_call_menu.tracking_group": [
+  "",
+  "CALLMENU"
+ ],
+ "asterisk.vicidial_call_menu.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_call_times.user_group": [
+  "---ALL---",
+  "Hypotec"
+ ],
+ "asterisk.vicidial_callbacks.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_callbacks.lead_status": [
+  "CALLBK",
+  "IVA"
+ ],
+ "asterisk.vicidial_callbacks.status": [
+  "ACTIVE",
+  "LIVE"
+ ],
+ "asterisk.vicidial_callbacks.user_group": [
+  "5Strata",
+  "TEAM2",
+  "TEAM3",
+  "TEAM6"
+ ],
+ "asterisk.vicidial_callbacks_archive.campaign_id": [
+  "SOLAR_RE",
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_callbacks_archive.lead_status": [
+  "CALLBK",
+  "IVA",
+  "SCB"
+ ],
+ "asterisk.vicidial_callbacks_archive.status": [
+  "INACTIVE",
+  "LIVE"
+ ],
+ "asterisk.vicidial_callbacks_archive.user_group": [
+  "QA",
+  "TEAM1",
+  "TEAM11",
+  "TEAM2",
+  "TEAM3",
+  "TEAM9"
+ ],
+ "asterisk.vicidial_campaign_agents.campaign_grade": [
+  "0",
+  "1",
+  "10"
+ ],
+ "asterisk.vicidial_campaign_agents.campaign_id": [
+  "NewCamp",
+  "SPCamp",
+  "Solar_Re",
+  "TESTCAMP",
+  "TGCamp",
+  "WI5S",
+  "WIFresh",
+  "WISafe",
+  "Window"
+ ],
+ "asterisk.vicidial_campaign_agents.campaign_rank": [
+  "0",
+  "8",
+  "9"
+ ],
+ "asterisk.vicidial_campaign_agents.campaign_weight": [
+  "0",
+  "8",
+  "9"
+ ],
+ "asterisk.vicidial_campaign_agents.group_web_vars": [
+  ""
+ ],
+ "asterisk.vicidial_campaign_cid_areacodes.active": [
+  "",
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_campaign_cid_areacodes.campaign_id": [
+  "MasterlistCID",
+  "WIACD1",
+  "WICID_JNTLRND",
+  "WICID_JNTLSTL2",
+  "WICID_JNTLSTT2",
+  "WICID_Jaintel",
+  "WICID_Jaintel2",
+  "WIJTSTATE",
+  "WINone",
+  "WISTT1",
+  "WITEST",
+  "WI_DIDs",
+  "WIareacode"
+ ],
+ "asterisk.vicidial_campaign_dnc.campaign_id": [
+  "29DOLLAR",
+  "ACCF",
+  "AI",
+  "BathRemo",
+  "CREDIREP",
+  "CSATV",
+  "CSATV_SV",
+  "DEBTCAMP",
+  "EDU",
+  "HOMEWRTY",
+  "HYPOTEC",
+  "KWFN",
+  "MLG",
+  "NewCamp",
+  "REVMORT",
+  "SPCAMP",
+  "Solar_Fr",
+  "Solar_Re",
+  "TESTCAMP",
+  "TGCamp",
+  "TQSALON",
+  "WI5S",
+  "WIFresh",
+  "WISafe",
+  "Window"
+ ],
+ "asterisk.vicidial_campaign_hotkeys.campaign_id": [
+  "WIFresh",
+  "Window"
+ ],
+ "asterisk.vicidial_campaign_hotkeys.status": [
+  "A",
+  "CB",
+  "DA",
+  "IVA"
+ ],
+ "asterisk.vicidial_campaign_hour_counts.campaign_id": [
+  "WIFresh",
+  "Window"
+ ],
+ "asterisk.vicidial_campaign_hour_counts.type": [
+  "AGENTS",
+  "ANSWERS",
+  "CALLS",
+  "DROPS",
+  "MACHINES"
+ ],
+ "asterisk.vicidial_campaign_hour_counts_archive.campaign_id": [
+  "WIFresh",
+  "Window"
+ ],
+ "asterisk.vicidial_campaign_hour_counts_archive.type": [
+  "AGENTS",
+  "ANSWERS",
+  "CALLS",
+  "DROPS",
+  "MACHINES"
+ ],
+ "asterisk.vicidial_campaign_server_stats.campaign_id": [
+  "",
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_campaign_stats.campaign_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "CallerID",
+  "CloserQueue",
+  "CredRepInboud",
+  "CustomerService",
+  "HWrty_NO",
+  "Hwrty_CID",
+  "Hwrty_CID_Callmenu",
+  "NewCamp",
+  "PMC",
+  "SOLAR_RE_CALL_MENU",
+  "SPCamp",
+  "Solar_Re",
+  "Solar_ReCID",
+  "TESTCAMP",
+  "TGCamp",
+  "WI5S",
+  "WI5SCID",
+  "WIFresh",
+  "WISafe",
+  "WISafeCID",
+  "WI_CID",
+  "Window"
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_1": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_2": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_3": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_4": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_count_1": [
+  "0"
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_count_2": [
+  "0"
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_count_3": [
+  "0"
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_count_4": [
+  "0"
+ ],
+ "asterisk.vicidial_campaign_stats_debug.campaign_id": [
+  "",
+  "--ABANDON-QUEUE--",
+  "--ALL--",
+  "--CALLBACK-QUEUE--",
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "CallerID",
+  "CloserQueue",
+  "CredRepInboud",
+  "CustomerService",
+  "HWrty_NO",
+  "Hwrty_CID",
+  "Hwrty_CID_Callmenu",
+  "NewCamp",
+  "PMC",
+  "SOLAR_RE_CALL_MENU",
+  "SPCamp",
+  "Solar_Re",
+  "Solar_ReCID",
+  "TESTCAMP",
+  "TGCamp",
+  "WI5S",
+  "WI5SCID",
+  "WIFresh",
+  "WISafe",
+  "WISafeCID",
+  "WI_CID",
+  "Window"
+ ],
+ "asterisk.vicidial_campaign_statuses.campaign_id": [
+  "SPCamp",
+  "Solar_Re",
+  "TESTCAMP",
+  "TGCamp",
+  "WI5S",
+  "WIFresh",
+  "WISafe",
+  "Window"
+ ],
+ "asterisk.vicidial_campaign_statuses.category": [
+  ""
+ ],
+ "asterisk.vicidial_campaign_statuses.status": [
+  "BAD",
+  "CB",
+  "DA",
+  "INBLK",
+  "IVA",
+  "LB",
+  "MXA",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NQ",
+  "NQA",
+  "NQD",
+  "NQH",
+  "NQS",
+  "NQT",
+  "Pend",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "WN"
+ ],
+ "asterisk.vicidial_campaigns.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_campaigns.agent_allow_group_alias": [
+  "N"
+ ],
+ "asterisk.vicidial_campaigns.agent_pause_codes_active": [
+  "FORCE",
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_campaigns.agent_search_ingroup_list": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.amd_inbound_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_campaigns.amd_type": [
+  "AMD"
+ ],
+ "asterisk.vicidial_campaigns.auto_active_list_new": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.auto_alt_dial_statuses": [
+  " B N NA DC -"
+ ],
+ "asterisk.vicidial_campaigns.auto_pause_precall_code": [
+  "PRECAL"
+ ],
+ "asterisk.vicidial_campaigns.callback_active_limit": [
+  "0"
+ ],
+ "asterisk.vicidial_campaigns.callback_active_limit_override": [
+  "N"
+ ],
+ "asterisk.vicidial_campaigns.campaign_allow_inbound": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_campaigns.campaign_description": [
+  "",
+  "Solar Revived",
+  "TEST CAMP",
+  "Thaigetaway",
+  "Window Fresh",
+  "Windows5s"
+ ],
+ "asterisk.vicidial_campaigns.campaign_id": [
+  "NewCamp",
+  "SPCamp",
+  "Solar_Re",
+  "TESTCAMP",
+  "TGCamp",
+  "WI5S",
+  "WIFresh",
+  "WISafe",
+  "Window"
+ ],
+ "asterisk.vicidial_campaigns.campaign_rec_exten": [
+  "8309"
+ ],
+ "asterisk.vicidial_campaigns.campaign_recording": [
+  "ALLFORCE"
+ ],
+ "asterisk.vicidial_campaigns.campaign_script": [
+  "",
+  "SOLARDNC",
+  "TEST"
+ ],
+ "asterisk.vicidial_campaigns.campaign_script_two": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.campaign_stats_refresh": [
+  "N"
+ ],
+ "asterisk.vicidial_campaigns.campaign_vdad_exten": [
+  "8368",
+  "8369",
+  "8370"
+ ],
+ "asterisk.vicidial_campaigns.cid_group_id": [
+  "---DISABLED---",
+  "CIDsolar",
+  "WI5SCID",
+  "WIACD1",
+  "WICID",
+  "WISafeCID"
+ ],
+ "asterisk.vicidial_campaigns.cid_group_id_two": [
+  "---DISABLED---",
+  "MainCID",
+  "WINone",
+  "WISTT1"
+ ],
+ "asterisk.vicidial_campaigns.dead_max_dispo": [
+  "DCMX"
+ ],
+ "asterisk.vicidial_campaigns.dead_to_dispo": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.default_group_alias": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.default_xfer_group": [
+  "---NONE---",
+  "AGENTDIRECT"
+ ],
+ "asterisk.vicidial_campaigns.dial_status_a": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_status_b": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_status_c": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_status_d": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_status_e": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_statuses": [
+  " A NEW -",
+  " N ERI DROP AM AL B AB AA A NEW -"
+ ],
+ "asterisk.vicidial_campaigns.disable_dispo_screen": [
+  "DISPO_ENABLED"
+ ],
+ "asterisk.vicidial_campaigns.disable_dispo_status": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dispo_max": [
+  "0"
+ ],
+ "asterisk.vicidial_campaigns.dispo_max_dispo": [
+  "DISMX"
+ ],
+ "asterisk.vicidial_campaigns.drop_inbound_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_campaigns.drop_rate_group": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.in_group_dial": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.in_group_dial_select": [
+  "CAMPAIGN_SELECTED"
+ ],
+ "asterisk.vicidial_campaigns.leave_vm_message_group_id": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_campaigns.leave_vm_no_dispo": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.manual_vm_status_updates": [
+  "ENABLED"
+ ],
+ "asterisk.vicidial_campaigns.pause_max_dispo": [
+  "PAUSMX"
+ ],
+ "asterisk.vicidial_campaigns.pllb_grouping": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.pllb_grouping_limit": [
+  "50"
+ ],
+ "asterisk.vicidial_campaigns.qc_statuses_id": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.queuemetrics_callstatus_override": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.script_top_dispo": [
+  "N"
+ ],
+ "asterisk.vicidial_campaigns.status_display_fields": [
+  "CALLID"
+ ],
+ "asterisk.vicidial_campaigns.status_display_ingroup": [
+  "ENABLED"
+ ],
+ "asterisk.vicidial_campaigns.survey_fourth_status": [
+  "NI"
+ ],
+ "asterisk.vicidial_campaigns.survey_ni_status": [
+  "NI"
+ ],
+ "asterisk.vicidial_campaigns.survey_third_status": [
+  "NI"
+ ],
+ "asterisk.vicidial_campaigns.transfer_no_dispo": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.use_campaign_dnc": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_campaigns.use_other_campaign_dnc": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.user_group": [
+  "---ALL---",
+  "Agent"
+ ],
+ "asterisk.vicidial_campaigns.user_group_script": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.vtiger_search_category": [
+  "LEAD"
+ ],
+ "asterisk.vicidial_campaigns.vtiger_status_call": [
+  "N"
+ ],
+ "asterisk.vicidial_carrier_hour_counts_archive.type": [
+  "ANSWER",
+  "BUSY",
+  "CANCEL",
+  "CHANUNAVAIL",
+  "CONGESTION",
+  "NOANSWER"
+ ],
+ "asterisk.vicidial_carrier_log.dialstatus": [
+  "ANSWER",
+  "BUSY",
+  "CANCEL",
+  "CHANUNAVAIL",
+  "CONGESTION",
+  "NOANSWER"
+ ],
+ "asterisk.vicidial_carrier_log.sip_hangup_reason": [
+  "Address Incomplete)",
+  "Busy Everywhere)",
+  "Busy Here)",
+  "Call is being forwarded)",
+  "DNC Customers)",
+  "Decline)",
+  "Declined)",
+  "Does not exist anywhere)",
+  "Forbidden)",
+  "Gone)",
+  "JT Network Blocked)",
+  "Loop Detected)",
+  "NOT ALLOWED)",
+  "Network Blocked)",
+  "No Vendor Available)",
+  "Not Acceptable Here)",
+  "Not Acceptable)",
+  "Not Found)",
+  "Number Busy)",
+  "OK)",
+  "PDD Timeout)",
+  "Precondition Failure)",
+  "Request Terminated)",
+  "Request Timeout)",
+  "Ringing)",
+  "Server Internal Error)",
+  "Server Time-out)",
+  "Service Unavailable)",
+  "Session Progress)",
+  "Temporarily Unavailable)",
+  "Temporarily not available)",
+  "Too Many Hops)",
+  "Trying -- your call is important to us)"
+ ],
+ "asterisk.vicidial_carrier_log_archive.dialstatus": [
+  "ANSWER",
+  "BUSY",
+  "CANCEL",
+  "CHANUNAVAIL",
+  "CONGESTION",
+  "NOANSWER"
+ ],
+ "asterisk.vicidial_carrier_log_archive.sip_hangup_reason": [
+  "",
+  "Address Incomplete",
+  "Address Incomplete)",
+  "Bad Gateway)",
+  "Bad Request",
+  "Bad Request)",
+  "Busy Everywhere)",
+  "Busy Here",
+  "Busy here)",
+  "Call Failure)",
+  "Call Is Being Forwarded)",
+  "Conditional Request Failed)",
+  "Conflict)",
+  "DNC BLOCK)",
+  "DNC Customers)",
+  "Decline",
+  "Decline)",
+  "Declined)",
+  "Does not exist anywhere)",
+  "ERS:No Route Available)",
+  "Forbidden)",
+  "Global Failure)",
+  "Gone",
+  "Gone)",
+  "Internal Error)",
+  "Invalid Identity Header",
+  "Invalid Sip Request)",
+  "JT Network Blocked)",
+  "Loop Detected",
+  "Loop Detected)",
+  "NOT ALLOWED)",
+  "Network Blocked)",
+  "No Vendor Available)",
+  "Not Acceptable Here)",
+  "Not Acceptable)",
+  "Not Authorized",
+  "Not Found",
+  "Not Found)",
+  "Not Implemented)",
+  "Number Busy)",
+  "Number Failure)",
+  "OK)",
+  "PDD Timeout)",
+  "Precondition Failure)",
+  "Ratedeck Not Found)",
+  "Rejected)",
+  "Request Terminated",
+  "Request Terminated)",
+  "Request Timeout",
+  "Request Timeout)",
+  "Request merged)",
+  "Ringing)",
+  "Server Internal Error)",
+  "Server time-out)",
+  "Service Unavailable",
+  "Service Unavailable)",
+  "Session Progress)",
+  "Subscriber Not Found)",
+  "Temporarily Unavailable",
+  "Temporarily not available)",
+  "Temporarily unavailable)",
+  "Too Many Hops",
+  "Too Many Hops)",
+  "Trunk Group CPS Exceeded)",
+  "Trunk Group Disabled)",
+  "Trunk Group Not Found)",
+  "Trying -- your call is important to us)",
+  "Unauthorized)",
+  "Unwanted",
+  "Use Identity Header)"
+ ],
+ "asterisk.vicidial_cid_groups.cid_group_id": [
+  "MasterlistCID",
+  "WIACD1",
+  "WICID_JNTLRND",
+  "WICID_JNTLSTL2",
+  "WICID_JNTLSTT2",
+  "WICID_Jaintel",
+  "WICID_Jaintel2",
+  "WIJTSTATE",
+  "WINone",
+  "WISTT1",
+  "WISafeCID",
+  "WITEST",
+  "WI_DIDs",
+  "WIareacode"
+ ],
+ "asterisk.vicidial_cid_groups.cid_group_notes": [
+  "CID updated",
+  "CID updated Statelookup",
+  "Jaintel DIDs WICID Random",
+  "MasterlistCID",
+  "STATELOOKUP2",
+  "WI Area Code",
+  "WI Jaintel State CID",
+  "WI None random",
+  "WI State",
+  "WI State Fill Test ",
+  "WICID-Jaintel",
+  "WISafeCID",
+  "WI_DIDs",
+  "WIareacode"
+ ],
+ "asterisk.vicidial_cid_groups.cid_group_type": [
+  "AREACODE",
+  "NONE",
+  "STATE"
+ ],
+ "asterisk.vicidial_cid_groups.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_conf_templates.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_custom_leadloader_templates.template_statuses": [
+  ""
+ ],
+ "asterisk.vicidial_daily_max_stats.campaign_id": [
+  "",
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "CallerID",
+  "CloserQueue",
+  "CredRepInboud",
+  "CustomerService",
+  "HWrty_NO",
+  "Hwrty_CID",
+  "Hwrty_CID_Callmenu",
+  "PMC",
+  "SOLAR_RE_CALL_MENU",
+  "Solar_ReCID",
+  "WI5SCID",
+  "WIFresh",
+  "WISafeCID",
+  "WI_CID",
+  "Window"
+ ],
+ "asterisk.vicidial_daily_max_stats.stats_flag": [
+  "CLOSED",
+  "OPEN"
+ ],
+ "asterisk.vicidial_daily_max_stats.stats_type": [
+  "CAMPAIGN",
+  "INGROUP",
+  "TOTAL"
+ ],
+ "asterisk.vicidial_daily_rt_monitoring_log.agent_status": [
+  "INCALL",
+  "PAUSED",
+  "QUEUE",
+  "READY"
+ ],
+ "asterisk.vicidial_daily_rt_monitoring_log.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_daily_rt_monitoring_log.monitor_type": [
+  "LISTEN"
+ ],
+ "asterisk.vicidial_dial_cid_log.call_type": [
+  "MANUAL",
+  "OUT"
+ ],
+ "asterisk.vicidial_dial_cid_log.outbound_cid_type": [
+  "AGENT",
+  "CAMPAIGN_CID",
+  "CID_GROUP",
+  "CID_GROUP_TWO",
+  "MONITOR_AGENT"
+ ],
+ "asterisk.vicidial_dial_cid_log_archive.call_type": [
+  "MANUAL",
+  "OUT",
+  "OUTBALANCE"
+ ],
+ "asterisk.vicidial_dial_cid_log_archive.outbound_cid_type": [
+  "AGENT",
+  "CAMPAIGN_CID",
+  "CID_GROUP",
+  "CID_GROUP_TWO",
+  "MONITOR_AGENT"
+ ],
+ "asterisk.vicidial_dial_log.sip_hangup_reason": [
+  "",
+  "Address Incomplete)",
+  "Busy Everywhere)",
+  "Busy Here)",
+  "Call is being forwarded)",
+  "DNC Customers)",
+  "Decline)",
+  "Declined)",
+  "Does not exist anywhere)",
+  "Forbidden)",
+  "Gone)",
+  "JT Network Blocked)",
+  "Loop Detected)",
+  "NOT ALLOWED)",
+  "Network Blocked)",
+  "No Vendor Available)",
+  "Not Acceptable Here)",
+  "Not Acceptable)",
+  "Not Found)",
+  "Number Busy)",
+  "OK)",
+  "PDD Timeout)",
+  "Precondition Failure)",
+  "Request Terminated)",
+  "Request Timeout)",
+  "Ringing)",
+  "Server Internal Error)",
+  "Server Time-out)",
+  "Service Unavailable)",
+  "Session Progress)",
+  "Temporarily Unavailable)",
+  "Temporarily not available)",
+  "Too Many Hops)",
+  "Trying -- your call is important to us)"
+ ],
+ "asterisk.vicidial_dial_log_archive.sip_hangup_reason": [
+  "",
+  "Address Incomplete",
+  "Address Incomplete)",
+  "Bad Gateway)",
+  "Bad Request)",
+  "Busy Everywhere)",
+  "Busy Here",
+  "Busy Here)",
+  "Call Failure)",
+  "Call Is Being Forwarded)",
+  "Conditional Request Failed)",
+  "Conflict)",
+  "DNC BLOCK)",
+  "DNC Customers)",
+  "Decline",
+  "Decline)",
+  "Declined)",
+  "Does not exist anywhere)",
+  "ERS:No Route Available)",
+  "Forbidden)",
+  "Global Failure)",
+  "Gone)",
+  "Internal Error)",
+  "Invalid Sip Request)",
+  "JT Network Blocked)",
+  "Loop Detected)",
+  "NOT ALLOWED)",
+  "Network Blocked)",
+  "No Vendor Available)",
+  "Not Acceptable Here)",
+  "Not Acceptable)",
+  "Not Found",
+  "Not Found)",
+  "Not Implemented)",
+  "Number Busy)",
+  "Number Failure)",
+  "OK)",
+  "PDD Timeout)",
+  "Precondition Failure)",
+  "Ratedeck Not Found)",
+  "Rejected)",
+  "Request Terminated",
+  "Request Terminated)",
+  "Request Timeout",
+  "Request Timeout)",
+  "Request merged)",
+  "Ringing)",
+  "Server Internal Error)",
+  "Server time-out)",
+  "Service Unavailable",
+  "Service Unavailable)",
+  "Session Progress)",
+  "Subscriber Not Found)",
+  "Temporarily Unavailable",
+  "Temporarily not available)",
+  "Temporarily unavailable)",
+  "Too Many Hops",
+  "Too Many Hops)",
+  "Trunk Group CPS Exceeded)",
+  "Trunk Group Disabled)",
+  "Trunk Group Not Found)",
+  "Trying -- your call is important to us)",
+  "Unauthorized)",
+  "Use Identity Header)"
+ ],
+ "asterisk.vicidial_dnc_log.campaign_id": [
+  "-SYSINT-",
+  "BathRemo",
+  "NewCamp",
+  "SPCamp",
+  "Solar_Re",
+  "TESTCAMP",
+  "TGCamp",
+  "WI5S",
+  "WIFresh",
+  "WINDOW",
+  "WISafe"
+ ],
+ "asterisk.vicidial_drop_rate_groups.group_id": [
+  "101",
+  "102",
+  "103",
+  "104",
+  "105",
+  "106",
+  "107",
+  "108",
+  "109",
+  "110"
+ ],
+ "asterisk.vicidial_filter_phone_groups.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_html_cache_stats.stats_type": [
+  "carrier_stats"
+ ],
+ "asterisk.vicidial_inbound_dids.campaign_id": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_inbound_dids.did_active": [
+  "Y"
+ ],
+ "asterisk.vicidial_inbound_dids.filter_campaign_id": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_inbound_dids.filter_dnc_campaign": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_dids.filter_group_id": [
+  "",
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_dids.filter_user_route_settings_ingroup": [
+  "AGENTDIRECT"
+ ],
+ "asterisk.vicidial_inbound_dids.group_id": [
+  "",
+  "---NONE---",
+  "CSATV_IN",
+  "CallerID",
+  "CredRepInboud",
+  "EDU_IN",
+  "SOLAR_RE_CALL_MENU"
+ ],
+ "asterisk.vicidial_inbound_dids.max_queue_ingroup_calls": [
+  "0"
+ ],
+ "asterisk.vicidial_inbound_dids.max_queue_ingroup_id": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_dids.no_agent_ingroup_id": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_dids.no_agent_ingroup_redirect": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_dids.user_group": [
+  "---ALL---",
+  "5Strata"
+ ],
+ "asterisk.vicidial_inbound_dids.user_route_settings_ingroup": [
+  "AGENTDIRECT"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_grade": [
+  "0",
+  "1",
+  "10"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "CallerID",
+  "CloserQueue",
+  "CredRepInboud",
+  "CustomerService",
+  "HWrty_NO",
+  "Hwrty_CID",
+  "Hwrty_CID_Callmenu",
+  "PMC",
+  "SOLAR_RE_CALL_MENU",
+  "Solar_FrCID",
+  "Solar_ReCID",
+  "Solar_Re_NO",
+  "WI5SCID",
+  "WISafeCID",
+  "WI_CID"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_rank": [
+  "0"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_type": [
+  "C"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_web_vars": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_weight": [
+  "0"
+ ],
+ "asterisk.vicidial_inbound_groups.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_inbound_groups.afterhours_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.areacode_filter": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.areacode_filter_action": [
+  "MESSAGE"
+ ],
+ "asterisk.vicidial_inbound_groups.areacode_filter_action_value": [
+  "nbdy-avail-to-take-call|vm-goodbye"
+ ],
+ "asterisk.vicidial_inbound_groups.areacode_filter_seconds": [
+  "10"
+ ],
+ "asterisk.vicidial_inbound_groups.closing_time_option_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.default_group_alias": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.default_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.dial_ingroup_cid": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.drop_inbound_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.group_color": [
+  "#FFFFFF",
+  "GREEN",
+  "Orange",
+  "Red",
+  "Yellow",
+  "pink",
+  "white"
+ ],
+ "asterisk.vicidial_inbound_groups.group_handling": [
+  "PHONE"
+ ],
+ "asterisk.vicidial_inbound_groups.group_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "CallerID",
+  "CloserQueue",
+  "CredRepInboud",
+  "CustomerService",
+  "HWrty_NO",
+  "Hwrty_CID",
+  "Hwrty_CID_Callmenu",
+  "PMC",
+  "SOLAR_RE_CALL_MENU",
+  "Solar_FrCID",
+  "Solar_ReCID",
+  "Solar_Re_NO",
+  "WI5SCID",
+  "WISafeCID",
+  "WI_CID"
+ ],
+ "asterisk.vicidial_inbound_groups.hold_recall_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.hold_time_option_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.ingroup_recording_override": [
+  "ALLFORCE",
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.ingroup_script": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.ingroup_script_two": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.populate_lead_ingroup": [
+  "ENABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.populate_lead_source": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.qc_statuses_id": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.status_group_id": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.uniqueid_status_display": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.uniqueid_status_prefix": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.user_group": [
+  "---ALL---",
+  "AI"
+ ],
+ "asterisk.vicidial_inbound_groups.wait_time_option_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_ingroup_hour_counts.group_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "CallerID",
+  "CloserQueue",
+  "CredRepInboud",
+  "CustomerService",
+  "HWrty_NO",
+  "Hwrty_CID",
+  "Hwrty_CID_Callmenu",
+  "PMC",
+  "SOLAR_RE_CALL_MENU",
+  "Solar_ReCID",
+  "WI5SCID",
+  "WISafeCID",
+  "WI_CID"
+ ],
+ "asterisk.vicidial_ingroup_hour_counts.type": [
+  "CALLS"
+ ],
+ "asterisk.vicidial_ingroup_hour_counts_archive.group_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "CallerID",
+  "CloserQueue",
+  "CredRepInboud",
+  "CustomerService",
+  "HWrty_NO",
+  "Hwrty_CID",
+  "Hwrty_CID_Callmenu",
+  "PMC",
+  "SOLAR_RE_CALL_MENU",
+  "Solar_ReCID",
+  "WI5SCID",
+  "WISafeCID",
+  "WI_CID"
+ ],
+ "asterisk.vicidial_ingroup_hour_counts_archive.type": [
+  "CALLS"
+ ],
+ "asterisk.vicidial_ip_list_entries.ip_list_id": [
+  "ViciBlack",
+  "ViciWhite"
+ ],
+ "asterisk.vicidial_ip_lists.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_ip_lists.ip_list_id": [
+  "ViciBlack",
+  "ViciWhite"
+ ],
+ "asterisk.vicidial_ip_lists.user_group": [
+  "---ALL---",
+  "ADMIN"
+ ],
+ "asterisk.vicidial_lead_24hour_calls.call_type": [
+  "AUTO"
+ ],
+ "asterisk.vicidial_lead_filters.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_lead_recycle.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_lead_recycle.campaign_id": [
+  "Window"
+ ],
+ "asterisk.vicidial_lead_recycle.status": [
+  "A",
+  "AA",
+  "B",
+  "CB",
+  "DA"
+ ],
+ "asterisk.vicidial_lead_search_log.source": [
+  "admin"
+ ],
+ "asterisk.vicidial_list.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADC",
+  "AFTHRS",
+  "AM",
+  "B",
+  "BAD",
+  "CB",
+  "CBHOLD",
+  "CBL",
+  "DA",
+  "DAIR",
+  "DC",
+  "DNC",
+  "DNCC",
+  "DROP",
+  "ERI",
+  "HUC102",
+  "HUC19",
+  "HUC21",
+  "HUC34",
+  "INBLK",
+  "INBND",
+  "INCALL",
+  "IVA",
+  "LB",
+  "NA",
+  "NANQUE",
+  "NDNC",
+  "NEW",
+  "NI",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NP",
+  "NQ",
+  "NQH",
+  "NQT",
+  "PDROP",
+  "PU",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "WN"
+ ],
+ "asterisk.vicidial_list_archive.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADAIR",
+  "ADC",
+  "AM",
+  "BAD",
+  "CB",
+  "CBHOLD",
+  "DA",
+  "DAIR",
+  "DNC",
+  "DNCC",
+  "DROP",
+  "ERI",
+  "HUC102",
+  "HUC18",
+  "HUC19",
+  "HUC21",
+  "HUC34",
+  "INBLK",
+  "INCALL",
+  "IVA",
+  "LB",
+  "LRERR",
+  "NA",
+  "NDNC",
+  "NEW",
+  "NI",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NQ",
+  "NQA",
+  "NQH",
+  "NQS",
+  "PDROP",
+  "PU",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "SALECB",
+  "WN"
+ ],
+ "asterisk.vicidial_lists.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_lists.auto_active_list_rank": [
+  "0"
+ ],
+ "asterisk.vicidial_lists.campaign_cid_override": [
+  ""
+ ],
+ "asterisk.vicidial_lists.campaign_id": [
+  "SPCamp",
+  "Solar_Re",
+  "TESTCAMP",
+  "WIFresh",
+  "Window"
+ ],
+ "asterisk.vicidial_lists.cid_group_id": [
+  "---DISABLED---"
+ ],
+ "asterisk.vicidial_lists.default_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_lists.drop_inbound_group_override": [
+  ""
+ ],
+ "asterisk.vicidial_lists.qc_statuses_id": [
+  ""
+ ],
+ "asterisk.vicidial_lists.status_group_id": [
+  ""
+ ],
+ "asterisk.vicidial_lists_fields.field_type": [
+  "RADIO",
+  "TEXT"
+ ],
+ "asterisk.vicidial_log.campaign_id": [
+  "",
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_log.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADC",
+  "AM",
+  "BAD",
+  "CB",
+  "DA",
+  "DAIR",
+  "DISPO",
+  "DNC",
+  "DROP",
+  "HUC102",
+  "HUC18",
+  "HUC19",
+  "HUC21",
+  "HUC34",
+  "HUC38",
+  "INCALL",
+  "IVA",
+  "LB",
+  "NA",
+  "NI",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NQ",
+  "PDROP",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "WN"
+ ],
+ "asterisk.vicidial_log.term_reason": [
+  "ABANDON",
+  "AGENT",
+  "CALLER",
+  "NONE",
+  "QUEUETIMEOUT"
+ ],
+ "asterisk.vicidial_log.user_group": [
+  "",
+  "5Strata",
+  "TEAM1",
+  "TEAM10",
+  "TEAM11",
+  "TEAM12",
+  "TEAM2",
+  "TEAM3",
+  "TEAM4",
+  "TEAM6"
+ ],
+ "asterisk.vicidial_log_archive.campaign_id": [
+  "",
+  "CALLMENU",
+  "TESTCAMP",
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_log_archive.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADAIR",
+  "ADC",
+  "AM",
+  "B",
+  "BAD",
+  "CALLBK",
+  "CB",
+  "CBL",
+  "DA",
+  "DAIR",
+  "DC",
+  "DISPO",
+  "DNC",
+  "DROP",
+  "HUC102",
+  "HUC18",
+  "HUC19",
+  "HUC21",
+  "HUC34",
+  "HUC38",
+  "INBLK",
+  "INCALL",
+  "IVA",
+  "LB",
+  "LRERR",
+  "NA",
+  "NARD",
+  "NI",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NP",
+  "NQ",
+  "NQH",
+  "NQS",
+  "NQT",
+  "PDROP",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "QUEUE",
+  "WN"
+ ],
+ "asterisk.vicidial_log_archive.term_reason": [
+  "ABANDON",
+  "AGENT",
+  "CALLER",
+  "NONE",
+  "QUEUETIMEOUT"
+ ],
+ "asterisk.vicidial_log_archive.user_group": [
+  "",
+  "5Strata",
+  "ADMIN",
+  "QA",
+  "Supervisor",
+  "SystemAdmin",
+  "TEAM1",
+  "TEAM10",
+  "TEAM11",
+  "TEAM12",
+  "TEAM2",
+  "TEAM3",
+  "TEAM4",
+  "TEAM5",
+  "TEAM6",
+  "TEAM7",
+  "TEAM9"
+ ],
+ "asterisk.vicidial_music_on_hold.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_music_on_hold.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_override_ids.active": [
+  "0"
+ ],
+ "asterisk.vicidial_pause_codes.campaign_id": [
+  "SPCamp",
+  "Solar_Re",
+  "TESTCAMP",
+  "WI5S",
+  "WIFresh",
+  "WISafe",
+  "Window"
+ ],
+ "asterisk.vicidial_pause_codes.pause_code": [
+  "1stBrk",
+  "2ndBrk",
+  "BIO",
+  "Coach",
+  "LAA",
+  "LAC",
+  "LAR",
+  "Lunch",
+  "Manual",
+  "Note",
+  "Off",
+  "OneCL",
+  "TeamHD",
+  "Tech"
+ ],
+ "asterisk.vicidial_peer_event_log.channel_type": [
+  "IAX2",
+  "SIP"
+ ],
+ "asterisk.vicidial_peer_event_log.event_type": [
+  "CRITICALTIMEOUT",
+  "LAGGED",
+  "REACHABLE",
+  "REGISTERED",
+  "RTPDISCONNECT",
+  "UNREACHABLE",
+  "UNREGISTERED"
+ ],
+ "asterisk.vicidial_phone_codes.tz_code": [
+  "ACST",
+  "AEST",
+  "AFT",
+  "AKST",
+  "ALMT",
+  "AMT",
+  "ART",
+  "AST",
+  "AWST",
+  "AZT",
+  "BNT",
+  "BOT",
+  "BRT",
+  "BST",
+  "BTT",
+  "CAST",
+  "CAT",
+  "CCT",
+  "CET",
+  "CKT",
+  "CLT",
+  "COT",
+  "CST",
+  "CVT",
+  "CXT",
+  "ChST",
+  "EAT",
+  "ECT",
+  "EET",
+  "EGT",
+  "EST",
+  "FJT",
+  "FKT",
+  "GAMT",
+  "GET",
+  "GFT",
+  "GILT",
+  "GMT",
+  "GST",
+  "HKT",
+  "HST",
+  "ICT",
+  "IRST",
+  "IST",
+  "JST",
+  "KGT",
+  "KST",
+  "MHT",
+  "MMT",
+  "MSK",
+  "MST",
+  "MUT",
+  "MVT",
+  "MYT",
+  "NCT",
+  "NPT",
+  "NRT",
+  "NST",
+  "NUT",
+  "NZST",
+  "PET",
+  "PGT",
+  "PHT",
+  "PKT",
+  "PMST",
+  "PONT",
+  "PST",
+  "PWT",
+  "PYT",
+  "SAST",
+  "SBT",
+  "SCT",
+  "SGT",
+  "SRT",
+  "SST",
+  "TJT",
+  "TKT",
+  "TLT",
+  "TMT",
+  "TRT",
+  "TST",
+  "TVT",
+  "ULAT",
+  "UYT",
+  "UZT",
+  "VET",
+  "VUT",
+  "WAT",
+  "WET",
+  "WFT",
+  "WIB",
+  "WST"
+ ],
+ "asterisk.vicidial_qc_codes.code": [
+  "QCCANCEL",
+  "QCFAIL",
+  "QCPASS"
+ ],
+ "asterisk.vicidial_qc_codes.qc_result_type": [
+  "CANCEL",
+  "FAIL",
+  "PASS"
+ ],
+ "asterisk.vicidial_rt_monitor_log.agent_status": [
+  "INCALL",
+  "PAUSED",
+  "QUEUE",
+  "READY"
+ ],
+ "asterisk.vicidial_rt_monitor_log.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_rt_monitor_log.monitor_type": [
+  "LISTEN"
+ ],
+ "asterisk.vicidial_screen_colors.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_screen_colors.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_scripts.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_scripts.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_server_carriers.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_server_carriers.user_group": [
+  "ADMIN"
+ ],
+ "asterisk.vicidial_session_data.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_sessions_recent.call_type": [
+  "V",
+  "X"
+ ],
+ "asterisk.vicidial_sessions_recent.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_sessions_recent_archive.call_type": [
+  "V",
+  "X"
+ ],
+ "asterisk.vicidial_sessions_recent_archive.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_settings_containers.container_type": [
+  "AMD_AGENT_OPTIONS",
+  "CM_VIDPROMPT_SPECIAL",
+  "LIST_WEEKDAY_RESETS",
+  "OTHER",
+  "PERL_CLI",
+  "PHONE_DEFAULTS",
+  "QC_TEMPLATE",
+  "READ_ONLY",
+  "TIMEZONE_LIST",
+  "WEBPHONE_SETTINGS"
+ ],
+ "asterisk.vicidial_settings_containers.user_group": [
+  "---ALL---",
+  "ADMIN"
+ ],
+ "asterisk.vicidial_shifts.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_state_call_times.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_status_categories.dead_lead_category": [
+  "N"
+ ],
+ "asterisk.vicidial_status_categories.sale_category": [
+  "N"
+ ],
+ "asterisk.vicidial_statuses.category": [
+  "QC",
+  "UNDEFINED"
+ ],
+ "asterisk.vicidial_statuses.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADAIR",
+  "ADC",
+  "ADCT",
+  "AFAX",
+  "AFTHRS",
+  "AL",
+  "AM",
+  "B",
+  "CALLBK",
+  "CBHOLD",
+  "DAIR",
+  "DC",
+  "DEC",
+  "DNC",
+  "DNCC",
+  "DNCL",
+  "DROP",
+  "ERI",
+  "HUC102",
+  "HUC18",
+  "HUC19",
+  "HUC34",
+  "HUC38",
+  "INCALL",
+  "IQNANQ",
+  "IVRXFR",
+  "LRERR",
+  "LSMERG",
+  "MAXCAL",
+  "MLINAT",
+  "N",
+  "NA",
+  "NANQUE",
+  "NEW",
+  "NI",
+  "NP",
+  "PDROP",
+  "PM",
+  "PU",
+  "QCFAIL",
+  "QUEUE",
+  "QVMAIL",
+  "RQXFER",
+  "SALE",
+  "SVYCLM",
+  "SVYEXT",
+  "SVYHU",
+  "SVYREC",
+  "SVYVM",
+  "TIMEOT",
+  "XDROP",
+  "XFER"
+ ],
+ "asterisk.vicidial_timeclock_audit_log.user_group": [
+  "5Strata",
+  "TEAM3"
+ ],
+ "asterisk.vicidial_timeclock_log.user_group": [
+  "5Strata",
+  "TEAM3"
+ ],
+ "asterisk.vicidial_timeclock_status.status": [
+  "AUTOLOGOUT"
+ ],
+ "asterisk.vicidial_timeclock_status.user_group": [
+  "5Strata",
+  "TEAM3"
+ ],
+ "asterisk.vicidial_url_multi.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_url_multi.campaign_id": [
+  "-SYSTEM-API-NEWLEAD-"
+ ],
+ "asterisk.vicidial_url_multi.entry_type": [
+  "system"
+ ],
+ "asterisk.vicidial_user_closer_log.campaign_id": [
+  "WIFRESH",
+  "WINDOW"
+ ],
+ "asterisk.vicidial_user_dial_log.call_type": [
+  "AC",
+  "APL",
+  "DC",
+  "M",
+  "RC",
+  "SYS"
+ ],
+ "asterisk.vicidial_user_groups.agent_status_view_time": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_user_groups.user_group": [
+  "29DollarSup",
+  "5Strata",
+  "ACCFGRP",
+  "ADMIN",
+  "AI",
+  "Agent",
+  "Agent1",
+  "Closer",
+  "Hypotec",
+  "IT-MONITORING",
+  "Main",
+  "QA",
+  "Supervisor",
+  "SystemAdmin",
+  "TEAM1",
+  "TEAM10",
+  "TEAM11",
+  "TEAM12",
+  "TEAM2",
+  "TEAM3",
+  "TEAM4",
+  "TEAM5",
+  "TEAM6",
+  "TEAM7",
+  "TEAM8",
+  "TEAM9",
+  "WI5S",
+  "WISafe"
+ ],
+ "asterisk.vicidial_user_log.campaign_id": [
+  "",
+  "HOMEWRTY",
+  "HOMWRNTY",
+  "HYPOTEC",
+  "MLG",
+  "SERVICE",
+  "SOLAR_FR",
+  "SOLAR_RE",
+  "SPCAMP",
+  "TESTCAMP",
+  "TGCAMP",
+  "VICIBOX",
+  "WI5S",
+  "WIFRESH",
+  "WINDOW",
+  "WISAFE"
+ ],
+ "asterisk.vicidial_user_log.user_group": [
+  "",
+  "5Strata",
+  "ADMIN",
+  "Agent",
+  "Agent1",
+  "Hypotec",
+  "MLGS",
+  "QA",
+  "Supervisor",
+  "SystemAdmin",
+  "TEAM1",
+  "TEAM10",
+  "TEAM11",
+  "TEAM12",
+  "TEAM2",
+  "TEAM3",
+  "TEAM4",
+  "TEAM5",
+  "TEAM6",
+  "TEAM7",
+  "TEAM8",
+  "TEAM9",
+  "WI5S",
+  "WISafe"
+ ],
+ "asterisk.vicidial_users.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_users.agent_choose_ingroups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.campaign_detail": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.change_agent_campaign": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.delete_campaigns": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.delete_ingroups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.delete_user_groups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.hotkeys_active": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.ignore_group_on_search": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.modify_campaigns": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.modify_ingroups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.modify_statuses": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.modify_usergroups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.pause_code_approval": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.shift_override_flag": [
+  "0"
+ ],
+ "asterisk.vicidial_users.status_group_id": [
+  ""
+ ],
+ "asterisk.vicidial_users.user_code": [
+  ""
+ ],
+ "asterisk.vicidial_users.user_group": [
+  "5Strata",
+  "ADMIN",
+  "AI",
+  "Agent",
+  "Closer",
+  "Hypotec",
+  "IT-MONITORING",
+  "Main",
+  "QA",
+  "Supervisor",
+  "TEAM1",
+  "TEAM10",
+  "TEAM11",
+  "TEAM12",
+  "TEAM2",
+  "TEAM3",
+  "TEAM4",
+  "TEAM5",
+  "TEAM6",
+  "TEAM7",
+  "TEAM8",
+  "TEAM9",
+  "WI5S",
+  "WISafe"
+ ],
+ "asterisk.vicidial_users.user_group_two": [
+  ""
+ ],
+ "asterisk.wallboard_widgets.widget_type": [
+  "AGENTS_READY",
+  "ANSWERED_CALLS",
+  "CLOCK",
+  "LIVE_AGENTS",
+  "LIVE_CALLS",
+  "LIVE_QUEUES",
+  "LIVE_QUEUE_INFO",
+  "LOGO",
+  "LONGEST_WAIT",
+  "LOST_CALLS",
+  "N_AGENTS_ON_CALL",
+  "N_ANSWERED_CALLS",
+  "N_WAITING_CALLS",
+  "OFFERED_CALLS",
+  "SLA_LEVEL_PCT",
+  "TEXT"
+ ]
+}

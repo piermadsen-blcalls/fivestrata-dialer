@@ -1,0 +1,2513 @@
+{
+ "asterisk.call_log.channel_group": [
+  "",
+  "DID_INBOUND",
+  "Local Channel Line"
+ ],
+ "asterisk.call_log.type": [
+  "Local",
+  "SIP"
+ ],
+ "asterisk.call_log_archive.channel_group": [
+  "",
+  "DID_INBOUND",
+  "Local Channel Line"
+ ],
+ "asterisk.call_log_archive.type": [
+  "Local",
+  "SIP"
+ ],
+ "asterisk.custom_1000.call_dispo": [
+  ""
+ ],
+ "asterisk.custom_1000.campaign": [
+  "AD",
+  "ADB",
+  "AIAD",
+  "AIADB",
+  "AUAD",
+  "BRAD",
+  "BRRT",
+  "GTAD",
+  "GTADB",
+  "HIAD",
+  "HIADB",
+  "HIMPAD",
+  "HO",
+  "HO10",
+  "HO15",
+  "HO20",
+  "HO30",
+  "HOAD",
+  "HOAD10",
+  "HOAD15",
+  "HOAD20",
+  "HOAD30",
+  "HOADU60",
+  "HOADU90",
+  "HOIAD",
+  "HOIAD2",
+  "HOIAD5",
+  "HOIADB",
+  "HOLD15",
+  "HOLF",
+  "HOLF20",
+  "HOLFA",
+  "HORT",
+  "HORT05",
+  "HORT10",
+  "HORT20",
+  "HOSF",
+  "HOSF10",
+  "HRAD",
+  "HSAD",
+  "HSADB",
+  "HVACAD",
+  "HVACADB",
+  "HW",
+  "HWRT",
+  "HWRTJ",
+  "HWRTS",
+  "MOAD",
+  "MOAD1",
+  "MOAD2",
+  "MOADB",
+  "MOLD",
+  "MOLDRS",
+  "RFAD",
+  "RFADB",
+  "RPC",
+  "SDAD",
+  "SDADB",
+  "SLAD",
+  "SLAD15",
+  "SLAD2",
+  "SLAD30",
+  "SLADT2",
+  "SLLD",
+  "SLLDRS",
+  "SLRS",
+  "TIER3",
+  "WIAD",
+  "WINAD",
+  "WINADB"
+ ],
+ "asterisk.custom_1000.timestamp_callcenter_dispositioned": [
+  ""
+ ],
+ "asterisk.custom_1000_archive.call_dispo": [
+  "",
+  "Qualified"
+ ],
+ "asterisk.custom_1000_archive.campaign": [
+  "AD",
+  "ADB",
+  "AIAD",
+  "AIADB",
+  "AUAD",
+  "BRAD",
+  "BRRT",
+  "FLAD",
+  "FSFRESH",
+  "GTAD",
+  "GTADB",
+  "HIAD",
+  "HIADB",
+  "HIMPAD",
+  "HO",
+  "HO10",
+  "HO15",
+  "HO20",
+  "HO30",
+  "HOAD",
+  "HOAD10",
+  "HOAD15",
+  "HOAD20",
+  "HOAD30",
+  "HOADU60",
+  "HOADU90",
+  "HOIAD",
+  "HOIAD2",
+  "HOIAD5",
+  "HOIADB",
+  "HOLD15",
+  "HOLF",
+  "HOLFA",
+  "HORT",
+  "HORT05",
+  "HORT10",
+  "HORT20",
+  "HORT30",
+  "HORTJ",
+  "HOSF",
+  "HOSF10",
+  "HRAD",
+  "HRAD2",
+  "HSAD",
+  "HSADB",
+  "HVACAD",
+  "HVACADB",
+  "HW",
+  "HWRT",
+  "HWRTJ",
+  "HWRTS",
+  "LIAD",
+  "MDAD",
+  "MOAD",
+  "MOAD1",
+  "MOAD2",
+  "MOADB",
+  "MOLD",
+  "MOLDRS",
+  "MORS",
+  "OTRAD",
+  "REOP",
+  "RFAD",
+  "RFADB",
+  "RFRT",
+  "RP",
+  "RPC",
+  "SDAD",
+  "SDADB",
+  "SLAD",
+  "SLAD15",
+  "SLAD2",
+  "SLAD30",
+  "SLADB",
+  "SLADT",
+  "SLADT2",
+  "SLLD",
+  "SLLDRS",
+  "SLRS",
+  "SLRT",
+  "SWPRT",
+  "TIER3",
+  "WIAD",
+  "WINAD",
+  "WINADB",
+  "WIRT"
+ ],
+ "asterisk.custom_1000_archive.timestamp_callcenter_dispositioned": [
+  ""
+ ],
+ "asterisk.custom_1100.call_dispo": [
+  "",
+  ""
+ ],
+ "asterisk.custom_1100.campaign": [
+  "",
+  "506",
+  "ACT",
+  "ALI",
+  "ALT",
+  "AMP",
+  "AQC",
+  "ARA",
+  "ARO",
+  "ASL",
+  "AWL",
+  "BEE",
+  "BL",
+  "BOO",
+  "BST",
+  "BVS",
+  "BYR",
+  "CIT",
+  "CMG",
+  "CNX",
+  "COM",
+  "CTD",
+  "CVD",
+  "DGP",
+  "DIM",
+  "DPP",
+  "ENC",
+  "ESP",
+  "FCT",
+  "FIM",
+  "FM",
+  "FTO",
+  "INC",
+  "INT",
+  "IQ",
+  "ISL",
+  "IVK",
+  "JLM",
+  "LDE",
+  "LFM",
+  "LLM",
+  "LOM",
+  "LP",
+  "MAD",
+  "MAL",
+  "MAS",
+  "MAX",
+  "MKA",
+  "OCM",
+  "OHP",
+  "OPG",
+  "PLA",
+  "PNT",
+  "PRE",
+  "PRM",
+  "PRO",
+  "PX",
+  "RDN",
+  "REX",
+  "RFA",
+  "RRM",
+  "RXM",
+  "SDM",
+  "SFM",
+  "SFT",
+  "SGA",
+  "SKY",
+  "SMD",
+  "SMG",
+  "SON",
+  "STC",
+  "TBM",
+  "TCG",
+  "TGM",
+  "TLW",
+  "TRC",
+  "TRE",
+  "TWC",
+  "UE",
+  "VCN",
+  "WBC",
+  "WIH",
+  "ZM",
+  "ZRM"
+ ],
+ "asterisk.custom_1100.timestamp_callcenter_dispositioned": [
+  "",
+  ""
+ ],
+ "asterisk.custom_1100_archive.call_dispo": [
+  "",
+  ""
+ ],
+ "asterisk.custom_1100_archive.timestamp_callcenter_dispositioned": [
+  "",
+  ""
+ ],
+ "asterisk.custom_2100.call_dispo": [
+  "",
+  ""
+ ],
+ "asterisk.custom_2100.campaign": [
+  "AWL",
+  "CNX",
+  "CTD",
+  "MAD",
+  "OPG",
+  "PX",
+  "SGA",
+  "STC",
+  "TLW",
+  "WIH"
+ ],
+ "asterisk.custom_2100.fs_code_1": [
+  "|VT:BR|PD:1|CH:HS|SC:AWL|CP:HOIAD|",
+  "|VT:BR|PD:1|CH:HS|SC:CTD|CP:HOAD20|",
+  "|VT:BR|PD:1|CH:HS|SC:CTD|CP:MOLD|",
+  "|VT:BR|PD:1|CH:HS|SC:CTD|CP:SLADT2|",
+  "|VT:BR|PD:1|CH:HS|SC:SGA|CP:HO20|",
+  "|VT:HW|PD:1|CH:HS|SC:AWL|CP:HOIAD|",
+  "|VT:HW|PD:1|CH:HS|SC:CTD|CP:MOLDRS|",
+  "|VT:HW|PD:1|CH:HS|SC:CTD|CP:MORS|",
+  "|VT:HW|PD:1|CH:HS|SC:CTD|CP:SLAD15|",
+  "|VT:HW|PD:1|CH:HS|SC:OPG|CP:AUAD|",
+  "|VT:HW|PD:1|CH:HS|SC:PX|CP:MOAD|",
+  "|VT:HW|PD:1|CH:HS|SC:SGA|CP:HO15|",
+  "|VT:HW|PD:1|CH:HS|SC:STC|CP:MOAD|",
+  "|VT:HW|PD:1|CH:HS|SC:WIH|CP:HW|",
+  "|VT:SL|PD:1|CH:HS|SC:AWL|CP:HOIAD|",
+  "|VT:SL|PD:1|CH:HS|SC:CNX|CP:HORTS|",
+  "|VT:SL|PD:1|CH:HS|SC:CTD|CP:MOLD|",
+  "|VT:SL|PD:1|CH:HS|SC:CTD|CP:SLRS|",
+  "|VT:SL|PD:1|CH:HS|SC:OPG|CP:AUAD|",
+  "|VT:SL|PD:1|CH:HS|SC:WIH|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:CTD|CP:MOLD|",
+  "|VT:WI|PD:1|CH:HS|SC:MAD|CP:HO|",
+  "|VT:WI|PD:1|CH:HS|SC:PX|CP:MOAD|",
+  "|VT:WI|PD:1|CH:HS|SC:TLW|CP:HOIAD2|",
+  "|VT:WI|PD:1|CH:HS|SC:WIH|CP:HW|"
+ ],
+ "asterisk.custom_2100.timestamp_callcenter_dispositioned": [
+  "",
+  ""
+ ],
+ "asterisk.custom_4000.call_dispo": [
+  ""
+ ],
+ "asterisk.custom_4000.campaign": [
+  ""
+ ],
+ "asterisk.custom_4000.fs_code_1": [
+  ""
+ ],
+ "asterisk.custom_4000.fs_code_2": [
+  ""
+ ],
+ "asterisk.custom_4000.timestamp_callcenter_dispositioned": [
+  ""
+ ],
+ "asterisk.custom_4000_archive.call_dispo": [
+  ""
+ ],
+ "asterisk.custom_4000_archive.campaign": [
+  ""
+ ],
+ "asterisk.custom_4000_archive.fs_code_1": [
+  ""
+ ],
+ "asterisk.custom_4000_archive.fs_code_2": [
+  ""
+ ],
+ "asterisk.custom_4000_archive.timestamp_callcenter_dispositioned": [
+  ""
+ ],
+ "asterisk.custom_4050_archive.call_dispo": [
+  ""
+ ],
+ "asterisk.custom_4050_archive.campaign": [
+  ""
+ ],
+ "asterisk.custom_4050_archive.fs_code_1": [
+  ""
+ ],
+ "asterisk.custom_4050_archive.fs_code_2": [
+  ""
+ ],
+ "asterisk.custom_4050_archive.timestamp_callcenter_dispositioned": [
+  ""
+ ],
+ "asterisk.custom_4100.call_dispo": [
+  ""
+ ],
+ "asterisk.custom_4100.campaign": [
+  ""
+ ],
+ "asterisk.custom_4100.fs_code_1": [
+  ""
+ ],
+ "asterisk.custom_4100.fs_code_2": [
+  ""
+ ],
+ "asterisk.custom_4100.timestamp_callcenter_dispositioned": [
+  ""
+ ],
+ "asterisk.custom_4100_archive.call_dispo": [
+  ""
+ ],
+ "asterisk.custom_4100_archive.campaign": [
+  ""
+ ],
+ "asterisk.custom_4100_archive.fs_code_1": [
+  ""
+ ],
+ "asterisk.custom_4100_archive.fs_code_2": [
+  ""
+ ],
+ "asterisk.custom_4100_archive.timestamp_callcenter_dispositioned": [
+  ""
+ ],
+ "asterisk.custom_4150_archive.call_dispo": [
+  ""
+ ],
+ "asterisk.custom_4150_archive.campaign": [
+  ""
+ ],
+ "asterisk.custom_4150_archive.fs_code_1": [
+  ""
+ ],
+ "asterisk.custom_4150_archive.fs_code_2": [
+  ""
+ ],
+ "asterisk.custom_4150_archive.timestamp_callcenter_dispositioned": [
+  ""
+ ],
+ "asterisk.kombea_fs_active_DLL.active": [
+  "A",
+  "B"
+ ],
+ "asterisk.kombea_fs_active_DLL.campaign_id": [
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.kombea_fs_campaign_level_params.campaign_id": [
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.park_log.campaign_id": [
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.park_log.channel_group": [
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.park_log.status": [
+  "GRABBED",
+  "HUNGUP",
+  "PARKED"
+ ],
+ "asterisk.phones.active": [
+  "Y"
+ ],
+ "asterisk.phones.call_out_number_group": [
+  "Zap/g2/"
+ ],
+ "asterisk.phones.codecs_list": [
+  ""
+ ],
+ "asterisk.phones.codecs_with_template": [
+  "0"
+ ],
+ "asterisk.phones.login_campaign": [
+  "",
+  ""
+ ],
+ "asterisk.phones.nva_new_status": [
+  "NVAINS"
+ ],
+ "asterisk.phones.peer_status": [
+  "UNKNOWN"
+ ],
+ "asterisk.phones.status": [
+  "ACTIVE"
+ ],
+ "asterisk.phones.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.phones_alias.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.servers.active": [
+  "Y"
+ ],
+ "asterisk.servers.active_agent_login_server": [
+  "N",
+  "Y"
+ ],
+ "asterisk.servers.active_asterisk_server": [
+  "N",
+  "Y"
+ ],
+ "asterisk.servers.carrier_logging_active": [
+  "Y"
+ ],
+ "asterisk.servers.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.servers.vicidial_balance_active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.system_settings.agentonly_callback_campaign_lock": [
+  "1"
+ ],
+ "asterisk.system_settings.allow_manage_active_lists": [
+  "0"
+ ],
+ "asterisk.system_settings.anyone_callback_inactive_lists": [
+  "default"
+ ],
+ "asterisk.system_settings.campaign_cid_areacodes_enabled": [
+  "1"
+ ],
+ "asterisk.system_settings.default_codecs": [
+  ""
+ ],
+ "asterisk.system_settings.enable_agc_dispo_log": [
+  "0"
+ ],
+ "asterisk.system_settings.enable_did_entry_list_id": [
+  "0"
+ ],
+ "asterisk.system_settings.enable_pause_code_limits": [
+  "0"
+ ],
+ "asterisk.system_settings.expired_lists_inactive": [
+  "0"
+ ],
+ "asterisk.system_settings.hide_inactive_lists": [
+  "0"
+ ],
+ "asterisk.system_settings.label_entry_list_id": [
+  ""
+ ],
+ "asterisk.system_settings.label_list_id": [
+  ""
+ ],
+ "asterisk.system_settings.label_status": [
+  ""
+ ],
+ "asterisk.system_settings.list_status_modification_confirmation": [
+  "0"
+ ],
+ "asterisk.system_settings.outbound_autodial_active": [
+  "1"
+ ],
+ "asterisk.system_settings.pllb_grouping_limit": [
+  "100"
+ ],
+ "asterisk.system_settings.qc_features_active": [
+  "0"
+ ],
+ "asterisk.system_settings.queuemetrics_callstatus": [
+  "1"
+ ],
+ "asterisk.system_settings.queuemetrics_dispo_pause": [
+  ""
+ ],
+ "asterisk.system_settings.queuemetrics_pause_type": [
+  "0"
+ ],
+ "asterisk.system_settings.queuemetrics_pausereason": [
+  "STANDARD"
+ ],
+ "asterisk.system_settings.sounds_central_control_active": [
+  "1"
+ ],
+ "asterisk.system_settings.test_campaign_calls": [
+  "0"
+ ],
+ "asterisk.system_settings.user_territories_active": [
+  "0"
+ ],
+ "asterisk.system_settings.vdc_agent_api_active": [
+  "1"
+ ],
+ "asterisk.user_call_log.call_type": [
+  "MANUAL_DIALFAST",
+  "MANUAL_DIALNOW",
+  "MANUAL_OVERRIDE",
+  "XFER_3WAY"
+ ],
+ "asterisk.user_call_log.campaign_id": [
+  "",
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.user_call_log.group_alias_id": [
+  ""
+ ],
+ "asterisk.user_call_log_archive.call_type": [
+  "MANUAL_DIALFAST",
+  "MANUAL_DIALNOW",
+  "MANUAL_OVERRIDE",
+  "XFER_3WAY"
+ ],
+ "asterisk.user_call_log_archive.campaign_id": [
+  "",
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.user_call_log_archive.group_alias_id": [
+  ""
+ ],
+ "asterisk.vicidial_admin_log.event_code": [
+  "ADMIN ADD AUTO REPORT",
+  "ADMIN ADD BULK CAMPAIGN AC-CID",
+  "ADMIN ADD BULK PHONE ALIAS",
+  "ADMIN ADD CAMPAIGN DIAL STATUS",
+  "ADMIN ADD CAMPAIGN LEAD RECYCLE",
+  "ADMIN ADD CAMPAIGN STATUS",
+  "ADMIN ADD CARRIER",
+  "ADMIN ADD CID GROUP",
+  "ADMIN ADD CID GROUP ENTRY",
+  "ADMIN ADD CONF TEMPLATE",
+  "ADMIN ADD CONTAINER",
+  "ADMIN ADD CUSTOM LIST FIELD",
+  "ADMIN ADD NUMBER TO DNC LIST",
+  "ADMIN ADD SYSTEM STATUS",
+  "ADMIN ADD USER",
+  "ADMIN ADD USER GROUP",
+  "ADMIN API UPDATE USER RANK",
+  "ADMIN BULK ADD PHONE",
+  "ADMIN COPY BULK DID",
+  "ADMIN COPY BULK USERS",
+  "ADMIN COPY CAMPAIGN",
+  "ADMIN COPY DID",
+  "ADMIN COPY INBOUND GROUP",
+  "ADMIN COPY PHONE",
+  "ADMIN COPY USER",
+  "ADMIN DELETE BULK ACCID",
+  "ADMIN DELETE BULK DID",
+  "ADMIN DELETE BULK USERS",
+  "ADMIN DELETE CAMPAIGN",
+  "ADMIN DELETE CAMPAIGN DIAL STATUS",
+  "ADMIN DELETE CID GROUP",
+  "ADMIN DELETE CID GROUP ENTRY",
+  "ADMIN DELETE DID",
+  "ADMIN DELETE SERVER",
+  "ADMIN DELETE USER",
+  "ADMIN EXPORT CALLS REPORT",
+  "ADMIN EXPORT CID GROUP",
+  "ADMIN EXPORT LEADS REPORT",
+  "ADMIN EXPORT LIST",
+  "ADMIN EXPORT SYSTEM INTERNAL DNC",
+  "ADMIN LOAD LIST",
+  "ADMIN LOAD LIST STANDARD",
+  "ADMIN LOGOUT CAMPAIGN AGENTS",
+  "ADMIN MODIFY AUTO REPORT",
+  "ADMIN MODIFY CAMPAIGN ACTIVE LISTS",
+  "ADMIN MODIFY CAMPAIGN BASIC",
+  "ADMIN MODIFY CAMPAIGN DETAIL",
+  "ADMIN MODIFY CAMPAIGN LEAD RECYCLE",
+  "ADMIN MODIFY CARRIER",
+  "ADMIN MODIFY CID GROUP ENTRY",
+  "ADMIN MODIFY COLORS",
+  "ADMIN MODIFY CONTAINER",
+  "ADMIN MODIFY DID",
+  "ADMIN MODIFY HOLIDAY",
+  "ADMIN MODIFY INGROUP",
+  "ADMIN MODIFY LEAD",
+  "ADMIN MODIFY PHONE",
+  "ADMIN MODIFY SERVER",
+  "ADMIN MODIFY SYSTEM SETTINGS",
+  "ADMIN MODIFY USER",
+  "ADMIN MODIFY USER GROUP",
+  "ADMIN REPORT EXPORT RUN EMAIL",
+  "ADMIN RESET LIST",
+  "ADMIN SEARCH LEAD",
+  "AUTO START ASTERISK",
+  "EMERGENCY LOGOUT FROM STATUS PAGE",
+  "FS_Abandon_8kHz_16bit_Mono.wav 295246",
+  "INITIAL SETTINGS UPDATE",
+  "LEAD RECYCLING AUTO DISABLED",
+  "LEAD RECYCLING AUTO ENABLED",
+  "UPDATE HELP DOCUMENTATION",
+  "USER FORCE CHANGE PASSWORD",
+  "USER INGROUP SETTINGS",
+  "USER INGROUP VIGA ADD"
+ ],
+ "asterisk.vicidial_admin_log.event_type": [
+  "ADD",
+  "COPY",
+  "DELETE",
+  "EXPORT",
+  "LOAD",
+  "LOGOUT",
+  "MODIFY",
+  "RESET",
+  "SEARCH"
+ ],
+ "asterisk.vicidial_admin_log.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_agent_log.campaign_id": [
+  "FSFRESH"
+ ],
+ "asterisk.vicidial_agent_log.dispo_sec": [
+  "0",
+  "1",
+  "10",
+  "105",
+  "107",
+  "1088",
+  "11",
+  "111",
+  "12",
+  "126",
+  "128",
+  "13",
+  "130",
+  "139",
+  "14",
+  "149",
+  "15",
+  "157",
+  "159",
+  "16",
+  "164",
+  "17",
+  "177",
+  "18",
+  "185",
+  "19",
+  "195",
+  "2",
+  "20",
+  "21",
+  "215",
+  "22",
+  "23",
+  "24",
+  "25",
+  "26",
+  "27",
+  "28",
+  "29",
+  "3",
+  "30",
+  "31",
+  "32",
+  "33",
+  "34",
+  "35",
+  "36",
+  "37",
+  "38",
+  "39",
+  "4",
+  "40",
+  "41",
+  "418",
+  "42",
+  "43",
+  "44",
+  "45",
+  "46",
+  "466",
+  "47",
+  "48",
+  "49",
+  "5",
+  "50",
+  "501",
+  "51",
+  "52",
+  "53",
+  "54",
+  "55",
+  "56",
+  "57",
+  "58",
+  "59",
+  "6",
+  "60",
+  "61",
+  "63",
+  "64",
+  "67",
+  "69",
+  "7",
+  "70",
+  "71",
+  "723",
+  "73",
+  "76",
+  "77",
+  "8",
+  "81",
+  "85",
+  "86",
+  "88",
+  "9",
+  "93",
+  "96",
+  "99"
+ ],
+ "asterisk.vicidial_agent_log.pause_type": [
+  "ADMIN",
+  "AGENT",
+  "SYSTEM"
+ ],
+ "asterisk.vicidial_agent_log.status": [
+  "",
+  "A",
+  "CALLBK",
+  "DAIR",
+  "DC",
+  "DNC",
+  "IVA",
+  "LB",
+  "N",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NQ",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "WN"
+ ],
+ "asterisk.vicidial_agent_log.sub_status": [
+  "",
+  "LAGGED",
+  "LOGIN"
+ ],
+ "asterisk.vicidial_agent_log.user_group": [
+  "FS-B",
+  "FS-C"
+ ],
+ "asterisk.vicidial_agent_log_archive.campaign_id": [
+  "FSFRESH"
+ ],
+ "asterisk.vicidial_agent_log_archive.pause_type": [
+  "ADMIN",
+  "AGENT",
+  "SYSTEM"
+ ],
+ "asterisk.vicidial_agent_log_archive.status": [
+  "",
+  "A",
+  "CALLBK",
+  "DAIR",
+  "DC",
+  "DNC",
+  "HUP",
+  "IVA",
+  "LB",
+  "N",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NQ",
+  "PU",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "WN"
+ ],
+ "asterisk.vicidial_agent_log_archive.sub_status": [
+  "",
+  "LAGGED",
+  "LOGIN"
+ ],
+ "asterisk.vicidial_agent_log_archive.user_group": [
+  "FS-AI",
+  "FS-B",
+  "FS-C",
+  "FS-D"
+ ],
+ "asterisk.vicidial_amd_log.AMDSTATUS": [
+  "HUMAN",
+  "MACHINE"
+ ],
+ "asterisk.vicidial_api_log.source": [
+  "",
+  "fsadmin",
+  "test"
+ ],
+ "asterisk.vicidial_api_log_archive.source": [
+  "",
+  "fsadmin",
+  "realtime",
+  "test"
+ ],
+ "asterisk.vicidial_automated_reports.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_automated_reports.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_call_menu.tracking_group": [
+  "",
+  "CALLMENU"
+ ],
+ "asterisk.vicidial_call_menu.user_group": [
+  "---ALL---",
+  "FS_ADMIN"
+ ],
+ "asterisk.vicidial_call_time_holidays.holiday_status": [
+  "EXPIRED"
+ ],
+ "asterisk.vicidial_call_time_holidays.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_call_times.user_group": [
+  "---ALL---",
+  "FS_ADMIN"
+ ],
+ "asterisk.vicidial_campaign_agents.campaign_grade": [
+  "0",
+  "1",
+  "10"
+ ],
+ "asterisk.vicidial_campaign_agents.campaign_id": [
+  "FSCFR",
+  "FSCRV",
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.vicidial_campaign_agents.campaign_rank": [
+  "0",
+  "3",
+  "4",
+  "5"
+ ],
+ "asterisk.vicidial_campaign_agents.campaign_weight": [
+  "0",
+  "3",
+  "4",
+  "5"
+ ],
+ "asterisk.vicidial_campaign_agents.group_web_vars": [
+  ""
+ ],
+ "asterisk.vicidial_campaign_cid_areacodes.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_campaign_cid_areacodes.areacode": [
+  "AL",
+  "AR",
+  "AZ",
+  "CA",
+  "CO",
+  "CT",
+  "DE",
+  "FL",
+  "GA",
+  "IA",
+  "ID",
+  "IL",
+  "IN",
+  "KS",
+  "KY",
+  "LA",
+  "MA",
+  "MD",
+  "ME",
+  "MI",
+  "MN",
+  "MO",
+  "MS",
+  "MT",
+  "NC",
+  "ND",
+  "NE",
+  "NH",
+  "NJ",
+  "NM",
+  "NV",
+  "NY",
+  "OH",
+  "OK",
+  "OR",
+  "PA",
+  "RI",
+  "SC",
+  "SD",
+  "TN",
+  "TX",
+  "UT",
+  "VA",
+  "VT",
+  "WA",
+  "WI",
+  "WV",
+  "WY"
+ ],
+ "asterisk.vicidial_campaign_cid_areacodes.campaign_id": [
+  "BATHROOM-FRESH"
+ ],
+ "asterisk.vicidial_campaign_dnc.campaign_id": [
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.vicidial_campaign_hour_counts_archive.campaign_id": [
+  "",
+  "FSFRESH",
+  "FSREVIVE",
+  "FSRFGFSH",
+  "FSRFGREV"
+ ],
+ "asterisk.vicidial_campaign_hour_counts_archive.type": [
+  "AGENTS",
+  "ANSWERS",
+  "CALLS",
+  "DROPS",
+  "MACHINES"
+ ],
+ "asterisk.vicidial_campaign_server_stats.campaign_id": [
+  ""
+ ],
+ "asterisk.vicidial_campaign_stats.campaign_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "FRESH_CLOSER",
+  "FSCFR",
+  "FSCRV",
+  "FSFRESH",
+  "FSREVIVE",
+  "FSRFGFSH",
+  "FSRFGREV",
+  "FS_FRESH_DEAD_AIR",
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL",
+  "FS_REVIVE_DEAD_AIR",
+  "FS_REVIVE_FAILOVER",
+  "FS_REVIVE_NORMAL",
+  "FS_RFG_FSH_DEAD_AIR",
+  "FS_RFG_FSH_FAILOVER",
+  "FS_RFG_FSH_NORMAL",
+  "FS_RFG_REV_DEAD_AIR",
+  "FS_RFG_REV_FAILOVER",
+  "FS_RFG_REV_NORMAL",
+  "REVIVE_CLOSER"
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_1": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_2": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_3": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_4": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_count_1": [
+  "0"
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_count_2": [
+  "0"
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_count_3": [
+  "0"
+ ],
+ "asterisk.vicidial_campaign_stats.status_category_count_4": [
+  "0"
+ ],
+ "asterisk.vicidial_campaign_stats_debug.campaign_id": [
+  "",
+  "--ALL--",
+  "-SHARE-",
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "FSCFR",
+  "FSCRV",
+  "FSFRESH",
+  "FSREVIVE",
+  "FS_FRESH_DEAD_AIR",
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL",
+  "FS_REVIVE_DEAD_AIR",
+  "FS_REVIVE_FAILOVER",
+  "FS_REVIVE_NORMAL",
+  "REVIVE_CLOSER"
+ ],
+ "asterisk.vicidial_campaign_statuses.campaign_id": [
+  "FSCFR",
+  "FSCRV",
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.vicidial_campaign_statuses.category": [
+  ""
+ ],
+ "asterisk.vicidial_campaign_statuses.status": [
+  "BAD",
+  "DA",
+  "EXPIRE",
+  "HUP",
+  "HUPL",
+  "LAPSED",
+  "LB",
+  "MAX",
+  "MAXNA",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NQ",
+  "PURGED",
+  "Q1",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "Q8",
+  "Q9",
+  "SCA",
+  "SCE",
+  "SCM",
+  "WDNC",
+  "WN"
+ ],
+ "asterisk.vicidial_campaigns.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_campaigns.agent_allow_group_alias": [
+  "N"
+ ],
+ "asterisk.vicidial_campaigns.agent_pause_codes_active": [
+  "N"
+ ],
+ "asterisk.vicidial_campaigns.amd_inbound_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_campaigns.amd_type": [
+  "AMD"
+ ],
+ "asterisk.vicidial_campaigns.auto_active_list_new": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.auto_alt_dial_statuses": [
+  " B N NA DC -"
+ ],
+ "asterisk.vicidial_campaigns.auto_pause_precall_code": [
+  "PRECAL"
+ ],
+ "asterisk.vicidial_campaigns.callback_active_limit": [
+  "0"
+ ],
+ "asterisk.vicidial_campaigns.callback_active_limit_override": [
+  "N"
+ ],
+ "asterisk.vicidial_campaigns.campaign_allow_inbound": [
+  "Y"
+ ],
+ "asterisk.vicidial_campaigns.campaign_description": [
+  "FiveStrata FRESH Campaign",
+  "FiveStrata REVIVE Campaign"
+ ],
+ "asterisk.vicidial_campaigns.campaign_id": [
+  "FSCFR",
+  "FSCRV",
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.vicidial_campaigns.campaign_rec_exten": [
+  "8309"
+ ],
+ "asterisk.vicidial_campaigns.campaign_recording": [
+  "ALLFORCE"
+ ],
+ "asterisk.vicidial_campaigns.campaign_script": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.campaign_script_two": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.campaign_stats_refresh": [
+  "N"
+ ],
+ "asterisk.vicidial_campaigns.campaign_vdad_exten": [
+  "8368",
+  "8370"
+ ],
+ "asterisk.vicidial_campaigns.cid_group_id": [
+  "---DISABLED---",
+  "BATHROOM-FRESH",
+  "BT-REVIVE"
+ ],
+ "asterisk.vicidial_campaigns.cid_group_id_two": [
+  "---DISABLED---",
+  "BT-REVIVE2"
+ ],
+ "asterisk.vicidial_campaigns.dead_max_dispo": [
+  "DCMX"
+ ],
+ "asterisk.vicidial_campaigns.dead_to_dispo": [
+  "ENABLED"
+ ],
+ "asterisk.vicidial_campaigns.default_group_alias": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.default_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_campaigns.dial_status_a": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_status_b": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_status_c": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_status_d": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_status_e": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dial_statuses": [
+  " NEW -"
+ ],
+ "asterisk.vicidial_campaigns.disable_dispo_screen": [
+  "DISPO_SELECT_DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.disable_dispo_status": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.dispo_max": [
+  "0"
+ ],
+ "asterisk.vicidial_campaigns.dispo_max_dispo": [
+  "DISMX"
+ ],
+ "asterisk.vicidial_campaigns.drop_inbound_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_campaigns.drop_rate_group": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.in_group_dial": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.in_group_dial_select": [
+  "CAMPAIGN_SELECTED"
+ ],
+ "asterisk.vicidial_campaigns.leave_vm_message_group_id": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_campaigns.leave_vm_no_dispo": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.pause_max_dispo": [
+  "PAUSMX"
+ ],
+ "asterisk.vicidial_campaigns.pllb_grouping": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.pllb_grouping_limit": [
+  "50"
+ ],
+ "asterisk.vicidial_campaigns.qc_statuses_id": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.queuemetrics_callstatus_override": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.script_top_dispo": [
+  "N"
+ ],
+ "asterisk.vicidial_campaigns.status_display_fields": [
+  "CALLID"
+ ],
+ "asterisk.vicidial_campaigns.status_display_ingroup": [
+  "ENABLED"
+ ],
+ "asterisk.vicidial_campaigns.survey_fourth_status": [
+  "NI"
+ ],
+ "asterisk.vicidial_campaigns.survey_ni_status": [
+  "NI"
+ ],
+ "asterisk.vicidial_campaigns.survey_third_status": [
+  "NI"
+ ],
+ "asterisk.vicidial_campaigns.transfer_no_dispo": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_campaigns.use_campaign_dnc": [
+  "Y"
+ ],
+ "asterisk.vicidial_campaigns.use_other_campaign_dnc": [
+  ""
+ ],
+ "asterisk.vicidial_campaigns.user_group": [
+  "FS-D",
+  "FS_ADMIN"
+ ],
+ "asterisk.vicidial_campaigns.vtiger_search_category": [
+  "LEAD"
+ ],
+ "asterisk.vicidial_campaigns.vtiger_status_call": [
+  "N"
+ ],
+ "asterisk.vicidial_carrier_hour_counts.type": [
+  "ANSWER",
+  "BUSY",
+  "CANCEL",
+  "CHANUNAVAIL",
+  "CONGESTION"
+ ],
+ "asterisk.vicidial_carrier_hour_counts_archive.type": [
+  "ANSWER",
+  "BUSY",
+  "CANCEL",
+  "CHANUNAVAIL",
+  "CONGESTION",
+  "NOANSWER"
+ ],
+ "asterisk.vicidial_carrier_log.dialstatus": [
+  "ANSWER",
+  "BUSY",
+  "CANCEL",
+  "CHANUNAVAIL",
+  "CONGESTION"
+ ],
+ "asterisk.vicidial_carrier_log.sip_hangup_reason": [
+  "",
+  "Bad Identity Info",
+  "Because",
+  "Busy Everywhere",
+  "Busy here",
+  "Decline",
+  "Does Not Exist Anywhere",
+  "Invalid Identity Header",
+  "Loop Detected",
+  "Network Blocked",
+  "No route available",
+  "Not Found",
+  "Request Timeout",
+  "Service Unavailable",
+  "Unwanted",
+  "Unwanted - DNC",
+  "Unwanted OCN"
+ ],
+ "asterisk.vicidial_carrier_log_archive.dialstatus": [
+  "ANSWER",
+  "BUSY",
+  "CANCEL",
+  "CHANUNAVAIL",
+  "CONGESTION",
+  "NOANSWER"
+ ],
+ "asterisk.vicidial_carrier_log_archive.sip_hangup_reason": [
+  "",
+  "Bad Identity Info",
+  "Because",
+  "Busy Everywhere",
+  "Busy here",
+  "Charging controller error  AUTH",
+  "Charging controller error (AUTH)",
+  "Decline",
+  "Does Not Exist Anywhere",
+  "Gone",
+  "Invalid Identity Header",
+  "Loop Detected",
+  "Network Blocked",
+  "No route available",
+  "Not Acceptable",
+  "Not Found",
+  "Precondition Failed",
+  "Rejected",
+  "Request Entity Too Large",
+  "Request Timeout",
+  "Request-URI Too Long",
+  "Service Unavailable",
+  "Temporarily Unavailable",
+  "Unauthorized",
+  "Unsupported URI Scheme",
+  "Unwanted",
+  "Unwanted - DNC",
+  "Unwanted - PRICE_CAP",
+  "Unwanted OCN",
+  "Use Identity Header"
+ ],
+ "asterisk.vicidial_cid_groups.cid_group_id": [
+  "BATHROOM-FRESH",
+  "BT-INTERNAL"
+ ],
+ "asterisk.vicidial_cid_groups.cid_group_notes": [
+  "BATHROOM-FRESH",
+  "BT-INTERNAL"
+ ],
+ "asterisk.vicidial_cid_groups.cid_group_type": [
+  "AREACODE",
+  "STATE"
+ ],
+ "asterisk.vicidial_cid_groups.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_closer_log.campaign_id": [
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL"
+ ],
+ "asterisk.vicidial_closer_log.status": [
+  "A",
+  "AFTHRS",
+  "CALLBK",
+  "DC",
+  "DISPO",
+  "DNC",
+  "DROP",
+  "INCALL",
+  "LB",
+  "N",
+  "NANQUE",
+  "NI2",
+  "NI3",
+  "NI5",
+  "NI6",
+  "NQ",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "TIMEOT",
+  "WN"
+ ],
+ "asterisk.vicidial_closer_log.term_reason": [
+  "ABANDON",
+  "AFTERHOURS",
+  "AGENT",
+  "CALLER",
+  "NOAGENT",
+  "NONE",
+  "QUEUETIMEOUT"
+ ],
+ "asterisk.vicidial_closer_log.user_group": [
+  "",
+  "FS-B",
+  "FS-C"
+ ],
+ "asterisk.vicidial_closer_log_archive.campaign_id": [
+  "FRESH_CLOSER",
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL"
+ ],
+ "asterisk.vicidial_closer_log_archive.status": [
+  "A",
+  "AFTHRS",
+  "CALLBK",
+  "DC",
+  "DISPO",
+  "DNC",
+  "DROP",
+  "INCALL",
+  "LB",
+  "N",
+  "NANQUE",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI5",
+  "NI6",
+  "NQ",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "TIMEOT",
+  "WN"
+ ],
+ "asterisk.vicidial_closer_log_archive.term_reason": [
+  "ABANDON",
+  "AFTERHOURS",
+  "AGENT",
+  "CALLER",
+  "NOAGENT",
+  "NONE",
+  "QUEUETIMEOUT"
+ ],
+ "asterisk.vicidial_closer_log_archive.user_group": [
+  "",
+  "FS-B",
+  "FS-C",
+  "FS-D"
+ ],
+ "asterisk.vicidial_conf_templates.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_custom_leadloader_templates.template_statuses": [
+  ""
+ ],
+ "asterisk.vicidial_daily_max_stats.campaign_id": [
+  "",
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "FRESH_CLOSER",
+  "FSFRESH",
+  "FSREVIVE",
+  "FS_FRESH_DEAD_AIR",
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL",
+  "FS_REVIVE_DEAD_AIR",
+  "FS_REVIVE_FAILOVER",
+  "FS_REVIVE_NORMAL",
+  "REVIVE_CLOSER"
+ ],
+ "asterisk.vicidial_daily_max_stats.stats_flag": [
+  "CLOSED",
+  "OPEN"
+ ],
+ "asterisk.vicidial_daily_max_stats.stats_type": [
+  "CAMPAIGN",
+  "INGROUP",
+  "TOTAL"
+ ],
+ "asterisk.vicidial_dial_cid_log.call_type": [
+  "MANUAL",
+  "OUT"
+ ],
+ "asterisk.vicidial_dial_cid_log.outbound_cid_type": [
+  "AGENT",
+  "CID_GROUP"
+ ],
+ "asterisk.vicidial_dial_cid_log_archive.call_type": [
+  "MANUAL",
+  "OUT"
+ ],
+ "asterisk.vicidial_dial_cid_log_archive.outbound_cid_type": [
+  "AGENT",
+  "CAMPAIGN_CID",
+  "CID_GROUP"
+ ],
+ "asterisk.vicidial_dial_log.sip_hangup_reason": [
+  "",
+  "Bad Identity Info",
+  "Because",
+  "Busy Everywhere",
+  "Busy here",
+  "Decline",
+  "Does Not Exist Anywhere",
+  "Gone",
+  "Invalid Identity Header",
+  "Loop Detected",
+  "Network Blocked",
+  "No route available",
+  "Not Acceptable",
+  "Not Found",
+  "Request Timeout",
+  "Service Unavailable",
+  "Unwanted",
+  "Unwanted - DNC",
+  "Unwanted OCN"
+ ],
+ "asterisk.vicidial_dial_log_archive.sip_hangup_reason": [
+  "",
+  "Bad Identity Info",
+  "Because",
+  "Busy Everywhere",
+  "Busy Everywhere (Channel Limit)",
+  "Busy here",
+  "Charging controller error  AUTH",
+  "Charging controller error (AUTH)",
+  "Decline",
+  "Does Not Exist Anywhere",
+  "Gone",
+  "Invalid Identity Header",
+  "Loop Detected",
+  "Network Blocked",
+  "No route available",
+  "Not Acceptable",
+  "Not Found",
+  "Precondition Failed",
+  "Rejected",
+  "Request Entity Too Large",
+  "Request Timeout",
+  "Request-URI Too Long",
+  "Service Unavailable",
+  "Temporarily Unavailable",
+  "Unauthorized",
+  "Unsupported URI Scheme",
+  "Unwanted",
+  "Unwanted - DNC",
+  "Unwanted - PRICE_CAP",
+  "Unwanted OCN",
+  "Use Identity Header"
+ ],
+ "asterisk.vicidial_dnc_log.campaign_id": [
+  "-SYSINT-",
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.vicidial_drop_rate_groups.group_id": [
+  "101",
+  "102",
+  "103",
+  "104",
+  "105",
+  "106",
+  "107",
+  "108",
+  "109",
+  "110"
+ ],
+ "asterisk.vicidial_filter_phone_groups.user_group": [
+  "FS_ADMIN"
+ ],
+ "asterisk.vicidial_html_cache_stats.stats_type": [
+  "carrier_stats"
+ ],
+ "asterisk.vicidial_inbound_caller_codes.group_id": [
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL"
+ ],
+ "asterisk.vicidial_inbound_caller_codes_archive.group_id": [
+  "FRESH_CLOSER",
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL"
+ ],
+ "asterisk.vicidial_inbound_dids.campaign_id": [
+  "FSCFR",
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.vicidial_inbound_dids.did_active": [
+  "Y"
+ ],
+ "asterisk.vicidial_inbound_dids.filter_campaign_id": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_dids.filter_dnc_campaign": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_dids.filter_group_id": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_dids.filter_user_route_settings_ingroup": [
+  "AGENTDIRECT"
+ ],
+ "asterisk.vicidial_inbound_dids.group_id": [
+  "FRESH_CLOSER",
+  "FS_FRESH_NORMAL",
+  "FS_REVIVE_NORMAL"
+ ],
+ "asterisk.vicidial_inbound_dids.max_queue_ingroup_calls": [
+  "0"
+ ],
+ "asterisk.vicidial_inbound_dids.max_queue_ingroup_id": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_dids.no_agent_ingroup_id": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_dids.no_agent_ingroup_redirect": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_dids.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_inbound_dids.user_route_settings_ingroup": [
+  "FRESH_CLOSER",
+  "FS_FRESH_NORMAL",
+  "FS_REVIVE_NORMAL"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_grade": [
+  "1",
+  "10"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "FRESH_CLOSER",
+  "FS_FRESH_DEAD_AIR",
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL",
+  "FS_REVIVE_DEAD_AIR",
+  "FS_REVIVE_FAILOVER",
+  "FS_REVIVE_NORMAL",
+  "REVIVE_CLOSER"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_rank": [
+  "0"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_type": [
+  "C"
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_web_vars": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_group_agents.group_weight": [
+  "0"
+ ],
+ "asterisk.vicidial_inbound_groups.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_inbound_groups.afterhours_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.areacode_filter": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.areacode_filter_action": [
+  "MESSAGE"
+ ],
+ "asterisk.vicidial_inbound_groups.areacode_filter_action_value": [
+  "confbridge-join",
+  "nbdy-avail-to-take-call|vm-goodbye"
+ ],
+ "asterisk.vicidial_inbound_groups.areacode_filter_seconds": [
+  "10"
+ ],
+ "asterisk.vicidial_inbound_groups.closing_time_option_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.default_group_alias": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.default_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.dial_ingroup_cid": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.drop_inbound_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.group_color": [
+  "#FFFFFF",
+  "BLUE",
+  "GREEN",
+  "RED",
+  "white",
+  "yellow"
+ ],
+ "asterisk.vicidial_inbound_groups.group_handling": [
+  "CHAT",
+  "PHONE"
+ ],
+ "asterisk.vicidial_inbound_groups.group_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "FRESH_CLOSER",
+  "FS_FRESH_DEAD_AIR",
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL",
+  "FS_REVIVE_DEAD_AIR",
+  "FS_REVIVE_FAILOVER",
+  "FS_REVIVE_NORMAL",
+  "REVIVE_CLOSER"
+ ],
+ "asterisk.vicidial_inbound_groups.hold_recall_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.hold_time_option_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_inbound_groups.ingroup_recording_override": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.ingroup_script": [
+  "",
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.ingroup_script_two": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.populate_lead_ingroup": [
+  "ENABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.populate_lead_source": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.qc_statuses_id": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.status_group_id": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.uniqueid_status_display": [
+  "DISABLED"
+ ],
+ "asterisk.vicidial_inbound_groups.uniqueid_status_prefix": [
+  ""
+ ],
+ "asterisk.vicidial_inbound_groups.user_group": [
+  "---ALL---",
+  "FS-D-AI",
+  "FS_ADMIN"
+ ],
+ "asterisk.vicidial_inbound_groups.wait_time_option_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_ingroup_hour_counts.group_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "FS_FRESH_DEAD_AIR",
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL",
+  "FS_REVIVE_DEAD_AIR",
+  "FS_REVIVE_FAILOVER",
+  "FS_REVIVE_NORMAL",
+  "REVIVE_CLOSER"
+ ],
+ "asterisk.vicidial_ingroup_hour_counts.type": [
+  "ANSWERS",
+  "CALLS",
+  "DROPS",
+  "HDSECALL",
+  "HDSECANS",
+  "HDSECDRP",
+  "HOLDSEC1",
+  "HOLDSEC2"
+ ],
+ "asterisk.vicidial_ingroup_hour_counts_archive.group_id": [
+  "AGENTDIRECT",
+  "AGENTDIRECT_CHAT",
+  "FS_FRESH_DEAD_AIR",
+  "FS_FRESH_FAILOVER",
+  "FS_FRESH_NORMAL",
+  "FS_REVIVE_DEAD_AIR",
+  "FS_REVIVE_FAILOVER",
+  "FS_REVIVE_NORMAL",
+  "REVIVE_CLOSER"
+ ],
+ "asterisk.vicidial_ingroup_hour_counts_archive.type": [
+  "ANSWERS",
+  "CALLS",
+  "DROPS",
+  "HDSECALL",
+  "HDSECANS",
+  "HDSECDRP",
+  "HOLDSEC1",
+  "HOLDSEC2"
+ ],
+ "asterisk.vicidial_lead_24hour_calls.call_type": [
+  "AUTO"
+ ],
+ "asterisk.vicidial_lead_filters.user_group": [
+  "---ALL---",
+  "FS_ADMIN"
+ ],
+ "asterisk.vicidial_lead_recycle.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_lead_recycle.campaign_id": [
+  "FSCFR",
+  "FSCRV",
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.vicidial_lead_recycle.status": [
+  "A",
+  "AA",
+  "AB",
+  "B",
+  "DROP",
+  "ERI",
+  "HUP",
+  "N",
+  "NA"
+ ],
+ "asterisk.vicidial_lead_search_log.source": [
+  "admin"
+ ],
+ "asterisk.vicidial_lead_search_log_archive.source": [
+  "admin"
+ ],
+ "asterisk.vicidial_list.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADC",
+  "AFTHRS",
+  "B",
+  "CALLBK",
+  "DAIR",
+  "DC",
+  "DISPO",
+  "DNC",
+  "DNCC",
+  "DNCL",
+  "DROP",
+  "ERESET",
+  "ERI",
+  "HUP",
+  "INBND",
+  "INCALL",
+  "IVA",
+  "LAPSED",
+  "LB",
+  "LRERR",
+  "MAXNA",
+  "N",
+  "NA",
+  "NANQUE",
+  "NEW",
+  "NI",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NQ",
+  "PDROP",
+  "PU",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "TIMEOT",
+  "WN"
+ ],
+ "asterisk.vicidial_list_archive.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADC",
+  "AFTHRS",
+  "B",
+  "CALLBK",
+  "DAIR",
+  "DC",
+  "DNC",
+  "DNCC",
+  "DNCL",
+  "DROP",
+  "ERESET",
+  "ERI",
+  "HUP",
+  "INBND",
+  "IVA",
+  "LAPSED",
+  "LB",
+  "LRERR",
+  "MAXNA",
+  "N",
+  "NA",
+  "NANQUE",
+  "NI",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NQ",
+  "PDROP",
+  "PU",
+  "PURGED",
+  "Q1",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "TIMEOT",
+  "WN",
+  "XFER"
+ ],
+ "asterisk.vicidial_lists.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_lists.auto_active_list_rank": [
+  "0"
+ ],
+ "asterisk.vicidial_lists.campaign_cid_override": [
+  ""
+ ],
+ "asterisk.vicidial_lists.campaign_id": [
+  "FSFRESH",
+  "FSREVIVE",
+  "TESTCAMP"
+ ],
+ "asterisk.vicidial_lists.cid_group_id": [
+  "---DISABLED---"
+ ],
+ "asterisk.vicidial_lists.default_xfer_group": [
+  "---NONE---"
+ ],
+ "asterisk.vicidial_lists.drop_inbound_group_override": [
+  ""
+ ],
+ "asterisk.vicidial_lists.qc_statuses_id": [
+  ""
+ ],
+ "asterisk.vicidial_lists.status_group_id": [
+  ""
+ ],
+ "asterisk.vicidial_lists_fields.field_type": [
+  "TEXT"
+ ],
+ "asterisk.vicidial_log.campaign_id": [
+  "",
+  "CALLMENU",
+  "FSFRESH"
+ ],
+ "asterisk.vicidial_log.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADC",
+  "B",
+  "CALLBK",
+  "DAIR",
+  "DC",
+  "DISPO",
+  "DNC",
+  "DROP",
+  "INCALL",
+  "IVA",
+  "LB",
+  "LRERR",
+  "N",
+  "NA",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NQ",
+  "PDROP",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "QUEUE",
+  "WN"
+ ],
+ "asterisk.vicidial_log.term_reason": [
+  "ABANDON",
+  "AGENT",
+  "CALLER",
+  "NONE",
+  "QUEUETIMEOUT"
+ ],
+ "asterisk.vicidial_log.user_group": [
+  "",
+  "FS-B",
+  "FS-C"
+ ],
+ "asterisk.vicidial_log_archive.campaign_id": [
+  "",
+  "CALLMENU",
+  "FSFRESH"
+ ],
+ "asterisk.vicidial_log_archive.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADC",
+  "B",
+  "CALLBK",
+  "DAIR",
+  "DC",
+  "DISPO",
+  "DNC",
+  "DROP",
+  "HUP",
+  "INCALL",
+  "IVA",
+  "LB",
+  "LRERR",
+  "N",
+  "NA",
+  "NI1",
+  "NI2",
+  "NI3",
+  "NI4",
+  "NI5",
+  "NI6",
+  "NI7",
+  "NQ",
+  "PDROP",
+  "Q2",
+  "Q3",
+  "Q4",
+  "Q5",
+  "Q6",
+  "Q7",
+  "QUEUE",
+  "WN"
+ ],
+ "asterisk.vicidial_log_archive.term_reason": [
+  "ABANDON",
+  "AGENT",
+  "CALLER",
+  "NONE",
+  "QUEUETIMEOUT"
+ ],
+ "asterisk.vicidial_log_archive.user_group": [
+  "",
+  "FS-AI",
+  "FS-B",
+  "FS-C",
+  "FS-D"
+ ],
+ "asterisk.vicidial_music_on_hold.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_music_on_hold.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_nanpa_prefix_codes.lata_type": [
+  "C",
+  "M",
+  "P",
+  "S",
+  "V"
+ ],
+ "asterisk.vicidial_override_ids.active": [
+  "0"
+ ],
+ "asterisk.vicidial_phone_codes.tz_code": [
+  "ACST",
+  "AEST",
+  "AFT",
+  "AKST",
+  "ALMT",
+  "AMT",
+  "ART",
+  "AST",
+  "AWST",
+  "AZT",
+  "BNT",
+  "BOT",
+  "BRT",
+  "BST",
+  "BTT",
+  "CAST",
+  "CAT",
+  "CCT",
+  "CET",
+  "CKT",
+  "CLT",
+  "COT",
+  "CST",
+  "CVT",
+  "CXT",
+  "ChST",
+  "EAT",
+  "ECT",
+  "EET",
+  "EGT",
+  "EST",
+  "FJT",
+  "FKT",
+  "GAMT",
+  "GET",
+  "GFT",
+  "GILT",
+  "GMT",
+  "GST",
+  "HKT",
+  "HST",
+  "ICT",
+  "IRST",
+  "IST",
+  "JST",
+  "KGT",
+  "KST",
+  "MHT",
+  "MMT",
+  "MSK",
+  "MST",
+  "MUT",
+  "MVT",
+  "MYT",
+  "NCT",
+  "NPT",
+  "NRT",
+  "NST",
+  "NUT",
+  "NZST",
+  "PET",
+  "PGT",
+  "PHT",
+  "PKT",
+  "PMST",
+  "PONT",
+  "PST",
+  "PWT",
+  "PYT",
+  "SAST",
+  "SBT",
+  "SCT",
+  "SGT",
+  "SRT",
+  "SST",
+  "TJT",
+  "TKT",
+  "TLT",
+  "TMT",
+  "TRT",
+  "TST",
+  "TVT",
+  "ULAT",
+  "UYT",
+  "UZT",
+  "VET",
+  "VUT",
+  "WAT",
+  "WET",
+  "WFT",
+  "WIB",
+  "WST"
+ ],
+ "asterisk.vicidial_qc_codes.code": [
+  "QCCANCEL",
+  "QCFAIL",
+  "QCPASS"
+ ],
+ "asterisk.vicidial_qc_codes.qc_result_type": [
+  "CANCEL",
+  "FAIL",
+  "PASS"
+ ],
+ "asterisk.vicidial_screen_colors.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_screen_colors.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_scripts.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_scripts.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_server_carriers.active": [
+  "Y"
+ ],
+ "asterisk.vicidial_server_carriers.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_session_data.campaign_id": [
+  "FSFRESH"
+ ],
+ "asterisk.vicidial_sessions_recent.call_type": [
+  "V",
+  "X",
+  "Y"
+ ],
+ "asterisk.vicidial_sessions_recent.campaign_id": [
+  "",
+  "FSFRESH",
+  "FS_FRESH_FAILOVER"
+ ],
+ "asterisk.vicidial_sessions_recent_archive.call_type": [
+  "V",
+  "X",
+  "Y"
+ ],
+ "asterisk.vicidial_sessions_recent_archive.campaign_id": [
+  "",
+  "FSFRESH",
+  "FS_FRESH_FAILOVER"
+ ],
+ "asterisk.vicidial_settings_containers.container_type": [
+  "AMD_AGENT_OPTIONS",
+  "OTHER",
+  "PERL_CLI",
+  "PHONE_DEFAULTS",
+  "QC_TEMPLATE",
+  "READ_ONLY",
+  "TIMEZONE_LIST"
+ ],
+ "asterisk.vicidial_settings_containers.user_group": [
+  "---ALL---"
+ ],
+ "asterisk.vicidial_shifts.user_group": [
+  "---ALL---",
+  "FS_ADMIN"
+ ],
+ "asterisk.vicidial_state_call_times.user_group": [
+  "---ALL---",
+  "ADMIN"
+ ],
+ "asterisk.vicidial_status_categories.dead_lead_category": [
+  "N"
+ ],
+ "asterisk.vicidial_status_categories.sale_category": [
+  "N"
+ ],
+ "asterisk.vicidial_statuses.category": [
+  "QC",
+  "UNDEFINED"
+ ],
+ "asterisk.vicidial_statuses.status": [
+  "A",
+  "AA",
+  "AB",
+  "ADC",
+  "ADCT",
+  "AFAX",
+  "AFTHRS",
+  "AL",
+  "AM",
+  "B",
+  "CALLBK",
+  "CBHOLD",
+  "DAIR",
+  "DC",
+  "DEC",
+  "DNC",
+  "DNCC",
+  "DNCL",
+  "DROP",
+  "ERESET",
+  "ERI",
+  "INCALL",
+  "IQNANQ",
+  "IVA",
+  "IVRXFR",
+  "LRERR",
+  "LSMERG",
+  "MAXCAL",
+  "MLINAT",
+  "N",
+  "NA",
+  "NANQUE",
+  "NEW",
+  "NI",
+  "NP",
+  "PA",
+  "PDROP",
+  "PM",
+  "PU",
+  "QCFAIL",
+  "QUEUE",
+  "QVMAIL",
+  "RQXFER",
+  "SALE",
+  "SVYCLM",
+  "SVYEXT",
+  "SVYHU",
+  "SVYREC",
+  "SVYVM",
+  "Static",
+  "TIMEOT",
+  "XDROP",
+  "XFER"
+ ],
+ "asterisk.vicidial_timeclock_audit_log.user_group": [
+  "FS-D"
+ ],
+ "asterisk.vicidial_timeclock_log.user_group": [
+  "FS-D"
+ ],
+ "asterisk.vicidial_timeclock_status.status": [
+  "AUTOLOGOUT"
+ ],
+ "asterisk.vicidial_timeclock_status.user_group": [
+  "FS-D"
+ ],
+ "asterisk.vicidial_user_closer_log.campaign_id": [
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.vicidial_user_groups.agent_status_view_time": [
+  "N"
+ ],
+ "asterisk.vicidial_user_groups.user_group": [
+  "ADMIN",
+  "BC-ADMINS",
+  "D-ADMINS",
+  "FS-A",
+  "FS-AI",
+  "FS-B",
+  "FS-C",
+  "FS-D",
+  "FS-Test_Group",
+  "FS_ADMIN",
+  "FS_FULLADMIN",
+  "FS_LIMITEDADMIN",
+  "FS_TEAMLEADS"
+ ],
+ "asterisk.vicidial_user_log.campaign_id": [
+  "FSFRESH",
+  "FSREVIVE"
+ ],
+ "asterisk.vicidial_user_log.user_group": [
+  "FS-A",
+  "FS-AI",
+  "FS-B",
+  "FS-C",
+  "FS-D",
+  "FS-Test_Group"
+ ],
+ "asterisk.vicidial_users.active": [
+  "N",
+  "Y"
+ ],
+ "asterisk.vicidial_users.agent_choose_ingroups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.campaign_detail": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.change_agent_campaign": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.delete_campaigns": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.delete_ingroups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.delete_user_groups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.hotkeys_active": [
+  "0"
+ ],
+ "asterisk.vicidial_users.ignore_group_on_search": [
+  "0"
+ ],
+ "asterisk.vicidial_users.modify_campaigns": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.modify_ingroups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.modify_statuses": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.modify_usergroups": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.pause_code_approval": [
+  "0",
+  "1"
+ ],
+ "asterisk.vicidial_users.shift_override_flag": [
+  "0"
+ ],
+ "asterisk.vicidial_users.status_group_id": [
+  ""
+ ],
+ "asterisk.vicidial_users.user_code": [
+  ""
+ ],
+ "asterisk.vicidial_users.user_group": [
+  "---ALL---",
+  "ADMIN",
+  "BC-ADMINS",
+  "D-ADMINS",
+  "FS-A",
+  "FS-AI",
+  "FS-B",
+  "FS-C",
+  "FS-D",
+  "FS_ADMIN",
+  "FS_FULLADMIN",
+  "FS_TEAMLEADS"
+ ],
+ "asterisk.vicidial_xfer_log.campaign_id": [
+  "FS_FRESH_FAILOVER"
+ ],
+ "asterisk.vicidial_xfer_log_archive.campaign_id": [
+  "FS_FRESH_FAILOVER"
+ ],
+ "asterisk.vicidial_xfer_stats.campaign_id": [
+  "FSREVIVE"
+ ]
+}
