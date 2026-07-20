@@ -46,8 +46,20 @@ callcenterdb skills, 2026-07-20):
   is the "sub-source" Kinsey/Alex want routing on; MDB maps SC → partner via a lookup
   maintained from the Command Center affiliates page.
 - `CP` campaign code (WIAD, HOAD, AUAD, HOAD10 …).
-- `PD`, `CH` — meanings not documented in any internal skill (`PD:1` and `CH:HS` observed);
-  MDB Records carries both as columns. ❓ confirm with Brandon/Alex.
+- `PD`, `CH` — meanings not documented in any internal skill; observed values (profiled
+  lookups, 2026-07-20): PD ∈ {1, 2, …} (PD:1 dominant; PD:2 co-occurs with non-HS channels),
+  CH ∈ {HS, MIX, PUB, AFL, DIS, IB, TM, OS, …} — CH is clearly channel. ❓ confirm meanings
+  with Brandon/Alex.
+
+**The three FS codes are a lifecycle** (from `techss_` profiled lookups): **FSCode1** =
+acquisition identity (`|VT|PD|CH|SC|CP|`, stable order). **FSCode2** = source detail +
+call-center assignment (`|SS:<subsource-id>|SA:<subaffiliate-id>|C0:<KB/TD/CD/YD>|`).
+**FSCode3** = distribution batch provenance (`|BT:RU_RV_BR_CC39_03292026|CC:TD|` — revive
+batch name + call center). So routing history is appended in codes 2–3 while code 1 stays the
+immutable media identity. `techss_all_leads.unique_FSCode1`/`unique_FSCodes` are live
+decomposition views (dimension sizes: VT 9, PD 4, CH 15, SC ~122–512, CP ~262). Batch-tag
+format `RU_RV_<VT>_CC<n>_<date>` is itself informative — revive batches are named per
+vertical/call-center/date.
 
 Where it lives: `techss_dl` routing tables are **keyed** by FSCode1 (+ callCenter, RU),
 including `client_blocked_fscodes` (client source constraints — the Sunrun-style mechanism);

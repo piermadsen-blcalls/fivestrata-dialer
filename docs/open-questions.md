@@ -59,14 +59,16 @@ Last updated: 2026-07-17.
 
 ### FS-code questions (added 2026-07-20; context in reporting/kb-wi-dashboard-spec.md)
 
-| # | Question | Likely owner |
-|---|---|---|
-| F1 | `PD:` and `CH:` tag meanings (`PD:1`, `CH:HS` observed; MDB Records carries both as columns) | Brandon / Alex |
-| F2 | Tag contract: is the string always `\|VT\|PD\|CH\|SC\|CP\|` in that order? Any other tags possible (C0? FSMarket?)? Fixed vs extensible? | Joseph |
-| F3 | Who mints the FS code, where, and when (lead purchase? LeadOps intake?) — is there a generator spec/dictionary we can consume instead of parsing strings? | Joseph |
-| F4 | FSCode1 vs FSCode2 vs FSCode3 roles (techss_dwh/techss_audit carry all three; dialer custom tables carry 1–2) | Joseph / Cromwel |
-| F5 | SC (seller-code) canonical dictionary — the Command Center affiliates lookup: is it a table/API we can read (techss_dl?), and how do new SCs get registered? | Alex / Joseph |
-| F6 | Immutability: can a lead's FS code change across its life (revive re-tagging)? Fresh/revive appears NOT to be encoded in the code itself (lists like RU0/RU1 carry it) — confirm | Joseph |
-| F7 | `client_blocked_fscodes` enforcement: where in today's flow is FS-code-level client blocking applied (LeadOps? Command Center?), so the platform's router replicates it (Sunrun case) | Joseph |
-| F8 | T3 payload contract: which field(s) of the LeadConduit delivery carry the FS code(s), and do we receive them verbatim? | Joseph |
-| F9 | Cardinality/stability: distinct FSCode1 count and growth rate (it keys techss_dl routing tables — matters for our transfer-priority mirror) | Cromwel |
+*Updated 2026-07-20 from the fivestratadb profiled lookups (offline) — several answered without a live query.*
+
+| # | Question | Status | Likely owner |
+|---|---|---|---|
+| F1 | `PD:` and `CH:` tag meanings | **Values enumerated, meanings still open.** PD ∈ {1, 2, +2 more} (PD:1 dominant; PD:2 co-occurs with CH:MIX/PUB/AFL/OS — hypothesis: party-data or paid/direct flag). CH ∈ {HS, MIX, PUB, AFL, DIS, IB, TM, OS, +7} — clearly channel (AFL affiliate, PUB publisher, IB inbound, TM telemarketing/SMS?); what HS stands for is the open bit | Brandon / Alex |
+| F2 | Tag contract / other tags | **Largely answered:** FSCode1 is consistently `\|VT\|PD\|CH\|SC\|CP\|` in that order (rare truncation: missing CP). Additional tags live in FSCode2/3, not FSCode1: `SS` (numeric sub-source id), `SA` (sub-affiliate id), `C0`/`CC` (call center: KB/TD/CD/YD), `BT` (batch tag). Confirm the writer enforces order | Joseph |
+| F3 | Who mints it, where; generator spec/dictionary | Open — but `techss_all_leads.unique_FSCode1` / `unique_FSCodes` views already decompose codes into key/value pairs (a live dictionary to read) | Joseph |
+| F4 | FSCode1 vs 2 vs 3 roles | **Answered structurally:** FSCode1 = acquisition identity (media taxonomy). FSCode2 = source detail + call-center assignment (`\|SS:…\|SA:…\|C0:KB\|`). FSCode3 = distribution batch provenance (`\|BT:RU_RV_BR_CC39_03292026\|CC:TD\|` — revive batch name + call center). Confirm semantics with Joseph | Joseph / Cromwel |
+| F5 | SC canonical dictionary | **Partial:** `unique_FSCodes` view enumerates ~512 SC values (some junk/legacy). SC→partner-name mapping still lives in the Command Center affiliates page lookup — is that a readable table/API? | Alex / Joseph |
+| F6 | Immutability | **Strong inference:** routing/batch assignment is stamped into FSCode2 (C0) and FSCode3 (BT/CC), leaving FSCode1 as immutable acquisition identity. Confirm nothing rewrites FSCode1 | Joseph |
+| F7 | `client_blocked_fscodes` enforcement point | **Structure answered:** rows are client × SC × CP with `approved` 0/1 + startDate — an allow/deny list at sub-source×campaign granularity (the Sunrun mechanism). WHERE it's enforced in the flow is still open | Joseph |
+| F8 | LeadConduit payload fields for FS codes | Open | Joseph |
+| F9 | Cardinality | **Answered:** small dimensions — VT 9, PD 4, CH 15, SC ~122–512 (view-dependent), CP ~262. Trivial for routing tables | — |
