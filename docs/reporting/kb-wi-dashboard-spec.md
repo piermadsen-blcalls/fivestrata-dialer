@@ -35,11 +35,33 @@ Contact, Complete, Lapsed, Qualified, Abandon, AlmostSale, tAtt, tSucc, tAgree, 
 
 ### FS code taxonomy
 
-Format: `|VT:WI|PD:1|CH:HS|SC:ALI|CP:WIAD|` — pipe-delimited key:value tags parsed by position:
-`VT` vertical (WI=windows) · `PD` (?) · `CH` channel · `SC` **sub-source** (the slicing key
-Kinsey/Alex want) · `CP` campaign. The dashboard parses `SC:` per-row with MID/FIND. Our
-platform should store these as first-class columns on the lead (we already carry `sub_source`
-and `vertical`; confirm PD/CH/CP meanings with Brandon/Alex and add if needed).
+Format: `|VT:WI|PD:1|CH:HS|SC:ALI|CP:WIAD|` — FiveStrata's composite lead-classification code,
+stamped at lead intake and carried through LeadConduit → dialers → partner reports. It is the
+**universal slicing key across the whole ecosystem** (per the fivestrataops/fivestratadb/
+callcenterdb skills, 2026-07-20):
+
+- `VT` vertical: WI windows, BR bathroom remodel, HW home warranty, HS home security, SL solar
+  (MDB also uses VTO "vertical original", and Hours-tab variants with F/FR suffix = Fresh).
+- `SC` **source/seller code** — the media partner (AWB=AutoWeb, CTD, ALI, ASL, BYR seen). This
+  is the "sub-source" Kinsey/Alex want routing on; MDB maps SC → partner via a lookup
+  maintained from the Command Center affiliates page.
+- `CP` campaign code (WIAD, HOAD, AUAD, HOAD10 …).
+- `PD`, `CH` — meanings not documented in any internal skill (`PD:1` and `CH:HS` observed);
+  MDB Records carries both as columns. ❓ confirm with Brandon/Alex.
+
+Where it lives: `techss_dl` routing tables are **keyed** by FSCode1 (+ callCenter, RU),
+including `client_blocked_fscodes` (client source constraints — the Sunrun-style mechanism);
+`techss_dwh`/`techss_audit` carry FSCode1/2/3 (2/3 roles ❓). On the dialer side it rides in
+custom tables (KB `kombea_fs_list_lead_results` has per-lead FSCode1; KB/TD custom lead tables
+carry FSCode1/FSCode2 + oleadid). Partner daily reports (KB/TD/CD) aggregate results at
+`(SourceId, FsCode1, State)` — the same shape as this dashboard's fact tabs, which is exactly
+the aggregation ceiling Brandon complained about: FS code is the finest source dimension
+vendors return. Owning the platform dissolves that ceiling — the code becomes parsed lead
+attributes and any grain below it is queryable.
+
+Platform intake should store the raw `fs_code` string plus parsed columns (we carry `vertical`
+and `sub_source` already; add `fs_code`, `campaign_code`, and PD/CH once their meanings are
+confirmed).
 
 ### Transfer funnel
 
