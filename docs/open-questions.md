@@ -56,3 +56,17 @@ Last updated: 2026-07-17.
 - **Fact-stream schema**: the row-per-dial event model (ts, number, dispo, duration, session, script/prompt version, call center, client, geo, sub-source) + retention tiers (hot 30–90d → warehouse → archive).
 - **DID management**: pool sizing for pilot volume, cap counters, rotation/retirement automation via Telnyx number APIs.
 - **Recordings**: storage target (S3?), stereo capture for QA/dead-air analysis, retention policy.
+
+### FS-code questions (added 2026-07-20; context in reporting/kb-wi-dashboard-spec.md)
+
+| # | Question | Likely owner |
+|---|---|---|
+| F1 | `PD:` and `CH:` tag meanings (`PD:1`, `CH:HS` observed; MDB Records carries both as columns) | Brandon / Alex |
+| F2 | Tag contract: is the string always `\|VT\|PD\|CH\|SC\|CP\|` in that order? Any other tags possible (C0? FSMarket?)? Fixed vs extensible? | Joseph |
+| F3 | Who mints the FS code, where, and when (lead purchase? LeadOps intake?) — is there a generator spec/dictionary we can consume instead of parsing strings? | Joseph |
+| F4 | FSCode1 vs FSCode2 vs FSCode3 roles (techss_dwh/techss_audit carry all three; dialer custom tables carry 1–2) | Joseph / Cromwel |
+| F5 | SC (seller-code) canonical dictionary — the Command Center affiliates lookup: is it a table/API we can read (techss_dl?), and how do new SCs get registered? | Alex / Joseph |
+| F6 | Immutability: can a lead's FS code change across its life (revive re-tagging)? Fresh/revive appears NOT to be encoded in the code itself (lists like RU0/RU1 carry it) — confirm | Joseph |
+| F7 | `client_blocked_fscodes` enforcement: where in today's flow is FS-code-level client blocking applied (LeadOps? Command Center?), so the platform's router replicates it (Sunrun case) | Joseph |
+| F8 | T3 payload contract: which field(s) of the LeadConduit delivery carry the FS code(s), and do we receive them verbatim? | Joseph |
+| F9 | Cardinality/stability: distinct FSCode1 count and growth rate (it keys techss_dl routing tables — matters for our transfer-priority mirror) | Cromwel |
