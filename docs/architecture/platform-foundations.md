@@ -33,6 +33,8 @@ Last updated: 2026-07-17.
 
 Open decision. Sean's instinct on the call: much of the sales-allocation/list-ordering logic "won't be too hard on the Vici side." Ashley's endorsement plus our replica expertise weigh toward A or C. Telnyx voice-AI product capabilities (native AI agents, media streaming) may decide it — investigate what Telnyx gives out of the box before committing.
 
+> **Update 2026-07-20 — V1 discovered & documented:** V1 is already option-B-shaped — Supabase queue/lease orchestration + Retell voice agents, no ViciDial (see [v1-build.md](v1-build.md)). Its failure was economic (voice-AI cost ≈ $157/sale), not architectural — the exact cost line the soundboard-first hybrid targets.
+>
 > **Update 2026-07-20 — public-docs capability review done:** see [telnyx-capability-review.md](telnyx-capability-review.md).
 > Headline: Telnyx replaces AMD, bridge/transfer/conference, pre-staged clip playback, bidirectional media streaming (L16), DID lifecycle (bulk order/release + reputation API), and optionally the whole STT→LLM→TTS loop (custom-LLM AI Assistants) — but has **zero campaign semantics** (no pacing, hopper, lists, dispositions, DNC, calling windows). Sharpest new fact for the fork: **with all-AI agents, predictive pacing loses most of its purpose** (no scarce human pool to keep busy), which weakens option A's biggest advantage. Remaining unknowns need account keys + a PoC: playback-start latency for pre-staged clips (critical for soundboard-first), concurrency defaults, warm-transfer fee scope. Still ➤ direction, not ✅ decided.
 
