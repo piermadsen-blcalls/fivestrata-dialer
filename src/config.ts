@@ -14,7 +14,10 @@ export const config = {
 
   supabase: {
     url: required('SUPABASE_URL'),
-    serviceRoleKey: required('SUPABASE_SERVICE_ROLE_KEY'),
+    // Supabase's current key naming is sb_secret_ (SUPABASE_SECRET_KEY); the
+    // legacy service_role name is accepted as a fallback.
+    serviceRoleKey:
+      process.env.SUPABASE_SECRET_KEY ?? required('SUPABASE_SERVICE_ROLE_KEY'),
   },
 
   telnyx: {
