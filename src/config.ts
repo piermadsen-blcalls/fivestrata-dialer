@@ -10,7 +10,9 @@ function required(name: string): string {
 
 export const config = {
   port: Number(process.env.PORT ?? 3000),
-  host: process.env.HOST ?? '0.0.0.0',
+  // 127.0.0.1 avoids Windows Firewall prompts in local dev; deployments that
+  // must accept external traffic (e.g. LeadConduit posts) set HOST=0.0.0.0.
+  host: process.env.HOST ?? '127.0.0.1',
 
   supabase: {
     url: required('SUPABASE_URL'),

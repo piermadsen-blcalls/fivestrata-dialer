@@ -63,15 +63,22 @@ export async function routeLead(lead: InboundLead): Promise<RouteResult> {
   // call-center selection, so leads routed to ccai must be checked here.
 
   // TODO: replace hardcoded list with per-vertical list/campaign mapping.
-  const vici = await nonAgentApi.addLead({
-    phone_number: lead.phone_number,
-    list_id: '999',
-    first_name: lead.first_name,
-    last_name: lead.last_name,
-    postal_code: lead.postal_code,
-    vendor_lead_code: data.id,
-    duplicate_check: 'DUPLIST',
-  });
+  // Lead persistence must survive a dead/unreachable dialer (async-always):
+  // the lead stays in 'vici_error' for later re-queue rather than being lost.
+  let vici;
+  try {
+    vici = await nonAgentApi.addLead({
+      phone_number: lead.phone_number,
+      list_id: '999',
+      first_name: lead.first_name,
+      last_name: lead.last_name,
+      postal_code: lead.postal_code,
+      vendor_lead_code: data.id,
+      duplicate_check: 'DUPLIST',
+    });
+  } catch (err) {
+    vici = { ok: false, raw: `vicidial unreachable: ${(err as Error).message}`, fields: [] };
+  }
 
   if (!vici.ok) {
     await supabase.from('leads').update({ status: 'vici_error' }).eq('id', data.id);
