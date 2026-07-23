@@ -1,6 +1,6 @@
 # CLAUDE.md — AICC (AI Call Center Platform)
 
-Project context for Claude Code. Read this first, then the files in "Repo map" below. Everything here was current as of 2026-07-20 (docs merged from the OneDrive AICC workspace; TypeScript scaffold in place).
+Project context for Claude Code. Read this first, then the files in "Repo map" below. Everything here was current as of 2026-07-22 (2nd scoping call folded in; TypeScript scaffold in place).
 
 ## Standing instructions
 
@@ -13,14 +13,20 @@ Project context for Claude Code. Read this first, then the files in "Repo map" b
 
 | File | What it holds |
 |---|---|
-| `README.md` | Living project doc: vision, stack, quasi-decided list (12 items), repo layout, open questions, action items, people |
+| `README.md` | Living project doc: vision, stack, quasi-decided list (14 items), repo layout, open questions, action items, people |
 | `docs/meetings/2026-07-17-scoping-call.md` | Distilled founding meeting (59m transcript → 12 topic sections + scope-coverage map) |
+| `docs/meetings/2026-07-22-scoping-call-2.md` | Distilled 2nd scoping call (39m): must-have list, revive intake, cadence, results DB, DID mgmt, IVA/contact-rate, recordings, KPIs |
 | `docs/scoping-outline-redlined.md` | Sean's scope outline with inline ✅/➤/❓ answers — the shareable decided-vs-open summary (Word/Google Doc versions live in Drive, doc id `1r5FL-ySMmLCcUo_YFSPN9POWtXY2q29O4XJDWgbzHWg`) |
 | `docs/open-questions.md` | Business/ops questions (15) + technical access list (T1–T11) + design/spec questions |
-| `docs/architecture/platform-foundations.md` | ViciDial evaluation, build options A/B/C, Telnyx, voice strategy, LeadConduit, data-layer tiers, no-human-layer implications |
+| `docs/architecture/platform-foundations.md` | ViciDial evaluation, build options A/B/C, Telnyx, voice strategy, LeadConduit, data-layer tiers, no-human-layer implications, schema strategy |
+| `docs/architecture/telnyx-capability-review.md` | T2 public-docs half: Call Control, AMD, media streaming, DID APIs, pricing model inputs |
+| `docs/architecture/v1-build.md` | V1 (Retell + Supabase queue) architecture + post-mortem economics (~$157/sale, killed 7/8) — T1 |
+| `docs/reporting/kb-wi-dashboard-spec.md` | Ashley's daily dashboard dissected (T9): fact grains, KPI dictionary, KB cost model, schema mapping |
 | `docs/transcripts/` | Raw meeting transcripts |
+| `docs/call-scripts/` | Call-center script workbooks per vertical |
+| `scripts/` | verify-setup, e2e-test, rest-introspect, v1-deepdive, v1-archive (Node/tsx) |
 | `src/` | TypeScript/Fastify scaffold: VICIdial API wrappers (option A/C — provisional until the Telnyx review), Telnyx client + webhooks, Supabase client, LeadConduit intake, lead router with two-phase client-selection stub |
-| `supabase/migrations/` | Schema: leads (OLeadID), calls (per-dial grain), call_turns (per-turn clip decisions), call_events, voice_packs/voice_clips, dids (1,500-dial caps), clients, transfer_priorities, scripts |
+| `supabase/migrations/` | 0001 schema: leads (OLeadID), calls (per-dial grain), call_turns (per-turn clip decisions), call_events, voice_packs/voice_clips, dids (1,500-dial caps), clients, transfer_priorities, scripts · 0002: reporting views emulating Ashley's dashboard. **The Supabase project is shared with V1** (Pier can't create more projects) — never modify/drop V1 objects (dial_queue, call_log, retell_*, agent_routing…) |
 
 ## Project in one paragraph
 
@@ -41,12 +47,12 @@ Augment-not-replace · own the data, row-per-dial granular fact stream (~62M row
 
 ## Stack
 
-Telnyx VoIP/voice-AI (decided) · ViciDial candidate dialer core (Asterisk/MariaDB/PHP/Perl; APIs: NON-AGENT_API.txt + AGENT_API.txt at vicidial.org/docs — Agent API is the likely AI-agent seam; wrapped in `src/clients/vicidial/`) · Supabase preferred app backend (not hard req) · AWS + Snowflake available for analytics (AutoWeb impression-logging precedent) · LeadConduit (ActiveProspect; REST/JSON; flows/sources/recipients; Firehose worth evaluating) · Command Center emulation for transfer priorities · Node.js 20+/TypeScript/Fastify for the platform service (Node not yet installed on Sean's box as of 2026-07-20).
+Telnyx VoIP/voice-AI (decided) · ViciDial candidate dialer core (Asterisk/MariaDB/PHP/Perl; APIs: NON-AGENT_API.txt + AGENT_API.txt at vicidial.org/docs — Agent API is the likely AI-agent seam; wrapped in `src/clients/vicidial/`) · Supabase preferred app backend (not hard req) · AWS + Snowflake available for analytics (AutoWeb impression-logging precedent) · LeadConduit (ActiveProspect; REST/JSON; flows/sources/recipients; Firehose worth evaluating) · Command Center emulation for transfer priorities · Node.js 20+/TypeScript/Fastify for the platform service (Node 24 LTS installed 2026-07-20).
 
 ## Immediate unblockers (full table in docs/open-questions.md)
 
 T1 Pier's V1 build (repo/prompts/Telnyx config — top priority, seeds option B) · T2 Telnyx keys + capability review (gates the A/B/C fork) · T3 LeadConduit API access (Joseph) · T4 pre-auth endpoint spec (Joseph) · T5 Command Center transfer-priority surface · T6 techss_ disposition write-back contract · T7 Supabase · T8 AWS/Snowflake · T9 Ashley's daily dashboard · T10 ViciDial sandbox on EC2 · T11 DNC/validation surface.
 
-## Next session agenda (scope-doc sections not reached 7/17)
+## Still-open agenda (after 7/22)
 
-Call-flow mechanics (warm-transfer leg: bridging, crediting, no-answer path) · scope boundary (IN/OUT of v1, what "dialing paused" means) · day-to-day operation & control inventory · DID strategy, recordings, DNC inheritance · economics (cost baselines vs KB/TD/CD, canned-coverage split point) · milestones/success thresholds for the 2–3 week slice.
+7/22 covered DID strategy, recordings retention, cadence controls, the results-DB shape, IVA/contact-rate, and KPI root-cause paths (see `docs/meetings/2026-07-22-scoping-call-2.md`). **Still open:** warm-transfer leg mechanics (bridging, crediting, no-answer path) · scope boundary (IN/OUT of v1, what "dialing paused" means) · seat-by-seat control inventory · DNC inheritance · economics (cost baselines vs KB/TD/CD, canned-coverage split point) · formal success thresholds for the ~3-week slice. Reaffirmed target: usable dial-able testbed in ~3 weeks.

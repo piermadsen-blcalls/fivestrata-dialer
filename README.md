@@ -1,7 +1,7 @@
 # AICC — AI Call Center Platform (ccai)
 
 Living context doc. Keep this current — this repo's markdown IS the project memory.
-Last updated: 2026-07-20 (docs merged from the OneDrive AICC workspace; scaffold added).
+Last updated: 2026-07-23 (2nd scoping call folded in; docs synced from the ccai sandbox — **this repo, piermadsen-blcalls/fivestrata-dialer, is canonical**).
 
 ## What this is
 
@@ -44,8 +44,10 @@ Timeline pressure: 2–3 week target for a v1 slice. Dialing paused during the b
 8. Prompting mechanism is a first-class feature: support both hard-coded script variants (stored, versioned, AI selects A/B/C) and generalized guidelines, and make them testable against each other.
 9. **Voice strategy: soundboard-first, TTS as fallback.** Pre-generate canned audio *in the AI voice*; play canned clips for common paths, synthesize the long tail. Voice pack (canned library + TTS voice + script version) swaps as a unit. **The AI is the soundboard operator** — every clip selection is a logged per-turn decision (context → clip → outcome), giving the optimization loop; learnings transfer to the human soundboard floors.
 10. **No human screener/closer layer** (working assumption unless expressly redirected). AICC → client warm transfer, end-to-end AI.
-11. `OLeadID` is the cross-system key; dispositions write back to `techss_` tables so MDB and dashboards keep working.
-12. Native DID retirement caps (~1,500 dials/DID) — a differentiator no current call center offers.
+11. **Results DB is a new, separate store** (Snowflake, per-dial + per-turn) capturing *every* call — not FiveStrata's current results tables. `OLeadID` keys it back, and dispositions still **write back both ways** to `techss_` so MDB and dashboards keep working. (7/22.)
+12. Native DID retirement caps (~1,500 dials/DID) + **individual benchmark-driven retirement** via the Telnyx number API — differentiators no current call center offers. Telnyx DIDs ~$1 (bulk 60–70¢), monthly subscription.
+13. **Platform must-haves (Pier, 7/22):** results DB, call-recording storage (5-yr legal, FS owns the backup), DID management, and A/B testing of AI agents/scripts.
+14. **Contact rate is compromised by IVAs** — logged as contacts but not real conversations; lean toward **connection rate** and live IVA disposition. Match the call centers' current dial pace (don't max out) to avoid carrier spam-blocks. (7/22.)
 
 ## This repo (scaffold)
 
@@ -65,14 +67,21 @@ src/
   services/
     leadRouter.ts            intake -> persist -> VICI list; two-phase client selection stub
     callLog.ts               granular call/event persistence
-supabase/migrations/         schema: leads (OLeadID), calls (per-dial), call_events,
+supabase/migrations/         0001: leads (OLeadID), calls (per-dial), call_events,
                              call_turns (per-turn clip decisions), voice_packs/voice_clips,
                              dids (1,500-dial caps), clients, transfer_priorities, scripts
+                             0002: v_daily_results / v_rdaily / v_rlist reporting views
+scripts/                     verify-setup, e2e-test, rest-introspect, v1-deepdive, v1-archive
 docs/
   scoping-outline-redlined.md   the scope doc with ✅/➤/❓ answers (shareable summary)
-  open-questions.md             business/ops questions + technical access list T1–T11
+  open-questions.md             business/ops questions + access list T1–T11 + FS-code F1–F9
   architecture/platform-foundations.md   ViciDial eval, options A/B/C, Telnyx, data tiers
+  architecture/telnyx-capability-review.md  T2 public-docs review (Call Control, AMD, DIDs, pricing)
+  architecture/v1-build.md      V1 (Retell) architecture + post-mortem economics (T1)
+  reporting/kb-wi-dashboard-spec.md      Ashley's dashboard dissected (T9) — the emulation target
   meetings/2026-07-17-scoping-call.md    distilled founding meeting
+  meetings/2026-07-22-scoping-call-2.md  distilled follow-up (must-haves, DID/recordings/cadence, IVAs)
+  call-scripts/                 call-center script workbooks per vertical
   transcripts/                  raw meeting transcripts
 ```
 
@@ -83,7 +92,7 @@ A-vs-B question.
 
 ### Getting started
 
-1. Install Node.js 20+ (not yet installed on this box as of 2026-07-20), then `npm install`.
+1. Node.js 24 LTS is installed on Sean's box (2026-07-20); after cloning, run `npm install`.
 2. Copy `.env.example` to `.env`; fill Supabase, Telnyx, VICIdial credentials. **Never commit `.env`.**
    For `SUPABASE_SERVICE_ROLE_KEY` use the **secret** key (`sb_secret_...` / "service_role") —
    not the `sb_publishable_` key, which is client-safe only and can't do server-side operations.
@@ -96,9 +105,9 @@ See [docs/open-questions.md](docs/open-questions.md) — business/ops (15) + the
 
 ## Action items
 
-- **Sean**: summarize decided vs open, send to team; schedule follow-up session early week of 7/20; brief Pier (incl. Ashley's ping-timing correction).
-- **Ashley**: share the daily dashboard; review summary and add input async.
-- **Team**: next session covers the scope-doc sections not reached (call flow mechanics, scope boundary, ops controls, DID/recordings/DNC, economics, milestones).
+- **Sean**: fold the 7/22 call into the doc, simplify (decisions + open questions), circulate later today *(done — this update)*. Keep pinging the team through the build.
+- **Still open after 7/22**: name the pilot vertical; define "dialing paused"; draw v1 in/out; set formal success thresholds; pull KB/TD/CD cost baselines; pin the crediting rules and techss_ write-back contract; DNC inheritance.
+- **Unblockers** (see open-questions T1–T11): T2 Telnyx keys (playback PoC, concurrency, pricing), T3/T4 LeadConduit + pre-auth spec (Joseph), T6 write-back contract, T8 Snowflake/AWS for the results DB.
 
 ## People
 

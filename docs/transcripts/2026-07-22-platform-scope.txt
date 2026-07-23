@@ -1,0 +1,257 @@
+Platform scope-20260722_111248-Meeting Recording
+July 22, 2026, 6:12PM
+39m 15s
+Sean Stott started transcription
+Kinsey Jackson   0:03process, but we also have this. Let us tell you why it's better. We are transitioning our whole entire soundboard over to this, or within the next one year, we want to transition soundboard to AR, whatever our plan is based on the progression of the performance of AI. But right now, if we start to tell them, hey, we're doing AI, we might get a lot that like preemptivelypause or panic a little bit.
+Sean Stott   0:28Mhm.Yeah, this is a loaded term.
+Kinsey Jackson   0:31So...Yeah, it is. Not a lot of people trust it quite yet. They're worried that it sets them up for a different kind of lawsuit. So for me, it's, let's actually prove the product first, because we know volume will be really low. Once we prove the product,
+Sean Stott   0:47Okay.
+Kinsey Jackson   0:52then we need, we have to have those conversations with clients. Because likely, if one is better than the other, we'll start to push more here. Now, if we decide to use AI completely different and spin up a hot transfer, then we have to go sell them a completely new kind of transfer.
+Sean Stott   1:01Mhm.
+Kinsey Jackson   1:10So, yeah. I mean, and this is what we're seeing with American Home Shield right now, right? Well, tell me about the voice. Well, what's your quality control? Well, send me the script. And it's like, they're already wary about even letting us test. So
+Sean Stott   1:27Yeah.
+Kinsey Jackson   1:29Those small mom and pop shops probably won't care.But they also make up $2000 of our revenue, not 100,000, 50K, 30K, so...Anyway, is that helpful?
+Sean Stott   1:42Yeah, for sure. Yeah, so who runs a day-to-day operation? So users and what they touch, we could scope this out a little bit more as we kind of figure out what the solution looks like. But we did have, I do have Ashley's reporting, so we do have all of the daily sort of controls that we need to have available.
+Kinsey Jackson   1:43Ops.
+Sean Stott   2:00on that dashboard. So I do have that and that has been integrated.which is super helpful.
+Pier Madsen   2:09Can we do a like a deep dive on the?
+Sean Stott   2:09Ah.
+Pier Madsen   2:13Like when we set up on the data side, like when we set up a new call center.Alex, from your perspective, like what is like the easiest way, like what call centers that you have to manually send leads to? Like, is that an easy process or what's like the best process to get revived leads to a call center? How can we build that in an idealistic state for you?
+Alex Lin   2:34Um, I mean...I would say...Maybe KomBea is slightly easier. It's just in the command center. We upload the file and then there's like, select the vertical and then for like bathroom and windows, there's like another tab of like, it's the bathroom cluster and then I just tag Ashley so she gets a confirmation e-mail. I mean, I know with our.Yeah, so I would guess that's probably the easiest. There's already a flow there.
+Pier Madsen   3:05And not necessarily like...Like, is that going to be, is like, can you think of a potentially better way to do it? Or is that your favorite way?
+Alex Lin   3:14Um...I...I mean, it would be great if it was automated and like Ashley was like 5000 to a thing and she could just click a button. But given, because when we revive, we just revive them into files. Like it comes from the back end we revive X amount Monday morning that I revive and then we have that much like when I was sending you batches. So I just have to pull from that.
+Sean Stott   3:23Yeah, I was going to say it would be great if Alex didn't have to do it.
+Pier Madsen   3:39Mhm.
+Alex Lin   3:41however much is requested and then put it in a place. So.Um...I mean, at least nothing comes to mind. I don't know how it could be more automated since it's not just like coming in and out of a database. It's getting like extracted into like an Excel file and then we're working from there.
+Sean Stott   4:05Yeah, like the problem is you're kind of like doling it out, and so one person has to control that. Otherwise, we're going to send out dupes to people.
+Alex Lin   4:06But.Yeah.Yeah.
+Brandon Titensor   4:10Yeah.In our in order to kind of improve the process right now, we'd have to improve the current database and revive process as well. So we'd have to basically make revive, change the entire revive process so that it only lives in the database. And then if it only lives in the database.then we could just do like a database query type of thing that would send, that would automate the revive process to your call center. But then we'd have to change it for all the call centers too, or do something. We would require doing all the back end on our side 1st and redoing that process.
+Sean Stott   4:49Yeah, and then there has to be like a feedback of which ones already got sent out.You know.
+Pier Madsen   4:59Okay.
+Alex Lin   4:59It, I mean, not that I wouldn't love for it to be automated, but...It sounds like for the type of like, or how large of a endeavor that would be.I mean, if it can be done, that's definitely great, because I think it could help with other things too. But if it's just so we aren't having to manually upload batches, I don't think that's critically important.
+Pier Madsen   5:25I agree, but in.In other terms, like having a place on this new platform.an endpoint, a place where you can hit, that uploads all of these new revived leads into a database. And then once the leads are in the database, we need like the whole dialing schedule, where that's when, like, I assume, Ashley, your expertise would come into play, how call centers are currently handling these volumes of leads and deciding who gets dialed.we have like dialing patterns. Is there, like I assume, especially as we start testing functionality, that we would want to establish, like potentially establish different dialing patterns. Like we'd want this batch of leads being dialed on this pattern and maybe we want to test this batch of leads on this separate pattern.So, we need a way to establish dialing patterns that leads can go through. Is that is is that standard call center practice for testing?
+Ashley Smith   6:26So I want to jump in a little bit. That's something that we've, we currently say, oh, we tell the call centers, you can call the leads two times a day. You, we don't, we want the, we do not want them called within two hours of one another. And then we give them a max attempt.
+Alex Lin   6:35I.
+Ashley Smith   6:45And then we give them the zip code white list and say, here, here's who you're able to call. And then based off of the zip code, you know, 8 o'clock, AM, everybody's not available. So depending on which Mountain Standard Time, specific time you're in, when it opens up and when it closes.It's pretty generic of what we do. What I would like to do and what I was mentioning last time with this technology is actually dive in and say, but wait a second, should we, is there something in the data? Because we have years and years worth of data that hasn't been analyzed.
+Pier Madsen   7:05Okay.
+Ashley Smith   7:24Can we look at that and say, hold on, we should actually only call a lead once. Or if we call a lead in the morning, because at my previous call center, if we called a lead in the morning, we would never call it again in the morning again if we didn't contact them until we'd called it in the afternoon and then in the evening. And so is there something in our data that
+Pier Madsen   7:41Sure.
+Ashley Smith   7:45tells us to do that, or can we start testing it? So those are things that I would like to use AI to help us figure out inside the data that we already have, because we are not currently doing that. It's very simple, but I think there's something more complex that we could create that would help us contact people better.
+Sean Stott   8:04Yeah, anything that we can like have as a standalone variable, we can probably test on it. So whether that's, you know, hour gap between or time of day, you know, time to wait, that kind of stuff, like I think we could encode those as variables that we could test. So knowing them.is half the battle and so you just told us them I think that's super helpful.And I'm not taking notes anymore because I'm just going to let the AI do it. It's so much easier.
+Pier Madsen   8:34Yeah.So currently.The FiveStrata back end dictates when.calls happen like when a customer gets dialed. So like we'll send it to them and you send us the rule, you send the call center the rules that dial it with a two hour separation only twice a day until you hit the cap of number of dials and then it's dead.
+Ashley Smith   8:56Yes, we.Very, very basic rules. And then LIFO versus FIFO. So if it's fresh, we want to call the lead as soon as it hits us. We want to call it first. And if it's revived, we want to call or we want to call the fresh leads that have already come in as quickly as possible.
+Pier Madsen   8:59So...Sure.
+Ashley Smith   9:19And then our revived leads, we want to finish calling them before we call on the next set of revived leads. So again, it's very basic of what we give them, but I would like it to be.more intelligent. And I don't know how that looks inside of the Vic dialer, right? If they just code that and it just randomly does that, or if they have coded some other variables in there.
+Pier Madsen   9:47And then, on each of those dials, current.traditional call center setup, are they responding with like every time there's a no answer, do they write back to FiveStrata somehow and we save it?
+Ashley Smith   10:03No, so we don't, I mean, just in our daily and weekly reports, we get the data. The only time that they're ever providing us like, here is what the call turned into directly back to FiveStrata is when it's a DNC ora qualified lead and then we get all of the history. Go ahead.
+Brandon Titensor   10:21I would.I would say, though, it would be nice to do it every time. I know that would increase our database a lot, but it'd be super nice if we could have a record of every single call that our call centers make so that we can do further data analysis on it.
+Sean Stott   10:39Oh, that's definitely a requirement.
+Pier Madsen   10:41Yeah, in my mind, yeah, every call that's made, it's going to write to like a results database or a dispo database and have like a lead ID and result.
+Sean Stott   10:46Yeah, and like...It's hard to optimize on that today because like they're storing all that stuff in like a really slow MySQL database and whatnot, but we have access to Snowflake. We could put it on Snowflake and make it really performant and then actually use the AI to actually analyze what we did. So that's definitely going to be foundational.
+Pier Madsen   11:07So it'll be a new database and it won't be connected to any of the current FiveStrata back end.which I think is probably the best call.
+Sean Stott   11:13I mean, it'll have a key, it'll have a key, you know, all that stuff, but um, I think...
+Pier Madsen   11:19but not written to whatever results table the FiveStrata backend currently uses.
+Brandon Titensor   11:25We'd have to create a new API for that then. I think, well, Joseph would, or Sean, whoever.
+Sean Stott   11:33Sorry, API for what?
+Brandon Titensor   11:36for returning those results.
+Sean Stott   11:39Oh, yeah, I mean, it'll be a part of just the ETL workflows that we set up with this thing. So it's going to have the call, it's going to push that call recording somewhere, and then we'll have it in that database.
+Pier Madsen   11:40Oh, I'm thinking you don't...
+Sean Stott   11:51And it'll be, you know, it'll have a key associated with the call and everything like that, so we'll be able to pull it in as needed.
+Brandon Titensor   11:51Yeah.Okay.
+Sean Stott   11:59And then of course, all the data that needs to get sent to our back end will still. It'll just go both ways.Ideally.And.We talked about DID results. Actually, one thing about the DIDs is we will have to go about purchasing them. I haven't researched that part yet. Pier, do you know, is that like just included in the plan with Telnix?
+Pier Madsen   12:23Yeah.Yeah, they're a dollar each and that bulk, they get down to like 60 or 70 cents each.
+Sean Stott   12:35Okay, let's get some.
+Pier Madsen   12:36But they have an API for their DID, so we can rotate them automatically.
+Sean Stott   12:42OK, that's good.So we could just, we tell them basically, hey, retire this number and purchase a new number in this area code, essentially. Okay, cool.
+Pier Madsen   12:50Yeah, yeah.
+Ashley Smith   12:52So do they do that automatically for you or do you have to go in and remove them and add them?
+Pier Madsen   12:59We'll have to build a...piece of programming that'll do it.But they they have the they have the endpoints that we can build the programming to run it automatically.
+Sean Stott   13:06Yeah, well.Yeah, so after the return of that call, we would then, you know, hey, we're going to retire these. You need to retire them. We'll flag them all as dead so they won't get dialed again and then bring in the new ones.Probably have to understand how their process works for that a little bit better, but that's the gist of it, I would say.
+Pier Madsen   13:30With the amount of...Dials that we're making though, I'm sure that we're also going to run into like we're.run into the issue if we won't be able to keep them totally optimized.Um...We'll just have to see what we can do there.
+Sean Stott   13:44Yeah.One thing.
+Brandon Titensor   13:46Because we'll also want to use several metrics. We'll want to use dial, lifetime dials, contact rates, stuff like that for it. And then compare that, find a balance behind contact rates and dials versus costs and everything like that. And also opportunity to buy versus.
+Ashley Smith   13:48What?
+Sean Stott   13:54Mm.
+Brandon Titensor   14:06you know, what we're allowed to do.
+Sean Stott   14:08Yeah.
+Pier Madsen   14:08And all that would exist in the results DB.
+Brandon Titensor   14:13OK.
+Pier Madsen   14:13Right, yeah, that's how I'm thinking of it, because the results DeVey would send back, like, who we dialed results.
+Sean Stott   14:17Is the results DB a real thing or is that just like a...
+Pier Madsen   14:20No, this is a theoretical thing that has not does not actually exist that we would be building.
+Sean Stott   14:23Okay, I thought so. Making sure.
+Brandon Titensor   14:24Yeah, so we would basically want a table that's showing the dials for each, a DID table that's showing the dials and contact rate that gets updated every time a call gets placed.
+Sean Stott   14:34And you might be able to just, we might be able to create that as a view or something, because you're gonna have all that data on the fact table, so...
+Pier Madsen   14:38Yeah.
+Brandon Titensor   14:39Yeah.Yeah.
+Ashley Smith   14:42One of the questions you guys asked last week, and I hung up on you guys, I'm really sorry about that, was you said, how can we use this maybe not to make dials or whatever, but to make what we currently have better. And
+Brandon Titensor   14:53Yes.
+Ashley Smith   15:00One of them is the DID optimization. To be able to optimize our DIDs in the way that we want and to the degree we want would be huge for us because we know what contact rate works, you know, what backs in for us. We know
+Pier Madsen   15:09Yes.
+Ashley Smith   15:19when we want them to be swapped out. The price point that you just said seems really high, and I would be interested to know if we have to keep them for a certain amount of time. So as we're exploring, we should look to see, do we get charged if we buy them? Do we have to keep them for 90 days regardless?So even when we replace them, are we still maybe paying twice? That's something we would want to know. And then...
+Sean Stott   15:45That 90 day thing was, are you getting that from Jane Tell, that data point?
+Ashley Smith   15:50Yeah, I don't know. I know each carrier has to keep them for a certain amount of time depending on who they buy from. I'm just saying for us, I don't know with this, these new people.
+Sean Stott   15:58I was kind of confused on that because like what does that even mean? Like if you get a DID and it's really crappy, immediately you could tell. Of course you're not going to dial on it anymore. What does that actually mean to keep it for 90 days?
+Ashley Smith   16:09You just continue to pay that cost for it until...
+Sean Stott   16:12But isn't it a one-time cost?
+Ashley Smith   16:16I don't, I think there's a buying cost and then there's like daily cost, I think.
+Sean Stott   16:16to originate the DID.
+Pier Madsen   16:18No.Interesting. How it works with Telnix is it's like a subscription. I mean, you buy it and you have committed to a 30-day price for it. And if you keep it for 31 days, then you're paying for the next month.
+Sean Stott   16:40Sure.
+Ashley Smith   16:41Okay.
+Pier Madsen   16:41So if you have 10 DIDs, you're paying 10 bucks a month. If you buy one and you want to switch it out next day, you still paid the dollar for that entire month, but you can still switch it out. And so then if you buy another one, then that's another dollar.
+Ashley Smith   16:53So I'm wondering if their carrier then is, hey, you bought it for 90 days. So regardless, you're going to pay for those three months, even if you kill it after the first month. So I'm guessing.
+Brandon Titensor   17:02And that's what it sounds like Jane Tell was saying, but we asked them if they were, if we were going to have to pay for that and they said no, from what I remember.
+Ashley Smith   17:05Yeah.Yes, that's just because they're giving us a discount cost because they're really trying to keep our business. So instead of they're giving us $2,500, I think is what they said that they will charge us. But I think as we add more campaigns, that will change, but that's half of what they were charging.On top dial.
+Brandon Titensor   17:34Gotcha.
+Ashley Smith   17:39Anyway, sorry to derail us.
+Sean Stott   17:39I mean, at least then it's like, if you, if these DIDs suck, you could just tell them I want a new one and you have to keep the old one for a couple months, but at least we have the opportunity to individually, individually retire them, whereas I think they're just rotating them.
+Pier Madsen   17:39What?No, there's.Yeah.
+Ashley Smith   17:52And that was just my point, is having a tool where we have access to the data or have told it, hey, here are the benchmarks that we want, is going to be something that we don't have now that will definitely give us that lift that we've been looking for. Because we ask all the time, when are you replacing them? How are you replacing them? And
+Sean Stott   18:01Mhm.Yeah.Right.
+Ashley Smith   18:13And so to have that lever to be able to do it.
+Sean Stott   18:14It will be.It would be cool if we could do it more individually too, instead of having to get a whole block of DID, some of which might still be good, and just rotate them just because, you know, we could actually say, hey, this DID is good, keep it, this one's not.Yeah.
+Pier Madsen   18:32It sounds like.This is like a another data exposure thing that if you guys had.A result DB of all 62 million calls that happen every single month.With what phone number they happened on, you could, like, you could answer so many questions if you could query that database, but that database doesn't exist.which we can fix with this new call center build.
+Sean Stott   18:53No.
+Ashley Smith   18:54Right, so that's what.Yeah, what Brandon has been manually trying to pull all of this data and.and try to get it. So we have it somewhere, right, but we don't have it easily and readily available to us.
+Sean Stott   19:04But...
+Brandon Titensor   19:11Yeah, that data is mostly stored in the call center databases and is grabbed every 60 or 90 days or something like that, depending on everything like that.
+Sean Stott   19:20Does that include like MP3s for the call logs?
+Brandon Titensor   19:25Those are separate. Those are stored separately, I believe. Right, Ashley? Yeah.
+Sean Stott   19:28Do we have do we ever look at those? I mean, it's not like we have the ability to individually to tune it based on them. You know, we can give them feedback, but...
+Ashley Smith   19:37Yeah, so that another optimization. Storage has always been a problem for us. So something that I would love to have is for us to have all of the recordings for everything that was ever down. Right now, we house all of the queue calls, we get those.
+Pier Madsen   19:40Yeah.
+Sean Stott   19:50Yeah.
+Ashley Smith   19:57Downloaded to us, and we were working on getting everything that was ever a completed call downloaded to us, and I...
+Sean Stott   20:06So we have to archive the calls, don't we? Just to, for legal indemnity stuff.
+Ashley Smith   20:06Shane left and who knows?We do, or the call center has to, but we ran into issues where the call center switches out a carrier. And when they switch out the carrier, now that carrier went away, they're not paying them anymore, so they don't care. And then they didn't house it. So that's what I was brought up a few months ago with Joseph and Cromwel waswe need to start migrating to where we are the ones that are backing that up regardless so that we're legally compliant all the time.
+Sean Stott   20:44Right, and I wonder how long we'd have to keep those, because that's a ton of data. Five years? Wow.
+Brandon Titensor   20:44And if...
+Ashley Smith   20:47Five years.Yep.
+Sean Stott   20:52Well, at least for that, I mean, we can always keep them in like a nice performant database for a month or two, because the calls that we made five months ago aren't really helpful for us today at all. So we could really just keep a shorter history of all that in a nice fast database and then just store all the other stuff somewhere, you know, archived, who cares.
+Brandon Titensor   20:52Right now, if...
+Ashley Smith   21:02Right.Our test, yep.
+Sean Stott   21:12So, we can we can design that, too.Because I do think there's going to be a lot of good information if we can scan the calls in, you know, a reasonable time frame and change, especially if we're doing AI everything, we can change what we're doing based on it.
+Ashley Smith   21:23And that.But I also think that will help us with the problem that I'm running into right now. Contact rate used to be one of my number one metrics. That was everything for me. And I could go to the carrier and say, you are my problem. The contact rate has dropped, it's dropped, it's dropped. And now I could have a high contact rate.but I'm not getting anything. And when you go back and review the courting, it's because they're the IVAs. And so we're talking to...you know, either the cell phone or them texting a message or whatever. And so my contact rate looks high, but it's really not. So if we had an AI that was listening and saying, wait a second, that contact rate for that DID is high, but 80% of them are IBAs, so it's actually garbage and kicking them out.
+Sean Stott   22:14Right.Yeah, we have to...Ideally flag it on the call so the data comes through right away, but could always scan it later. I'll have to look into that more. I don't know if you have any opinions on that, Pier.
+Pier Madsen   22:32Yeah, it's, I mean, it's gonna be...
+Sean Stott   22:34Because we would want to disposition it immediately if we can.
+Pier Madsen   22:34Like AI is not perfect at being able to tell if it is an IVA or not. It's like it's better. Like it would be better than nothing if we had AI determine if it was an IVA or not. But if the goal is like...We might need to just think around.Contact rate being the moniker of.Like, performance.I don't know the right answer, but I'm thinking like maybe we just can't, like you're experiencing actually, maybe we just can't trust contact right anymore. So maybe we need to look and like figure out a different way to look at it. I don't know. I don't know. That's a tough one.
+Sean Stott   23:02I, yeah, I mean, contact rate.
+Ashley Smith   23:12Yeah. And that is the problem is that used to be a, that was what you looked at, right? That helped you in every, and now I'm just finding, oh, wait a second, this metric is now a liar. So.
+Sean Stott   23:24Yeah, I mean, connection rate would probably be better just to make sure everything's working okay for us.
+Pier Madsen   23:24Let's.So let's, to this point, I think that we've come to the, from what I've gathered so far, like utterly important to have a results database, that we're writing as much data we can back to the results database. Utterly important to store call recordings as much as we can. Utterly important to build a DID management portion.Those are the must-haves.I think now we need to keep like expanding on that list. Like what are other things that we need to have on this platform? Like for example, in a system to AB test AI agents so that we can tell which ones are performing better. Like we can test scripts against each other. I assume that that would be necessary, but let's keep talking through what those.must-haves need to be on this platform.Under the context of, like...What are our best call centers doing? How can we build that here?
+Sean Stott   24:28Yeah, I think we've gone through basically the doc, so...So yeah, it'd be good to know anything else that's on top of mind, and then we can kind of refactor this and see where we stand.
+Pier Madsen   24:42So let's maybe to give better context or better like frame of thinking, let's think about KPIs. We've talked about contact rate and how you use contact rate to make decisions through call centers.
+Sean Stott   24:53Yeah.
+Pier Madsen   24:57But we're not confident in contact rate anymore for an obvious reason. And we can, like, let's table that one for now. There's still discussion to be had around what we can do about contact rate. But let's look at the other KPIs that you guys use to make call center decisions and data decisions. And then let's talk about what that looks like from the call center's perspective.on what to build from there. So what's the next KPI, like the next most important KPI in your mind?
+Kinsey Jackson   25:20What weren't we going to share like one of our dashboards that show our KPIs? Yeah, so it's contact rate, but then it's dials per lead, it's dials per hour, it's lead consumption, all of those things plus sales per hour kind of indicate whether or not we're healthy.
+Ashley Smith   25:24I did.
+Sean Stott   25:25Ashley did.
+Ashley Smith   25:27I know.
+Kinsey Jackson   25:41Because like contact rate, great, if it's high, but we've used four times the amount of leads to get that contact rate. It's going to bleed us in another area. So.
+Pier Madsen   25:44What do you?
+Kinsey Jackson   25:53Yeah.
+Pier Madsen   25:54So what do you use like that? That tells you if the company's healthy. What tells you if a call center is healthy?
+Kinsey Jackson   26:00Those things, those are all call center metrics. Yeah, contact rate, dials per.
+Pier Madsen   26:01Same thing? Okay.Dials per lead.
+Kinsey Jackson   26:06We do that, but we have it down per hour too, right, Ashley? Yeah.
+Ashley Smith   26:10Yep.
+Pier Madsen   26:10So, explain to me the...
+Sean Stott   26:11Dials per hour is going to be kind of not relevant for this though, I don't think. Because we're not going to have like screeners that need to be able to make sure that the calls are like stratified enough so they can help.
+Brandon Titensor   26:17Well...Well, dials per hour are important to look up if, because if our contact goes right, then our dials per hour go up. So it's just another kind of metric that shows how well we're contacting people. And so, yeah.
+Kinsey Jackson   26:36And then it affects lead consumption. Like our dials went way up. We had to slow the dialing down to slow down how quickly we're running through leads. So they're all just little health metrics. Contact rate, dials per lead, dials per hour, lead consumption, and then...
+Brandon Titensor   26:38Yeah.
+Pier Madsen   26:39Teh.O, let's...
+Kinsey Jackson   26:55SPH.
+Pier Madsen   26:55So dials per hour is high. What do you do?First of all, what lets you, what makes you feel like it's high? And then if it's high, what decision, like what do you do with the call center to affect it?
+Ashley Smith   27:01So.So if my dials per hour is high and that usually means that my contact percentage is low. So then that's when I would reach out to the carrier. And I would say, we are just spinning through my leads what is going on. And I would also have reached out to Joy. So I would kind of do both.I would say, okay, did I get, did I buy a batch of bum leads, right, where they're not great? But then I'm also reaching out to see, are my DIDs that I currently have that? Because if my dials per hour is high, I'm going through a lot of leads.going through a lot of leads and I'm not contacting them, then we have a problem, right?
+Pier Madsen   27:53Okay, so it takes you on this root cause analysis journey to figure out why it's high. And then based on why it's high, if it's because of DIDs, then you go through the DID management plan. If it's because contact rate sucks, then, well, maybe contact rate is what alerted you to DIDs. But then there's this root cause analysis path that lets you know
+Ashley Smith   27:59Right.Yes.
+Pier Madsen   28:13what you end up needing to affect.
+Brandon Titensor   28:16With that one.
+Pier Madsen   28:17Um...
+Brandon Titensor   28:19Oh, with that one, if it would be nice to be able to see for like for Alex as a media partner to kind of see in real time how different media partners are performing on on dials and stuff like that. So if we could.like filter by media partner so we could see, you know, for sure like, oh, well, this media partner dials per hour is super high versus this media partner. Then that could be something interesting too.
+Sean Stott   28:49Well, we have the media partner in the campaign, right, when we get the lead.
+Brandon Titensor   28:56Yeah.
+Sean Stott   28:57We should, I think.So we can read that.
+Brandon Titensor   29:00So that will be just be part of that data that result that results database, but just saying that would be that would be kind of like another that would be an investigative path out would be nice to have when dials per hour is high.
+Sean Stott   29:02Yeah, so we can just read it and just make sure the call has that information for sure.That makes sense. We could definitely include that.You'd probably want to build some, you know, views or queries for it, but we could create a way where it's tagged and then figure out how to like stream it the data.
+Pier Madsen   29:30So it's dials per hour, dials per lead.
+Sean Stott   29:35Just one thing really quick. Dials per hour is going to be kind of interesting because a lot of the Vic dial software is around the dials per hour and pacing because it assumes that you're going to have a person there to pick up when to talk to the person when they answer. So you can't have a million dials a minute because the person the screener can never get to them all.
+Pier Madsen   29:36Yeah.
+Sean Stott   29:54A lot of that is sort of built into Vic dial, where we're going to have to be a little careful is we don't really need to pace that way, because we don't need to make sure a person is available to pick up the call on our side.
+Pier Madsen   30:07Yeah, we do have concurrency caps that we can buy more of. And then it's just like a pricing question as to how many concurrent calls we want to do.
+Sean Stott   30:12Mm.Okay.That's good to know.
+Kinsey Jackson   30:18I also wonder though, if we're like rapid dialing like that, like crazy, what is that going to look like to a carrier? I know we don't have to worry about it because we don't have a human agent, but if a carrier sees this company is dialing this fast and they're all no answers or they're all this or all this, that carrier might say,
+Sean Stott   30:33Mhm.
+Kinsey Jackson   30:37That's all spam. I'm going to block them and then our contact rate will fall. So there still is some fine tuning around dialing speed.
+Sean Stott   30:39Yeah.Teh.Yeah, it could corrupt the DIDs too.
+Ashley Smith   30:46Yeah, because carriers won't work. Yeah, carriers won't work with us unless you have a certain percent of your leads that are contacting. They'll shut you off.
+Kinsey Jackson   30:55Yeah.
+Pier Madsen   30:56Hey, well, in that sense, we might kind of like the IVAs.
+Ashley Smith   31:00Teh.
+Pier Madsen   31:01Yeah.And we, and we also we also do want to like try calling people at different times of the day, so it's good to spread out the files anyways.
+Sean Stott   31:03That's true, that's funny.
+Kinsey Jackson   31:07Yeah.
+Sean Stott   31:08Mhm.
+Kinsey Jackson   31:09Yeah.
+Sean Stott   31:10Yeah, for sure.
+Pier Madsen   31:11So we'll work through that. So we probably won't be, like, even though we could, like, absolutely destroy these call centers in calls per second, we won't. We won't even attempts to, because it just wouldn't be the right call. So we'll probably just try to match the pace that the call centers are currently doing.Okay, dials per lead. Oh, yes.
+Ashley Smith   31:30Another.Another thing, a metric that we look at is, you know, you've got your SPH, but then we also look at sales per contact. So out of the people that we are contacting, how many of those are turning into sales? And that would indicate, okay, I'm contacting X, but I used to,get a 1% now I'm at a.3 isn't an agent issue and so
+Sean Stott   31:58And that's all agent and script, right?
+Ashley Smith   32:00Yep, yep.But we were just talking about what are the different metrics. And so some of them indicate me to reach out to the carrier. Some of them indicate me to reach out to the call center. Some of the KPIs indicate me to reach out to see if something happened with our leads. So, and some of them I do both at the same time because I don't know which it is, but I'm like,
+Pier Madsen   32:05Yeah.
+Ashley Smith   32:23There's clearly a problem.
+Sean Stott   32:33OK.
+Pier Madsen   32:36So sales per contact is sale. Have you found that the sales per contact metric is also getting weird because of IVAs?
+Ashley Smith   32:43Yeah, unfortunately, but it is.
+Pier Madsen   32:46But if we can account for that...
+Ashley Smith   32:49Yeah.
+Pier Madsen   32:49And that's fine.Um...
+Sean Stott   32:52Does anyone here have an IDA or IVA, whatever it's called?
+Pier Madsen   32:56Heck yeah!
+Sean Stott   32:57Really?
+Pier Madsen   32:58Yeah.
+Sean Stott   32:59I don't even know what it is.
+Ashley Smith   33:01So on your stupid iPhones, all of you iPhone users, you are my problem. So I couldn't figure out what it was until honestly, both of my adult children were with me and we were on a road trip and my daughter was just sending a message, a text, it looked like a text message and she was telling it what to tell the person on the phone.
+Sean Stott   33:05Teh.
+Pier Madsen   33:07Yeah.
+Ashley Smith   33:21phone and I was like, let me hear that. And then she showed me like, it's actually leaving her a voicemail. So that whole conversation is now on her voicemail of the whole conversation that she just had through.A robot.
+Sean Stott   33:37Whose... Is it her voice?
+Ashley Smith   33:40No, they just, it's just something that you turn on and then you're able to like, it'll maybe say, who's calling or press 1 if you, or tell me why you're calling. Yeah, oh, absolutely. But then you respond and then she can see what you respond with. And then she can decide to ask you another question or accept
+Sean Stott   33:48But it's like clearly a robot.Okay.
+Ashley Smith   34:00the call or reject the call.
+Sean Stott   34:02It's funny. It's the same voice every time. Maybe we can identify this IVA's voice.
+Ashley Smith   34:08No, but some of them are. That is actually another thing that happens. And I don't know if it's a carrier or what triggers it, but there are times where I'll get 10 calls within 10 minutes for different agents. And that's the hard thing because unless like a manager is monitoring or something, the agent doesn't realize it's the same voice.because each agent is just getting one or two, but you'll get that same like one liner and then it ends up hanging up on you. But now it counted as a contact and really you never were talking to a person.
+Brandon Titensor   34:39I would say though, isn't that still useful for us though? Because the IVA is still, it's the customer who's making the decision still. So if that customer...
+Ashley Smith   34:51On some of them.Only on some of them.
+Brandon Titensor   34:55Okay, because like, I mean, technically we are contacting the customer still and like they're still, they would probably turn to be a non-qualified anyway, right?
+Sean Stott   34:56What does that mean?
+Pier Madsen   35:07M.
+Ashley Smith   35:07I would say not necessarily be.
+Brandon Titensor   35:08or not interested.
+Ashley Smith   35:10because you're not really getting them on the phone. And it's just like keyboard warriors, right? Like if I could skip that, like if I wasn't getting flagged as spam and I didn't hit that on them and they actually picked up the phone, then I might have a chance to pitch them. But because they're screening the call through a keyboard beforehand, it's not real.Does that make sense? Like, what do some people write on the computer that they would never say to someone's face? I think it's similar to that with like picking up the phone. If I'm not getting marked as spam, the questions that they ask me up front maybe wouldn't have happened and I would have had a chance to pitch them.So.
+Brandon Titensor   35:48Sure.
+Sean Stott   36:01Anything else top of mind?
+Ashley Smith   36:07Are any of these things that you're going to build be something where we...can use it at our current call centers, like to be able to analyze things and...
+Sean Stott   36:23I would say script optimization, yes, absolutely, for sure.I'm not really sure what else though.We're going to be collecting a ton of data, but...
+Pier Madsen   36:40What would be the best? Maybe we'll get to this point where we're comfortable with it, or maybe we won't.I would like to get to the point where we have this results database where that we can provide the endpoints to these call centers that they will start writing their call results to.
+Sean Stott   37:00Mm.
+Pier Madsen   37:01And then you'll have all the data you could ever possibly dream of.
+Ashley Smith   37:06Teh.
+Pier Madsen   37:07That would be ideal.
+Sean Stott   37:11Yeah.Okay, if no one has anything else, I will put all of our stuff back into this document and simplify it a little bit with some open questions and decisions and whatnot, and then I'll circulate that probably later today.
+Pier Madsen   37:29The goal from here, from my end, is I really want to get something like a platform live that is usable that you guys can dial on within the next.within the next three weeks.
+Sean Stott   37:47I think it's doable.
+Pier Madsen   37:48Will that be the end state of the platform within three weeks? Heck no, but at least something that you can.start using to test, like if you wanted to test a new vertical through AI, just to see if it's even functional, then we can.then we can run with that.
+Sean Stott   38:07Yeah, yesterday Andre called me because I think he saw all the AI fable usage I was doing, building this, starting this thing. And he's like, he wanted to know what we're doing. And then he also said, I think Payam wants to be able to use this for other stuff too. So.
+Brandon Titensor   38:14Teh.
+Pier Madsen   38:23He does. The end state of this is like mostly used by CV, but they will want like all these like auto web marketing SMSs that go out. They will want to be able to spin up AI agents to follow up on those SMS text messages.
+Sean Stott   38:26DeVey.Yeah, so I think, I think it's gonna be, I think it's gonna be a lot of fun, honestly.
+Pier Madsen   38:38So same kind of purpose.Guys, thanks so much for your time. We will, I will, we will both keep pinging you with tons and tons of questions as we keep going through the build.And then once it's live, please bother the heck out of us so that we can get it to a usable state where it's actually contributing to your bottom line.
+Ashley Smith   39:05Sounds good.
+Sean Stott   39:05That's all alrighty.
+Ashley Smith   39:07Appreciate it, guys. Thank you.
+Sean Stott   39:09Thanks.
+Sean Stott stopped transcription

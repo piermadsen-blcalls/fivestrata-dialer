@@ -57,6 +57,8 @@ Carrier + programmable voice. Relevant capabilities to spec: Call Control API (p
 
 Architecturally this means the media layer needs fast clip playback (pre-staged audio on the media path) interleaved with streaming TTS — a requirement to test against both option A (Asterisk plays files natively; this is exactly how soundboard call centers work today) and option B (Telnyx Call Control audio playback + streaming).
 
+> ➤ Direction (Sean, 2026-07-22): rotate a small pool of pre-generated variants (~3–5) per high-frequency clip slot (greetings, objection handles) rather than a single fixed recording — hearing the exact same take every call is what tips a lead off that it's canned; variety reads as more real. Non-determinism of the underlying TTS is a feature here, not a bug to engineer around — generate the pool once (batch, still async/pre-staged, no live-generation added to the call path) and rotate at playback time. Track which variant played within a call (avoid same-call repeats; repeats across different calls are fine) as an added dimension on the per-turn clip-selection log (`context → clip_variant → outcome`), so variant effectiveness is measurable through the same optimization loop as clip selection generally. Not yet costed against the per-clip QA/generation burden of N variants × M clips × swappable voice packs — likely start with variants only on the highest-frequency/highest-visibility slots rather than the full library.
+
 ## 3. LeadConduit (lead delivery — decided in principle)
 
 ActiveProspect's lead-routing hub; already carries our fresh-lead flow to KB/TD/CD, and Darwin's active-zips upload goes through it.
@@ -105,7 +107,59 @@ Working assumption unless expressly redirected: **no human screener or closer an
 - Branding at zero marginal cost (batch-generate branded clips in the AI voice into the voice pack — no voice-actor dependency).
 - Canned/TTS hybrid voice with per-call cost telemetry — soundboard economics with generative flexibility.
 
-## 6. Open architecture questions
+## 6. Schema strategy & data-layer split (analysis 2026-07-23, Sean + Claude)
+
+### 6a. Model the schema off VICIdial? — vocabulary yes, tables no
+
+➤ Direction: **own modern event schema; VICI conventions at the edges; compat views if needed.**
+
+- Comparability with the human floors — the platform's core mission — lives at the **metric
+  grain** (SPH, contact/connection rate, transfer funnel, per FS-code × state × day), not the
+  table grain. Nobody compares raw `vicidial_log` rows; partner data returns aggregated anyway.
+  Comparability = shared dimensions + KPI definitions (OLeadID, FS-code, disposition codes,
+  call date), which our schema already carries.
+- VICI's tables are an artifact of a human-agent predictive dialer: agent sessions, pause
+  codes, closer queues, hopper mechanics — modeling we deliberately don't have — and nothing
+  for what we do have (per-turn clip decisions, voice packs, per-call cost telemetry, Telnyx
+  events, IVA classification, A/B pattern assignment). Every 7/22 must-have lands in a table
+  ViciDial lacks. The 7/22 pacing insight generalizes: schema built to serve a human screener
+  we don't employ.
+- V1 is the existence proof: a modern queue/event shape spoke fluent FiveStrata (oleadid,
+  fscodes, `calldispo_ext_fives`) with zero VICI table semantics.
+- **Keep from VICI (free wins):** `vendor_lead_code` ≡ OLeadID; disposition vocabulary decoded
+  via `techss_dl.callcenter_dispos` so KPIs decode identically across floors; list/campaign
+  batch semantics ops already thinks in.
+- **If table-level comparability is ever wanted:** add a compat **view layer** (e.g.
+  `v_vicidial_log` over `calls`) so callcenterdb cookbook queries run nearly unchanged. Views
+  are cheap and put zero constraints on the core schema. This is "option C-lite": VICI's
+  semantics, not its skeleton.
+
+### 6b. Snowflake vs Supabase — a latency split, not a rivalry
+
+➤ Direction (consistent with the 7/22 results-DB decision): **Supabase = operational OLTP +
+hot window; Snowflake = results DB + 5-yr archive.** The relay:
+
+1. **Supabase (seconds-fresh, call path):** dial queue/dispatch, two-phase client-selection
+   reads, DID counters, kill switches, voice-pack config, webhook ingest, Brandon's
+   updated-per-call DID view, live SPH. A warehouse cannot do this: no sub-100 ms point
+   reads/writes, per-row costs by warehouse-second. Async-always means the call path touches
+   only our own hot store.
+2. **CDC/batch → Snowflake (minutes-fresh):** nightly batch is sufficient for T-1
+   comparability with the partner replicas; streaming CDC can come later. ETL also pushes the
+   recording to storage and keys the row to it (7/22).
+3. **Snowflake (system of record, 5 yr):** every call, per-dial + per-turn. Scale math: ~62M
+   rows/mo per-dial, plausibly 5–10× per-turn → billions of rows over retention. In Postgres
+   that's partitioning/vacuum/index care + analytic scans competing with live dialing — the
+   "analytics touching the dialing DB" anti-pattern. Snowflake: columnar compression (5–10×),
+   ~$23/TB-mo storage (the whole 5-yr stream ≈ $10–20/mo storage, rough), per-second elastic
+   compute, joins against AutoWeb enterprise data, and the impression-logging precedent.
+   Feeds dashboards/MDB; dispositions write back to `techss_` from the service layer.
+
+Failure modes of picking one: everything-Snowflake kills the call path (latency + per-call
+warehouse costs); everything-Supabase strangles under the 5-yr granular store. Open knobs: hot
+window length (30–90d) and nightly-vs-streaming CDC.
+
+## 7. Open architecture questions
 
 - Option A vs B vs C — gate on a Telnyx capability review (what does their voice-AI/Call Control stack replace?).
 - Where does the AI conversation engine run (Telnyx-native vs our own STT→LLM→TTS loop), and what's the per-minute cost model?

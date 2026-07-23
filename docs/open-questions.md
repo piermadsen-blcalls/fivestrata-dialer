@@ -1,7 +1,9 @@
 # Open Questions
 
-Boiled down from the 7/17 scoping call and post-call decisions. Two buckets: business/ops (mostly session-2 agenda for Kinsey/Ashley/team) and technical (mostly access + specs Sean/Pier need to start unblocking now).
-Last updated: 2026-07-17.
+Boiled down from the 7/17 scoping call and post-call decisions, refreshed after the 7/22 follow-up. Two buckets: business/ops and technical (mostly access + specs Sean/Pier need to start unblocking now).
+Last updated: 2026-07-22.
+
+> **7/22 session update:** the "session-2 agenda" items below were substantially covered. Cadence/dialing-pattern controls (Q8), IVA/contact-rate breakage (Q9), DID economics + recordings retention are now direction, not blank. Remaining hard-open: pilot vertical (Q1), "paused" definition (Q2), in/out of v1 (Q3), formal success thresholds (Q5), cost baselines (Q6), crediting rules (Q7), DNC inheritance (Q10).
 
 ## Business / ops questions
 
@@ -54,8 +56,10 @@ Last updated: 2026-07-17.
 - **Warm-transfer leg**: bridging mechanics, client no-answer handling, transfer recording/crediting event schema (feeds business Q7).
 - **Hot store choice**: VICI MySQL + streaming replica vs Supabase Postgres + logical replication; CDC route to Snowflake (Debezium/DMS vs Snowpipe from S3).
 - **Fact-stream schema**: the row-per-dial event model (ts, number, dispo, duration, session, script/prompt version, call center, client, geo, sub-source) + retention tiers (hot 30–90d → warehouse → archive).
-- **DID management**: pool sizing for pilot volume, cap counters, rotation/retirement automation via Telnyx number APIs.
-- **Recordings**: storage target (S3?), stereo capture for QA/dead-air analysis, retention policy.
+- **DID management**: pool sizing for pilot volume, cap counters, rotation/retirement automation via Telnyx number APIs. **Open (7/22):** does the *carrier* (not Telnyx) impose a minimum hold — Ashley's "90-day" concern? Telnyx itself is a monthly subscription (swap anytime, pay the month). Design for individual benchmark-driven retirement, not block rotation.
+- **Recordings**: storage target (S3?), stereo capture for QA/dead-air analysis. **Retention (7/22):** 5-year legal minimum; FiveStrata owns the backup (carrier-swap gap is the failure mode); hot 1–2-month window in a fast store, cold-archive the rest.
+- **Results DB shape (7/22):** confirmed a *separate* store (not techss_ results tables), keyed by OLeadID, on Snowflake, capturing every call; a DID dials/contact-rate view sits over the fact table; media partner tagged per call. Two-way write-back to techss_ still required for MDB/dashboards (see T6).
+- **Contact-rate replacement**: IVAs make contact rate unreliable; evaluate connection rate as the primary signal and define the IVA/spam taxonomy (business Q9) so classification is well-specified.
 
 ### FS-code questions (added 2026-07-20; context in reporting/kb-wi-dashboard-spec.md)
 
