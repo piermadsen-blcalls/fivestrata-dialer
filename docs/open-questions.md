@@ -43,14 +43,14 @@ Last updated: 2026-07-22.
 | T5 | **Command Center** — transfer priorities: where they live (API? techss_dl tables?), read/write surface | Platform must emulate/plug into it. | Joseph / Cromwel |
 | T6 | **techss_ write-back contract** — target tables for dispositions/results (callcenter_dispos conventions, import-log pattern), push mechanics | Keeps MDB and every downstream dashboard alive; mirrors the TD_* ingestion pattern we already half-own. | Joseph / Cromwel |
 | T7 | **Supabase org/project** access | Preferred app-layer home; need to size what it can host (hot store vs app data only). | Pier / Sean |
-| T8 | **AWS + Snowflake** — account, warehouse, Snowpipe/S3 landing rights | Analytical tier for the 62M-rows/month fact stream; AutoWeb precedent lives here. | IT / enterprise data |
+| T8 | **AWS + Snowflake** — account, warehouse, Snowpipe/S3 landing rights | Analytical tier for the 62M-rows/month fact stream; AutoWeb precedent lives here. *Owner identified (Pier, 7/23): **Shelly Teh** for Snowflake. Costs for Telnyx/Supabase/Snowflake must be outlined + approved via **Sam/Tatevik** — also the forcing function for the §5 cost baselines.* | Shelly Teh / Sam+Tatevik |
 | T9 | **Ashley's daily dashboard** — the file + its data pulls | It IS the day-one reporting spec; also feeds Brandon/Alex's automation work. *File received 2026-07-20 (KB WI 3.1) — structure extracted to `reporting/kb-wi-dashboard-spec.md`, emulation views in `supabase/migrations/0002_reporting_views.sql`. Remaining: disposition dictionary (→T6), FS-code PD/CH/CP tag meanings, where the data pulls come from.* | Ashley |
 | T10 | **ViciDial source + a sandbox box** (AWS EC2; SCRATCH_INSTALL) | Cheapest way to de-risk option A — stand one up, wire a Telnyx trunk, drive the Agent API. | Sean / Cromwel |
 | T11 | **DNC/validation surface** — how LeadOps validates today (techss_all_leads dncDate et al.), and whether the platform gets pre-scrubbed leads only | Determines whether platform-side scrub is needed at all. | Joseph |
 
 ### Design/spec questions (answerable once access lands)
 
-- **Architecture fork (A/B/C)**: does Telnyx's voice-AI/Call Control stack replace enough of the dialer core (pacing, retry logic, DID rotation) to skip ViciDial? Decide after T1+T2 review and T10 sandbox.
+- **Architecture fork (A/B/C)**: ➤ **hardened toward B (Sean↔Pier chat, 7/23)** — no ViciDial instance ("we'd have to work around the whole human-agent build" — Pier); VICI = schema vocabulary/jargon only (dispos, list/campaign language, compat views if needed); Supabase = orchestration/OLTP; Snowflake = analysis. **Formalize as ✅ in the PRD** (the next artifact — Pier: "PRD is gonna be king"). T10 (VICI sandbox) likely obsolete.
 - **AI conversation engine**: Telnyx-native vs own STT→LLM→TTS loop; latency budget per turn; how canned-clip playback interleaves with streaming TTS on the chosen media path.
 - **Voice pack pipeline**: batch TTS generation, clip storage/versioning, per-call canned-vs-TTS telemetry schema.
 - **Warm-transfer leg**: bridging mechanics, client no-answer handling, transfer recording/crediting event schema (feeds business Q7).

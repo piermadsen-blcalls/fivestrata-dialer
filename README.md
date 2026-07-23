@@ -105,6 +105,7 @@ See [docs/open-questions.md](docs/open-questions.md) — business/ops (15) + the
 
 ## Action items
 
+- **PRD is the next artifact (Pier, 7/23: "PRD is gonna be king — we can direct the rest of the build off it").** Sean makes a block diagram first; PRD opens with it + a "the decision" box, presents remaining unknowns as named workstreams with owners/gates (clip-playback-latency PoC, warm-transfer leg, voice-engine choice). Stakeholders to pull in: **Shelly Teh** (Snowflake), **Sam/Tatevik** (Telnyx/Supabase/Snowflake cost outline + approval).
 - **Sean**: fold the 7/22 call into the doc, simplify (decisions + open questions), circulate later today *(done — this update)*. Keep pinging the team through the build.
 - **Still open after 7/22**: name the pilot vertical; define "dialing paused"; draw v1 in/out; set formal success thresholds; pull KB/TD/CD cost baselines; pin the crediting rules and techss_ write-back contract; DNC inheritance.
 - **Unblockers** (see open-questions T1–T11): T2 Telnyx keys (playback PoC, concurrency, pricing), T3/T4 LeadConduit + pre-auth spec (Joseph), T6 write-back contract, T8 Snowflake/AWS for the results DB.
