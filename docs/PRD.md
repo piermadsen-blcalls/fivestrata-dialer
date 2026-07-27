@@ -17,13 +17,14 @@
 
 ```mermaid
 flowchart LR
-  subgraph IN["Lead Intake"]
+  subgraph IN["Lead Intake — per-program endpoints (§2b)"]
     LC["LeadConduit<br/>(fresh, % split)"]
     RV["Revive batches<br/>(from FiveStrata DB)"]
+    OTH["Any future program<br/>(playbook-declared source)"]
   end
 
   subgraph BRAIN["Supabase — Operational Brain"]
-    API["Intake API<br/>DNC check · FS-code parse"]
+    API["Intake API<br/>program resolution · payload validation<br/>DNC check · FS-code parse"]
     Q["Dial Queue<br/>cadence patterns · retry ladders<br/>LIFO fresh / FIFO revive"]
     DIDM["DID Manager<br/>buy/retire via benchmark<br/>~1,500-dial caps"]
     CSEL["Client Selection<br/>two-phase + fallback"]
@@ -44,6 +45,7 @@ flowchart LR
 
   LC --> API
   RV --> API
+  OTH --> API
   API --> Q
   Q --> DIAL
   DIDM -.numbers.-> DIAL
@@ -67,6 +69,47 @@ flowchart LR
   C --> D["Revenue<br/>(same clients, same product)"]
   B -.-> E["Every call recorded, measured,<br/>and mined — teaches the<br/>human floors what works"]
 ```
+
+### 2b. The differentiator: tenant-agnostic intake — one platform, many programs
+
+A **program** (a product + script family + disposition contract + delivery target, within a
+**tenant** business unit) is the unit of onboarding. Onboarding a new vertical — or a whole new
+business unit like AutoWeb trade-in acquisition — touches **zero code and zero schema**: a
+validated playbook manifest becomes config rows, and the identical platform core runs it.
+FiveStrata is simply tenant zero. (Full spec: `architecture/tenant-program-onboarding.md`.)
+
+```mermaid
+flowchart TB
+  subgraph T1["Tenant: FiveStrata CV"]
+    P1["fs-windows-revive"]
+    P2["fs-bathroom-fresh"]
+  end
+  subgraph T2["Tenant: AutoWeb"]
+    P3["aw-tradein-acquisition"]
+  end
+  T3["Tenant N<br/>(any future demand owner)"]
+
+  P1 --> PB
+  P2 --> PB
+  P3 --> PB
+  T3 --> PB
+  PB["PLAYBOOK — versioned onboarding manifest<br/>product profile · scripts (+ compliance-locked disclosures)<br/>dispositions/tags mapped → canonical taxonomy<br/>lead field schema · declared connections · calling rules"]
+  PB --> REG["Register & validate (POST /programs)<br/>= config rows — zero TypeScript, zero DDL"]
+  REG --> CORE
+  subgraph CORE["ONE shared platform core — identical for every program"]
+    direction LR
+    C1["dial queue<br/>cadence · pacing"] --- C2["AI agent · voice packs<br/>per-turn logging"] --- C3["DID pool · recordings<br/>A/B harness · fact stream"]
+  end
+  CORE --> XLATE["Canonical → program-code translation<br/>(fact stream stores BOTH — cross-program KPIs are free)"]
+  XLATE --> O1["FiveStrata delivery:<br/>techss_ write-back ·<br/>Command Center transfer strategy"]
+  XLATE --> O2["Trade-in delivery:<br/>fixed transfer line ·<br/>results ETL out"]
+  XLATE --> O3["Program N delivery:<br/>whatever the playbook declared"]
+```
+
+Why investors should care: the CV call center is the **first workload, not the product**. The
+product is "spin up an AI calling operation for any demand owner in days" — same core, new
+manifest. Cross-program KPIs stay comparable because every program's dispositions map onto one
+canonical dictionary that all reporting computes from.
 
 ## 3. Why (business case)
 
