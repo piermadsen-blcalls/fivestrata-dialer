@@ -48,6 +48,7 @@ Timeline pressure: 2–3 week target for a v1 slice. Dialing paused during the b
 12. Native DID retirement caps (~1,500 dials/DID) + **individual benchmark-driven retirement** via the Telnyx number API — differentiators no current call center offers. Telnyx DIDs ~$1 (bulk 60–70¢), monthly subscription.
 13. **Platform must-haves (Pier, 7/22):** results DB, call-recording storage (5-yr legal, FS owns the backup), DID management, and A/B testing of AI agents/scripts.
 14. **Contact rate is compromised by IVAs** — logged as contacts but not real conversations; lean toward **connection rate** and live IVA disposition. Match the call centers' current dial pace (don't max out) to avoid carrier spam-blocks. (7/22.)
+15. **Multi-tenant input topology** (Sean, 7/23 — requirement made explicit): the schema/logic layer targets FiveStrata rules first, but must onboard other verticals or other business units (e.g. AutoWeb trade-in acquisition) with minimal-to-zero refactoring. Meta-level **tenant → program** mapping; each program onboards via a **standard playbook** (product profile, scripts + disclosures, disposition/sentiment mapping onto platform-canonical taxonomies, declared connections/ETL) — virtually self-serve, config not code. See `docs/architecture/tenant-program-onboarding.md`.
 
 ## This repo (scaffold)
 
@@ -77,6 +78,7 @@ docs/
   open-questions.md             business/ops questions + access list T1–T11 + FS-code F1–F9
   architecture/platform-foundations.md   ViciDial eval, options A/B/C, Telnyx, data tiers
   architecture/telnyx-capability-review.md  T2 public-docs review (Call Control, AMD, DIDs, pricing)
+  architecture/tenant-program-onboarding.md  multi-tenant topology: tenants/programs, playbook spec, canonical taxonomies
   architecture/v1-build.md      V1 (Retell) architecture + post-mortem economics (T1)
   reporting/kb-wi-dashboard-spec.md      Ashley's dashboard dissected (T9) — the emulation target
   meetings/2026-07-17-scoping-call.md    distilled founding meeting
