@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import { healthRoutes } from './routes/health.js';
 import { leadRoutes } from './routes/leads.js';
+import { dashboardRoutes } from './routes/dashboard.js';
 import { telnyxWebhookRoutes } from './routes/webhooks/telnyx.js';
 
 export async function buildServer() {
@@ -10,6 +11,7 @@ export async function buildServer() {
 
   await server.register(healthRoutes);
   await server.register(leadRoutes);
+  await server.register(dashboardRoutes);
   await server.register(telnyxWebhookRoutes, { prefix: '/webhooks' });
 
   return server;

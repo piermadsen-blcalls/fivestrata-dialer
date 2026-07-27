@@ -1,5 +1,6 @@
 import { supabase } from '../clients/supabase.js';
 import { nonAgentApi } from '../clients/vicidial/nonAgentApi.js';
+import { config } from '../config.js';
 
 export interface InboundLead {
   /** FiveStrata OLeadID — the cross-system key for techss_ write-back */
@@ -61,6 +62,13 @@ export async function routeLead(lead: InboundLead): Promise<RouteResult> {
 
   // TODO: DNC validation — in the current LeadOps flow this happens after
   // call-center selection, so leads routed to ccai must be checked here.
+
+  // No dialer configured yet (VICIdial placeholder / pre-Telnyx): accept and
+  // queue — the dial dispatcher picks leads up when a dialer is wired in.
+  if (config.vicidial.baseUrl.includes('placeholder')) {
+    await supabase.from('leads').update({ status: 'queued' }).eq('id', data.id);
+    return { accepted: true, lead_id: data.id };
+  }
 
   // TODO: replace hardcoded list with per-vertical list/campaign mapping.
   // Lead persistence must survive a dead/unreachable dialer (async-always):
