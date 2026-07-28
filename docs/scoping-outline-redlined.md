@@ -10,6 +10,7 @@ We're building a platform that manages the call center. Plan of record: buy the 
 
 > **✅ Amended vision (Pier, from Payam):** this is a platform the CV team owns and operates — augments the human call centers, does not replace them (V1 proved we can't beat their cost). Uses: controlled test bench (Ashley), new-product lane like hot transfers (Kinsey), faster vertical spin-up (Pier), disaster fallback capacity. Every feature must tie to revenue — produce it, or teach optimizations that transfer to KB/TD/CD.
 > **➤ ViciDial** is the candidate foundational dialer layer — no objections; Ashley: ~75% of call centers she's worked with run it. Final call gated on a Telnyx capability review (see architecture doc, options A/B/C).
+> **✅ Update 2026-07-28 — the gate closed: no ViciDial instance.** The fork hardened toward option B in the 7/23 Sean-Pier alignment (`ac4357e`) and was formalized in **`PRD.md` (Draft v1, Sean 2026-07-27**, awaiting merge with Pier's draft**)**: Supabase operational brain + Telnyx call path, ViciDial kept as vocabulary only (dispositions, lists/campaigns, `vendor_lead_code` ≡ OLeadID) for comparability with the human floors. *(This local mirror is annotated ahead of the Drive copy — carry the note over when the Drive doc is next touched.)*
 
 ## The core ask: what features are needed?
 

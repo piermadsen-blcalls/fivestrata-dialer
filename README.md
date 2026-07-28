@@ -1,7 +1,7 @@
 # AICC — AI Call Center Platform (ccai)
 
-Living context doc. Keep this current — this repo's markdown IS the project memory.
-Last updated: 2026-07-23 (2nd scoping call folded in; docs synced from the ccai sandbox — **this repo, piermadsen-blcalls/fivestrata-dialer, is canonical**).
+Living context doc. Keep this current — this repo's markdown IS the project memory. **This repo, piermadsen-blcalls/fivestrata-dialer, is the one and only repo** (the ccai sandbox is retired — everything merged here as of 2026-07-28).
+Last updated: 2026-07-28 (dialer-core decision recorded: **no ViciDial instance** — Supabase operational brain + Telnyx call path, per `docs/PRD.md` Draft v1, Sean 2026-07-27; VICIdial wrappers in `src/` now vestigial, see Caveats).
 
 ## What this is
 
@@ -22,9 +22,9 @@ No human screener or closer anywhere in the call path — the AI screens, qualif
 | Layer | Choice | Status |
 |---|---|---|
 | Voice/carrier | **Telnyx** VoIP + voice AI | decided |
-| Dialer foundation | **ViciDial** (open source) — candidate foundational layer | proposed, no objections; gated on Telnyx capability review — see `docs/architecture/platform-foundations.md` (options A/B/C) |
-| App backend | **Supabase** (Postgres) — preferred, not hard requirement | preferred |
-| Analytics at scale | **Snowflake** (enterprise access) + AWS available; slave off standard MySQL if we mirror the VICI pattern | direction |
+| Dialer foundation | **No ViciDial instance** — Supabase is the operational brain (queue, routing, controls), Telnyx carries the calls. ViciDial kept as *vocabulary only* (dispositions, list/campaign semantics, `vendor_lead_code` ≡ OLeadID) for one-to-one comparability with the human floors; compat views if table-level comparison is ever wanted | ✅ decided — PRD Draft v1 (Sean, 2026-07-27; awaiting merge with Pier's draft); A/B/C hardened toward B in the 7/23 Sean-Pier alignment (`ac4357e`). History: `docs/architecture/platform-foundations.md` |
+| App backend | **Supabase** (Postgres) — operational brain + hot call tables (30–90d window) | ✅ decided — PRD Draft v1 (was "preferred"; hardened with the dialer decision) |
+| Analytics at scale | **Snowflake** results DB — every dial + every turn, 5-yr system of record; AWS available | ✅ decided — 7/22 must-have + PRD Draft v1 |
 | Lead delivery in | **LeadConduit** — platform becomes another recipient endpoint, same as KB/TD/CD | decided in principle |
 | Ops controls | Must emulate/plug into **Command Center** (transfer priorities, routing splits, brand rules) | decided in principle |
 | Voice strategy | **Soundboard-first hybrid** — swappable voice packs (canned clips in the AI voice + TTS long tail), canned-vs-TTS telemetry | decided, revisitable |
@@ -36,7 +36,7 @@ Timeline pressure: 2–3 week target for a v1 slice. Dialing paused during the b
 
 1. Augment, don't replace. Platform handed to CV team as a self-serve tool.
 2. **Own the data, store it call-level granular.** Every dial: date, number, disposition, duration, agent, script, call center. ~62M rows/month is fine (AutoWeb impression logging in Snowflake is the precedent). All reporting derives from this one fact stream. Two grains: per-dial and per-turn. Tiered retention: hot indexed window, then aggregate/archive.
-3. ViciDial as the off-the-shelf dialer base — Ashley: ~75% of call centers she's worked with run it; cheap, malleable, well-documented. (Direction, gated on Telnyx review.)
+3. ~~ViciDial as the off-the-shelf dialer base~~ **Superseded — ✅ no ViciDial instance** (7/23 Sean-Pier alignment hardened A/B/C toward B — "we'd have to work around the whole human-agent build" (Pier), `ac4357e`; formalized in PRD Draft v1, Sean 2026-07-27, awaiting merge with Pier's draft). Ashley's original case (~75% of call centers run it; cheap, malleable, well-documented) survives as the reason we keep VICI *vocabulary* — dispositions, list/campaign semantics, `vendor_lead_code` ≡ OLeadID — for comparability with the human floors.
 4. Lead flow in via LeadConduit, split upstream by percentage like today; we become a new small-percentage source, gated by performance. LeadConduit only retains 3 months; our DB holds ~5 years — revive inventory comes from our own DB (mirror Joseph's KB bulk-upload feature).
 5. Pilot on **revive** first, an existing vertical (not HW — weak comparison), but build the fresh/revive switch from day one.
 6. Client-selection timing: keep pre-call auth as a *default/fallback* client, re-request the client at qualification time (Joseph's design). Don't front-load pings — ping when needed, as the human call centers do. **Async always** — no synchronous external calls in the call path.
@@ -58,7 +58,7 @@ src/
   index.ts / server.ts       Fastify entry + route registration
   config.ts                  env-driven configuration (.env — never committed)
   clients/
-    vicidial/                typed wrappers: Non-Agent API + Agent API (the likely AI-agent seam)
+    vicidial/                typed wrappers: Non-Agent API + Agent API — VESTIGIAL (see Caveats)
     telnyx.ts                Telnyx SDK + webhook signature verification
     supabase.ts              Supabase service-role client
   routes/
@@ -74,9 +74,11 @@ supabase/migrations/         0001: leads (OLeadID), calls (per-dial), call_event
                              0002: v_daily_results / v_rdaily / v_rlist reporting views
 scripts/                     verify-setup, e2e-test, rest-introspect, v1-deepdive, v1-archive
 docs/
+  PRD.md                        THE GOVERNING ARTIFACT — Draft v1 (Sean 2026-07-27): the decision,
+                                diagrams, P0 scope, workstreams W1–W7, exposure ramp
   scoping-outline-redlined.md   the scope doc with ✅/➤/❓ answers (shareable summary)
-  open-questions.md             business/ops questions + access list T1–T11 + FS-code F1–F9
-  architecture/platform-foundations.md   ViciDial eval, options A/B/C, Telnyx, data tiers
+  open-questions.md             business/ops questions + access list T1–T11 (T10 closed) + FS-code F1–F9
+  architecture/platform-foundations.md   ViciDial eval, options A/B/C (closed — decision box at top), Telnyx, data tiers
   architecture/telnyx-capability-review.md  T2 public-docs review (Call Control, AMD, DIDs, pricing)
   architecture/tenant-program-onboarding.md  multi-tenant topology: tenants/programs, playbook spec, canonical taxonomies
   architecture/v1-build.md      V1 (Retell) architecture + post-mortem economics (T1)
@@ -87,15 +89,24 @@ docs/
   transcripts/                  raw meeting transcripts
 ```
 
-**Caveats:** the `src/clients/vicidial/` layer assumes option A/C — it swaps out if the Telnyx
-capability review lands on option B. The Supabase schema currently hosts the hot call tables;
-per the architecture doc, whether the dialer's hot write path stays in Supabase is an open
-A-vs-B question.
+**Caveats:**
+
+- **`src/clients/vicidial/` is vestigial.** It was scaffolded for options A/C; the dialer-core
+  decision (no ViciDial instance — PRD Draft v1, Sean 2026-07-27) makes it dead code. Kept for
+  reference (the Agent/Non-Agent API shapes are still useful when reasoning about the partner
+  floors' replicas), not deleted — but nothing should build on it.
+- **`src/config.ts` still hard-requires `VICIDIAL_BASE_URL` / `VICIDIAL_API_USER` /
+  `VICIDIAL_API_PASS`** — the server won't boot without them even though they're now unused.
+  Until the config is pruned, fill them with dummy values in `.env`. Same for `leadRouter.ts`'s
+  "persist → VICI list" step: the list/campaign *semantics* stay (VICI vocabulary), the VICI
+  API call goes.
+- The Supabase schema hosts the hot call tables — no longer an open A-vs-B question: Supabase
+  is the operational brain and hot store (platform-foundations §6b, PRD §5).
 
 ### Getting started
 
 1. Node.js 24 LTS is installed on Sean's box (2026-07-20); after cloning, run `npm install`.
-2. Copy `.env.example` to `.env`; fill Supabase, Telnyx, VICIdial credentials. **Never commit `.env`.**
+2. Copy `.env.example` to `.env`; fill Supabase and Telnyx credentials (VICIDIAL_* vars: dummy values — vestigial, see Caveats). **Never commit `.env`.**
    For `SUPABASE_SERVICE_ROLE_KEY` use the **secret** key (`sb_secret_...` / "service_role") —
    not the `sb_publishable_` key, which is client-safe only and can't do server-side operations.
 3. Apply `supabase/migrations/0001_init.sql` to the Supabase project.
@@ -103,11 +114,11 @@ A-vs-B question.
 
 ## Open questions
 
-See [docs/open-questions.md](docs/open-questions.md) — business/ops (15) + the technical access list (T1–T11). Top unblockers: T1 Pier's V1 build, T2 Telnyx keys + capability review (gates the A/B/C fork), T3 LeadConduit access, T4 pre-auth endpoint spec.
+See [docs/open-questions.md](docs/open-questions.md) — business/ops (15) + the technical access list (T1–T11, T10 closed) + FS-code F1–F9. Top unblockers: T2 Telnyx keys (playback-latency PoC, concurrency, pricing — PRD workstream W1), T3 LeadConduit access, T4 pre-auth endpoint spec. (T1 largely unblocked 7/20; the A/B/C fork T2 used to gate is now decided.)
 
 ## Action items
 
-- **PRD is the next artifact (Pier, 7/23: "PRD is gonna be king — we can direct the rest of the build off it").** Sean makes a block diagram first; PRD opens with it + a "the decision" box, presents remaining unknowns as named workstreams with owners/gates (clip-playback-latency PoC, warm-transfer leg, voice-engine choice). Stakeholders to pull in: **Shelly Teh** (Snowflake), **Sam/Tatevik** (Telnyx/Supabase/Snowflake cost outline + approval).
+- **PRD is the next artifact (Pier, 7/23: "PRD is gonna be king — we can direct the rest of the build off it").** *(Done — **[docs/PRD.md](docs/PRD.md) Draft v1, Sean 2026-07-27**: opens with "the decision" box + system diagrams, remaining unknowns as workstreams W1–W7 with owners/gates. Awaiting merge with Pier's draft.)* Stakeholders pulled in: **Shelly Teh** (Snowflake), **Sam/Tatevik** (Telnyx/Supabase/Snowflake cost outline + approval).
 - **Sean**: fold the 7/22 call into the doc, simplify (decisions + open questions), circulate later today *(done — this update)*. Keep pinging the team through the build.
 - **Still open after 7/22**: name the pilot vertical; define "dialing paused"; draw v1 in/out; set formal success thresholds; pull KB/TD/CD cost baselines; pin the crediting rules and techss_ write-back contract; DNC inheritance.
 - **Unblockers** (see open-questions T1–T11): T2 Telnyx keys (playback PoC, concurrency, pricing), T3/T4 LeadConduit + pre-auth spec (Joseph), T6 write-back contract, T8 Snowflake/AWS for the results DB.

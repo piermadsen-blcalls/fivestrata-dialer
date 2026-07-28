@@ -1,6 +1,6 @@
 # CLAUDE.md — AICC (AI Call Center Platform)
 
-Project context for Claude Code. Read this first, then the files in "Repo map" below. Everything here was current as of 2026-07-22 (2nd scoping call folded in; TypeScript scaffold in place).
+Project context for Claude Code. Read this first, then the files in "Repo map" below. Everything here was current as of 2026-07-28 (dialer-core decision folded in: no ViciDial instance — `docs/PRD.md` is the governing artifact).
 
 ## Standing instructions
 
@@ -13,12 +13,13 @@ Project context for Claude Code. Read this first, then the files in "Repo map" b
 
 | File | What it holds |
 |---|---|
-| `README.md` | Living project doc: vision, stack, quasi-decided list (14 items), repo layout, open questions, action items, people |
+| `README.md` | Living project doc: vision, stack, quasi-decided list (15 items), repo layout, open questions, action items, people |
+| `docs/PRD.md` | **The governing artifact** (Draft v1, Sean 2026-07-27, awaiting merge with Pier's draft): the decision, system diagrams, full P0 scope, data architecture, workstreams W1–W7 with owners/gates, exposure ramp, success measures |
 | `docs/meetings/2026-07-17-scoping-call.md` | Distilled founding meeting (59m transcript → 12 topic sections + scope-coverage map) |
 | `docs/meetings/2026-07-22-scoping-call-2.md` | Distilled 2nd scoping call (39m): must-have list, revive intake, cadence, results DB, DID mgmt, IVA/contact-rate, recordings, KPIs |
 | `docs/scoping-outline-redlined.md` | Sean's scope outline with inline ✅/➤/❓ answers — the shareable decided-vs-open summary (Word/Google Doc versions live in Drive, doc id `1r5FL-ySMmLCcUo_YFSPN9POWtXY2q29O4XJDWgbzHWg`) |
-| `docs/open-questions.md` | Business/ops questions (15) + technical access list (T1–T11) + design/spec questions |
-| `docs/architecture/platform-foundations.md` | ViciDial evaluation, build options A/B/C, Telnyx, voice strategy, LeadConduit, data-layer tiers, no-human-layer implications, schema strategy |
+| `docs/open-questions.md` | Business/ops questions (15) + technical access list (T1–T11; T10 closed) + design/spec questions + FS-code F1–F9 |
+| `docs/architecture/platform-foundations.md` | ViciDial evaluation, build options A/B/C (closed — decision box at top), Telnyx, voice strategy, LeadConduit, data-layer tiers, no-human-layer implications, schema strategy |
 | `docs/architecture/telnyx-capability-review.md` | T2 public-docs half: Call Control, AMD, media streaming, DID APIs, pricing model inputs |
 | `docs/architecture/v1-build.md` | V1 (Retell + Supabase queue) architecture + post-mortem economics (~$157/sale, killed 7/8) — T1 |
 | `docs/architecture/tenant-program-onboarding.md` | Multi-tenant input topology (Sean, 7/23): tenants → programs, self-serve playbook onboarding spec, canonical disposition/sentiment taxonomies + per-program mapping |
@@ -26,7 +27,7 @@ Project context for Claude Code. Read this first, then the files in "Repo map" b
 | `docs/transcripts/` | Raw meeting transcripts |
 | `docs/call-scripts/` | Call-center script workbooks per vertical |
 | `scripts/` | verify-setup, e2e-test, rest-introspect, v1-deepdive, v1-archive (Node/tsx) |
-| `src/` | TypeScript/Fastify scaffold: VICIdial API wrappers (option A/C — provisional until the Telnyx review), Telnyx client + webhooks, Supabase client, LeadConduit intake, lead router with two-phase client-selection stub |
+| `src/` | TypeScript/Fastify scaffold: VICIdial API wrappers (**vestigial** — no ViciDial per the PRD decision; see README caveats, incl. the still-required `VICIDIAL_*` env vars in `src/config.ts`), Telnyx client + webhooks, Supabase client, LeadConduit intake, lead router with two-phase client-selection stub |
 | `supabase/migrations/` | 0001 schema: leads (OLeadID), calls (per-dial grain), call_turns (per-turn clip decisions), call_events, voice_packs/voice_clips, dids (1,500-dial caps), clients, transfer_priorities, scripts · 0002: reporting views emulating Ashley's dashboard. **The Supabase project is shared with V1** (Pier can't create more projects) — never modify/drop V1 objects (dial_queue, call_log, retell_*, agent_routing…) |
 
 ## Project in one paragraph
@@ -44,15 +45,15 @@ Full internal skills are available in this repo's `.claude/skills/` — **fivest
 
 ## Key decisions (details in README.md)
 
-Augment-not-replace · own the data, row-per-dial granular fact stream (~62M rows/mo, tiers: hot 30–90d → CDC → Snowflake → archive) · ViciDial candidate foundation (option A/B/C fork open, gated on Telnyx capability review) · LeadConduit recipient endpoint for lead-in · revive-first pilot, existing vertical, not HW · two-phase client selection (pre-auth default + re-request at qualification + fallback) · async always, ping-on-need (never sync calls in the call path) · branding cheap-to-keep via AI-voice clips (drop/generic/keep is testable) · **soundboard-first hybrid voice** (canned clips pre-generated in the AI voice, TTS long tail, swappable voice packs, canned-vs-TTS telemetry) · **no human screener/closer** — AI warm-transfers direct to client · **the AI is the soundboard operator** (today humans fire hotkeys tied to clips; AI replaces them, every clip choice logged per-turn: context → clip → outcome → optimization loop; learnings transfer to human floors). Fact stream has two grains: per-dial and per-turn. · **Multi-tenant input topology** (Sean 7/23): FiveStrata rules first, but tenant → program meta-mapping + self-serve playbook onboarding so new verticals/business units (e.g. AutoWeb trade-in) onboard as config, not code — see `docs/architecture/tenant-program-onboarding.md`.
+Augment-not-replace · own the data, row-per-dial granular fact stream (~62M rows/mo, tiers: hot 30–90d → CDC → Snowflake → archive) · **no ViciDial instance — Supabase operational brain + Telnyx call path** (✅ PRD Draft v1, Sean 2026-07-27, awaiting merge with Pier's draft; the A/B/C fork hardened toward B in the 7/23 Sean-Pier alignment, commit `ac4357e`; ViciDial vocabulary kept — dispositions, list/campaign semantics, `vendor_lead_code` ≡ OLeadID — for one-to-one comparability with the human floors) · LeadConduit recipient endpoint for lead-in · revive-first pilot, existing vertical, not HW · two-phase client selection (pre-auth default + re-request at qualification + fallback) · async always, ping-on-need (never sync calls in the call path) · branding cheap-to-keep via AI-voice clips (drop/generic/keep is testable) · **soundboard-first hybrid voice** (canned clips pre-generated in the AI voice, TTS long tail, swappable voice packs, canned-vs-TTS telemetry) · **no human screener/closer** — AI warm-transfers direct to client · **the AI is the soundboard operator** (today humans fire hotkeys tied to clips; AI replaces them, every clip choice logged per-turn: context → clip → outcome → optimization loop; learnings transfer to human floors). Fact stream has two grains: per-dial and per-turn. · **Multi-tenant input topology** (Sean 7/23): FiveStrata rules first, but tenant → program meta-mapping + self-serve playbook onboarding so new verticals/business units (e.g. AutoWeb trade-in) onboard as config, not code — see `docs/architecture/tenant-program-onboarding.md`.
 
 ## Stack
 
-Telnyx VoIP/voice-AI (decided) · ViciDial candidate dialer core (Asterisk/MariaDB/PHP/Perl; APIs: NON-AGENT_API.txt + AGENT_API.txt at vicidial.org/docs — Agent API is the likely AI-agent seam; wrapped in `src/clients/vicidial/`) · Supabase preferred app backend (not hard req) · AWS + Snowflake available for analytics (AutoWeb impression-logging precedent) · LeadConduit (ActiveProspect; REST/JSON; flows/sources/recipients; Firehose worth evaluating) · Command Center emulation for transfer priorities · Node.js 20+/TypeScript/Fastify for the platform service (Node 24 LTS installed 2026-07-20).
+Telnyx VoIP/voice-AI (decided) · **no dialer core** — Supabase (Postgres) is the operational brain: dial queue, routing, controls, hot call tables (✅ PRD Draft v1, 2026-07-27; ViciDial dropped as an instance, kept as vocabulary — the `src/clients/vicidial/` wrappers and `VICIDIAL_*` env vars in `src/config.ts` are vestigial, see README caveats) · Snowflake results DB (every dial + turn, 5-yr; AWS available; AutoWeb impression-logging precedent) · LeadConduit (ActiveProspect; REST/JSON; flows/sources/recipients; Firehose worth evaluating) · Command Center emulation for transfer priorities · Node.js/TypeScript/Fastify for the platform service (Node 24 LTS installed 2026-07-20).
 
 ## Immediate unblockers (full table in docs/open-questions.md)
 
-T1 Pier's V1 build (repo/prompts/Telnyx config — top priority, seeds option B) · T2 Telnyx keys + capability review (gates the A/B/C fork) · T3 LeadConduit API access (Joseph) · T4 pre-auth endpoint spec (Joseph) · T5 Command Center transfer-priority surface · T6 techss_ disposition write-back contract · T7 Supabase · T8 AWS/Snowflake · T9 Ashley's daily dashboard · T10 ViciDial sandbox on EC2 · T11 DNC/validation surface.
+T1 Pier's V1 build (largely unblocked 7/20 — Supabase deep-dive done, see `docs/architecture/v1-build.md`; repo/prompts/Retell pricing still owed) · T2 Telnyx keys (playback-latency PoC, concurrency, pricing — PRD workstream W1; capability review done 7/20, and the A/B/C fork it gated is now decided) · T3 LeadConduit API access (Joseph) · T4 pre-auth endpoint spec (Joseph) · T5 Command Center transfer-priority surface · T6 techss_ disposition write-back contract · T7 Supabase · T8 AWS/Snowflake (Shelly Teh; costs via Sam/Tatevik) · T9 Ashley's daily dashboard (received 7/20; disposition dictionary + FS-code tags remain) · ~~T10 ViciDial sandbox~~ (closed — no ViciDial) · T11 DNC/validation surface.
 
 ## Still-open agenda (after 7/22)
 

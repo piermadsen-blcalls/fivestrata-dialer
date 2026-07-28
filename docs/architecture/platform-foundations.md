@@ -1,7 +1,18 @@
 # Platform Foundations — ViciDial, Telnyx, LeadConduit, Data Layer
 
 Architecture working notes. Nothing here is final; this hardens as requirements/specs/business-logic layers land.
-Last updated: 2026-07-17.
+Last updated: 2026-07-28 (dialer-core decision recorded — no ViciDial instance).
+
+> **✅ DECISION (recorded here 2026-07-28): no ViciDial instance.** The A/B/C fork below is
+> closed. The 7/23 Sean↔Pier alignment hardened it toward option B ("we'd have to work around
+> the whole human-agent build" — Pier; commit `ac4357e`), and the **PRD formalized it**
+> ([../PRD.md](../PRD.md), Draft v1, Sean 2026-07-27 — awaiting merge with Pier's draft):
+> **Supabase** is the operational brain (queue, routing, controls), **Telnyx** carries the
+> calls, **Snowflake** is the results store. ViciDial survives as *vocabulary only* —
+> dispositions, list/campaign semantics, `vendor_lead_code` ≡ OLeadID — so our data compares
+> one-to-one with the human floors (compat views if table-level comparison is ever wanted;
+> see §6a). §1 and the options table are retained below as the historical record of the
+> evaluation.
 
 ## 1. ViciDial as the foundational layer
 
@@ -31,12 +42,12 @@ Last updated: 2026-07-17.
 | B. Build orchestration directly on Telnyx Voice API/Call Control | Our own dialer service (Supabase/AWS) commands Telnyx programmatically; borrow VICI's data model concepts, skip its code | Modern, clean eventing (webhooks), AI-native, single stack | We rebuild pacing, hopper, dispo, compliance, DNC, DID rotation from scratch — the "boring 80%" |
 | C. Hybrid: VICI schema + our orchestration | Adopt VICI-compatible table semantics (list/log/dispo) over a modern engine | Data comparability without legacy code | Still rebuilding dialer logic; risk of half-compat |
 
-Open decision. Sean's instinct on the call: much of the sales-allocation/list-ordering logic "won't be too hard on the Vici side." Ashley's endorsement plus our replica expertise weigh toward A or C. Telnyx voice-AI product capabilities (native AI agents, media streaming) may decide it — investigate what Telnyx gives out of the box before committing.
+~~Open decision~~ **Closed — see the decision box at the top of this doc.** (Historical: Sean's instinct on the call: much of the sales-allocation/list-ordering logic "won't be too hard on the Vici side." Ashley's endorsement plus our replica expertise weighed toward A or C. Telnyx voice-AI product capabilities were the gate.)
 
 > **Update 2026-07-20 — V1 discovered & documented:** V1 is already option-B-shaped — Supabase queue/lease orchestration + Retell voice agents, no ViciDial (see [v1-build.md](v1-build.md)). Its failure was economic (voice-AI cost ≈ $157/sale), not architectural — the exact cost line the soundboard-first hybrid targets.
 >
 > **Update 2026-07-20 — public-docs capability review done:** see [telnyx-capability-review.md](telnyx-capability-review.md).
-> Headline: Telnyx replaces AMD, bridge/transfer/conference, pre-staged clip playback, bidirectional media streaming (L16), DID lifecycle (bulk order/release + reputation API), and optionally the whole STT→LLM→TTS loop (custom-LLM AI Assistants) — but has **zero campaign semantics** (no pacing, hopper, lists, dispositions, DNC, calling windows). Sharpest new fact for the fork: **with all-AI agents, predictive pacing loses most of its purpose** (no scarce human pool to keep busy), which weakens option A's biggest advantage. Remaining unknowns need account keys + a PoC: playback-start latency for pre-staged clips (critical for soundboard-first), concurrency defaults, warm-transfer fee scope. Still ➤ direction, not ✅ decided.
+> Headline: Telnyx replaces AMD, bridge/transfer/conference, pre-staged clip playback, bidirectional media streaming (L16), DID lifecycle (bulk order/release + reputation API), and optionally the whole STT→LLM→TTS loop (custom-LLM AI Assistants) — but has **zero campaign semantics** (no pacing, hopper, lists, dispositions, DNC, calling windows). Sharpest new fact for the fork: **with all-AI agents, predictive pacing loses most of its purpose** (no scarce human pool to keep busy), which weakens option A's biggest advantage. Remaining unknowns need account keys + a PoC: playback-start latency for pre-staged clips (critical for soundboard-first), concurrency defaults, warm-transfer fee scope. ~~Still ➤ direction, not ✅ decided.~~ *Superseded: ✅ decided 7/23→7/27, see decision box at top. The account-key unknowns (playback latency, concurrency, pricing) live on as PRD workstream W1.*
 
 ## 2. Telnyx (voice layer — decided)
 
@@ -55,7 +66,7 @@ Carrier + programmable voice. Relevant capabilities to spec: Call Control API (p
 - **Directly comparable to the human call centers**: KB's soundboard agents are making the same decisions unlogged. Anything we learn about clip/sequence effectiveness is transferable coaching/script feedback for the human floors — the "platform teaches the call centers" revenue path made concrete.
 - The granular fact stream therefore has **two grains**: per-dial (the row-per-dial fact) and per-turn (clip decisions within a call). Design both from day one.
 
-Architecturally this means the media layer needs fast clip playback (pre-staged audio on the media path) interleaved with streaming TTS — a requirement to test against both option A (Asterisk plays files natively; this is exactly how soundboard call centers work today) and option B (Telnyx Call Control audio playback + streaming).
+Architecturally this means the media layer needs fast clip playback (pre-staged audio on the media path) interleaved with streaming TTS — a requirement to test against both option A (Asterisk plays files natively; this is exactly how soundboard call centers work today) and option B (Telnyx Call Control audio playback + streaming). *With the fork closed on B, this test is now the Telnyx playback-latency PoC (PRD workstream W1: clip start ≤ human-soundboard seam, ~200ms).*
 
 > ➤ Direction (Sean, 2026-07-22): rotate a small pool of pre-generated variants (~3–5) per high-frequency clip slot (greetings, objection handles) rather than a single fixed recording — hearing the exact same take every call is what tips a lead off that it's canned; variety reads as more real. Non-determinism of the underlying TTS is a feature here, not a bug to engineer around — generate the pool once (batch, still async/pre-staged, no live-generation added to the call path) and rotate at playback time. Track which variant played within a call (avoid same-call repeats; repeats across different calls are fine) as an added dimension on the per-turn clip-selection log (`context → clip_variant → outcome`), so variant effectiveness is measurable through the same optimization loop as clip selection generally. Not yet costed against the per-clip QA/generation burden of N variants × M clips × swappable voice packs — likely start with variants only on the highest-frequency/highest-visibility slots rather than the full library.
 
@@ -87,7 +98,7 @@ Design rules from the call:
 - Granular first, aggregate derived (Brandon). Never store only aggregates.
 - We control the data = analytics stop being a negotiation with vendors (Sean).
 
-Supabase's role: preferred home for the platform application layer (config, scripts/prompt versions, campaigns, users, transfer-priority mirror, UI). Whether it also holds the hot call-log tier depends on option A vs B — don't force the dialer's write path into it if VICI/MySQL is the engine.
+Supabase's role: preferred home for the platform application layer (config, scripts/prompt versions, campaigns, users, transfer-priority mirror, UI). ~~Whether it also holds the hot call-log tier depends on option A vs B~~ *Resolved with the fork (7/23→7/27): Supabase holds the hot tier too — it IS the operational brain; see §6b.*
 
 ## 4b. Call flow assumption: no human layer
 
@@ -159,11 +170,13 @@ Failure modes of picking one: everything-Snowflake kills the call path (latency 
 warehouse costs); everything-Supabase strangles under the 5-yr granular store. Open knobs: hot
 window length (30–90d) and nightly-vs-streaming CDC.
 
+*Both 6a and 6b were folded into the PRD (Draft v1, 2026-07-27) §1 and §5 as the decided shape.*
+
 ## 7. Open architecture questions
 
-- Option A vs B vs C — gate on a Telnyx capability review (what does their voice-AI/Call Control stack replace?).
-- Where does the AI conversation engine run (Telnyx-native vs our own STT→LLM→TTS loop), and what's the per-minute cost model?
-- Supabase vs MySQL for the dialer hot store; Snowflake ingestion route (Snowpipe vs batch).
+- ~~Option A vs B vs C — gate on a Telnyx capability review~~ **✅ Decided: no ViciDial instance** (7/23 Sean-Pier alignment hardened toward B, `ac4357e`; formalized in [../PRD.md](../PRD.md) Draft v1, Sean 2026-07-27, awaiting merge with Pier's draft). See decision box at top.
+- Where does the AI conversation engine run (Telnyx-native vs our own STT→LLM→TTS loop), and what's the per-minute cost model? *(PRD workstream W1 — voice engine bake-off.)*
+- ~~Supabase vs MySQL for the dialer hot store~~ **✅ Supabase** (falls out of the A/B/C decision; see §6b). Still open: Snowflake ingestion route (Snowpipe vs batch) and hot-window length.
 - Exact disposition write-back contract into `techss_` (which tables, what cadence, who owns — Joseph/Cromwel).
 - DNC: inherit `techss_all_leads.dncDate` scrub upstream (LeadOps validates before split today) + platform-side scrub?
 - Recording storage/format designed for analysis (stereo, per VICI `STEREO_CALL_RECORDINGS.txt`, helps dead-air/QA ML).

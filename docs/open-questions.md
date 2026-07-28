@@ -1,7 +1,7 @@
 # Open Questions
 
 Boiled down from the 7/17 scoping call and post-call decisions, refreshed after the 7/22 follow-up. Two buckets: business/ops and technical (mostly access + specs Sean/Pier need to start unblocking now).
-Last updated: 2026-07-22.
+Last updated: 2026-07-28 (dialer-core decision recorded — A/B/C closed ✅, no ViciDial, T10 obsolete; see `PRD.md`).
 
 > **7/22 session update:** the "session-2 agenda" items below were substantially covered. Cadence/dialing-pattern controls (Q8), IVA/contact-rate breakage (Q9), DID economics + recordings retention are now direction, not blank. Remaining hard-open: pilot vertical (Q1), "paused" definition (Q2), in/out of v1 (Q3), formal success thresholds (Q5), cost baselines (Q6), crediting rules (Q7), DNC inheritance (Q10).
 
@@ -37,7 +37,7 @@ Last updated: 2026-07-22.
 | # | Surface | Why now | Likely owner |
 |---|---|---|---|
 | T1 | **Pier's V1 AI build** — repo, prompts, Telnyx config, infra | It already dials and talks; it's the seed of option B and the fastest way to learn what Telnyx integration actually looks like. Also needs the ping-everything fix regardless. *LARGELY UNBLOCKED 2026-07-20: V1's Supabase (Retell-based, queue-orchestrated) deep-dived read-only — full write-up in `architecture/v1-build.md` (arch, June economics: ~$157/sale vs ~$25–35 at KB, dialing killed 7/8). Still needed from Pier: repo/prompts, Retell account+pricing, Telnyx config, agent naming context.* | Pier |
-| T2 | **Telnyx account + API keys** (Call Control, SIP trunking, media streaming, voice-AI product, number ordering, pricing) | Gates the A/B/C architecture decision AND the soundboard/TTS cost model. *Public-docs half DONE 2026-07-20 — see `architecture/telnyx-capability-review.md`. Keys still needed for: playback-latency PoC, concurrency defaults, negotiated pricing, warm-transfer fee scope.* | Pier / IT |
+| T2 | **Telnyx account + API keys** (Call Control, SIP trunking, media streaming, voice-AI product, number ordering, pricing) | ~~Gates the A/B/C architecture decision~~ *(fork decided 7/23→7/27 — no ViciDial)* — keys now gate the soundboard/TTS cost model and PRD workstream W1. *Public-docs half DONE 2026-07-20 — see `architecture/telnyx-capability-review.md`. Keys still needed for: playback-latency PoC, concurrency defaults, negotiated pricing, warm-transfer fee scope.* | Pier / IT |
 | T3 | **LeadConduit account API access** (flows, entities, recipient config; Firehose eval) | We become a recipient endpoint — need the submission-doc/field-mapping spec and the lead payload contract (incl. OLeadID, sub-source fields). | Joseph |
 | T4 | **Pre-auth / client-selection endpoint spec** — request/response contract of the endpoint call centers hit today | Two-phase client selection is designed around it; we must call the same surface (or its successor). | Joseph |
 | T5 | **Command Center** — transfer priorities: where they live (API? techss_dl tables?), read/write surface | Platform must emulate/plug into it. | Joseph / Cromwel |
@@ -45,16 +45,16 @@ Last updated: 2026-07-22.
 | T7 | **Supabase org/project** access | Preferred app-layer home; need to size what it can host (hot store vs app data only). | Pier / Sean |
 | T8 | **AWS + Snowflake** — account, warehouse, Snowpipe/S3 landing rights | Analytical tier for the 62M-rows/month fact stream; AutoWeb precedent lives here. *Owner identified (Pier, 7/23): **Shelly Teh** for Snowflake. Costs for Telnyx/Supabase/Snowflake must be outlined + approved via **Sam/Tatevik** — also the forcing function for the §5 cost baselines.* | Shelly Teh / Sam+Tatevik |
 | T9 | **Ashley's daily dashboard** — the file + its data pulls | It IS the day-one reporting spec; also feeds Brandon/Alex's automation work. *File received 2026-07-20 (KB WI 3.1) — structure extracted to `reporting/kb-wi-dashboard-spec.md`, emulation views in `supabase/migrations/0002_reporting_views.sql`. Remaining: disposition dictionary (→T6), FS-code PD/CH/CP tag meanings, where the data pulls come from.* | Ashley |
-| T10 | **ViciDial source + a sandbox box** (AWS EC2; SCRATCH_INSTALL) | Cheapest way to de-risk option A — stand one up, wire a Telnyx trunk, drive the Agent API. | Sean / Cromwel |
+| T10 | ~~**ViciDial source + a sandbox box** (AWS EC2; SCRATCH_INSTALL)~~ | **CLOSED — obsolete.** Purpose was to de-risk option A; the A/B/C fork closed with no ViciDial instance (7/23 Sean-Pier alignment, `ac4357e`; ✅ PRD Draft v1, Sean 2026-07-27, awaiting merge with Pier's draft). | — |
 | T11 | **DNC/validation surface** — how LeadOps validates today (techss_all_leads dncDate et al.), and whether the platform gets pre-scrubbed leads only | Determines whether platform-side scrub is needed at all. | Joseph |
 
 ### Design/spec questions (answerable once access lands)
 
-- **Architecture fork (A/B/C)**: ➤ **hardened toward B (Sean↔Pier chat, 7/23)** — no ViciDial instance ("we'd have to work around the whole human-agent build" — Pier); VICI = schema vocabulary/jargon only (dispos, list/campaign language, compat views if needed); Supabase = orchestration/OLTP; Snowflake = analysis. **Formalize as ✅ in the PRD** (the next artifact — Pier: "PRD is gonna be king"). T10 (VICI sandbox) likely obsolete.
+- **Architecture fork (A/B/C)**: ✅ **DECIDED — no ViciDial instance** (hardened toward B in the Sean↔Pier chat 7/23 — "we'd have to work around the whole human-agent build" (Pier), `ac4357e`; **formalized in `PRD.md` Draft v1, Sean 2026-07-27**, awaiting merge with Pier's draft). VICI = schema vocabulary only (dispos, list/campaign language, `vendor_lead_code` ≡ OLeadID, compat views if needed); Supabase = orchestration/OLTP; Snowflake = analysis. T10 (VICI sandbox) closed.
 - **AI conversation engine**: Telnyx-native vs own STT→LLM→TTS loop; latency budget per turn; how canned-clip playback interleaves with streaming TTS on the chosen media path.
 - **Voice pack pipeline**: batch TTS generation, clip storage/versioning, per-call canned-vs-TTS telemetry schema.
 - **Warm-transfer leg**: bridging mechanics, client no-answer handling, transfer recording/crediting event schema (feeds business Q7).
-- **Hot store choice**: VICI MySQL + streaming replica vs Supabase Postgres + logical replication; CDC route to Snowflake (Debezium/DMS vs Snowpipe from S3).
+- **Hot store choice**: ✅ **Supabase Postgres** (falls out of the A/B/C decision — see platform-foundations §6b). Still open: CDC route to Snowflake (nightly batch vs streaming; Snowpipe from S3 vs other) and hot-window length (30–90d).
 - **Fact-stream schema**: the row-per-dial event model (ts, number, dispo, duration, session, script/prompt version, call center, client, geo, sub-source) + retention tiers (hot 30–90d → warehouse → archive).
 - **DID management**: pool sizing for pilot volume, cap counters, rotation/retirement automation via Telnyx number APIs. **Open (7/22):** does the *carrier* (not Telnyx) impose a minimum hold — Ashley's "90-day" concern? Telnyx itself is a monthly subscription (swap anytime, pay the month). Design for individual benchmark-driven retirement, not block rotation.
 - **Recordings**: storage target (S3?), stereo capture for QA/dead-air analysis. **Retention (7/22):** 5-year legal minimum; FiveStrata owns the backup (carrier-swap gap is the failure mode); hot 1–2-month window in a fast store, cold-archive the rest.
