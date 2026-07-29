@@ -162,7 +162,7 @@ Supabase = OLTP (call path never leaves it — async always); Snowflake = OLAP (
 
 | # | Workstream | Gate / exit criterion | Owner(s) |
 |---|---|---|---|
-| W1 | Voice engine bake-off (Telnyx-native vs Retell vs BYO loop) | Clip playback latency PoC ≤ human-soundboard seam (~200ms); cost/connected-min model vs KB baseline | Sean + Pier (needs T2 keys) |
+| W1 | Voice engine bake-off (Telnyx-native vs Retell vs BYO loop) — interface design: `architecture/soundboard-llm-interface.md` (LLM as constrained tool-calling clip selector; TTS as guarded escape hatch) | Clip playback latency PoC ≤ human-soundboard seam (~200ms); cost/connected-min model vs KB baseline | Sean + Pier (needs T2 keys) |
 | W2 | Warm-transfer leg | Bridged test transfer with tAtt/tSucc/tAgree logged + crediting rule signed off by Kinsey | Sean, Joseph (T4 spec) |
 | W3 | Intake contracts | LeadConduit payload spec (F8), pre-auth endpoint contract, DNC inheritance (T3/T4/T11) | Joseph |
 | W4 | Results relay + write-back | Snowflake landing live (Shelly Teh); techss_ write-back contract (T6) | Sean, Cromwel, Shelly Teh |
