@@ -23,7 +23,7 @@ flowchart LR
     MARTS["KPI marts · A/B evaluator · DID health ·<br/>Cortex (in-warehouse LLM over transcripts)"]
   end
 
-  CALLS -- "nightly push (zero tech lift — agreed 7/29)" --> FACT
+  CALLS -- "incremental watermark sync —<br/>nightly today, cadence is config" --> FACT
   TELNYX["Telnyx recordings"] --> S3["S3 (cheap/archival tiers)"] --> REC
   FACT --> MARTS
   REC --> MARTS
@@ -68,6 +68,42 @@ The V1 build carries the contract, not the analytics:
 4. **Cost in V1: one migration + ~50 lines of read-hooks.** The Snowflake side can land weeks
    later without touching the engine.
 
+## Push cadence: why nightly batch (not constant streaming) — and the free upgrade path
+
+Considered explicitly (Sean, 2026-07-31): does anything intraday require a constant or
+high-frequency push to Snowflake? **No — because every intraday *action* is an operational
+reflex over hot data that already lives in Supabase in real time.** The engine writes
+`calls`/`call_turns`/`call_events` as they happen; the sync direction is Supabase→Snowflake.
+Routing an intraday threshold check through Snowflake would add a round-trip and a standing
+warehouse bill to compute what Postgres answers in milliseconds where the data sits.
+
+The two-loop division of labor:
+
+| | **Fast loop — Supabase (seconds–minutes)** | **Slow loop — Snowflake (nightly)** |
+|---|---|---|
+| Nature | Operational reflexes: simple calculated fields over the hot window | Learning: scans over months of history, models, stat-sig tests, Cortex |
+| Examples | **DID circuit-breaker** (bench a number when rolling 603/contact rate breaches threshold — evidenced by the TD study's 36–69%-decline zombies), kill switches, pacing/backpressure, A/B guardrail stops, client-endpoint fallbacks | Decay-curve fitting, block-level reputation trends, clip win-rates, cadence uplift, propensity scores, transcript mining |
+| Freshness need | Real | None of it changes materially between 11am and 6pm |
+
+**The seam: Snowflake sets the thresholds, Supabase pulls the trigger.** The slow loop
+learns what "bad" looks like (the decay knee, the decline baseline) and ships it as a
+directive; the fast loop applies it locally. This is also Pier's 7/28 position ("live-data
+stats the team would act on are just simple calculated fields") — confirmed, for this loop.
+
+**The one V1 requirement this adds:** build the push as an **incremental watermark sync**
+(idempotent upserts keyed by call/turn id, "everything since the last high-water mark"),
+*not* a dump-the-day job. Then nightly → hourly → 15-min → Snowpipe streaming is a cron/
+config change, never a rewrite; the directives inbox is already cadence-agnostic. Legit
+future reasons to tighten cadence (none pilot-blocking): intraday models needing deep
+history + this morning, analyst same-day queries during test bursts, shrinking the <24h
+data-loss window.
+
+**Anti-pattern to refuse:** running a warehouse hot all day so Snowflake can be an intraday
+brain. Two systems computing overlapping metrics on different lags = definition drift and
+"which number is right" fights, and it forfeits the pay-per-use cost shape. Any metric that
+exists in both loops (contact rate, 603 share) gets one canonical definition, with the
+Supabase copy labeled *operational estimate, hot window*.
+
 ## Recordings — why Snowflake is the obvious long-term home
 
 We record every call long-term no matter what (decided). The pattern: **audio lands in S3**
@@ -99,6 +135,7 @@ connected volumes, i.e. tens of dollars/mo in storage, not a budget line.
 
 | In V1 | In parallel / later |
 |---|---|
-| Nightly push of calls + call_turns to Snowflake | KPI marts, A/B evaluator, models (rows 1–9 above) |
+| Incremental watermark sync of calls + call_turns (nightly cadence; cadence is config, not architecture) | KPI marts, A/B evaluator, models (rows 1–9 above) |
 | `analytics_directives` inbox + engine read-hooks | Cortex transcript mining |
+| Fast-loop reflexes in Supabase (DID circuit-breaker, guardrail stops) with Snowflake-supplied thresholds | Tighter push cadence (hourly/streaming) if intraday models ever warrant it |
 | Recordings → S3 with catalog-ready naming | Directory tables / stage wiring, retention tiering |
