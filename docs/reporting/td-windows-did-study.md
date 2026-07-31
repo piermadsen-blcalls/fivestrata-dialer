@@ -52,11 +52,26 @@ Answer rate vs dials-per-DID-per-day (21 days, all campaigns pooled):
 | 101–200 | 967 | 138,383 | **12.6%** |
 | 200+ | 1 | 2,126 | 1.8% |
 
-Monotonic decline, roughly halving from lightest to heaviest use. **Caveat — confounded by
-campaign mix:** the WINDOW (revive-bulk) campaign answers ~5% while WIFRESH answers ~70%
-(status-flag definitions differ too), and heavy-DID days skew WINDOW. The
-campaign-stratified rerun (`did_followup_query.py` E2) isolates the within-campaign effect.
-Directionally it supports shallow use; the *magnitude* needs the stratified cut.
+Monotonic decline, roughly halving from lightest to heaviest use. The pooled curve is
+confounded by campaign mix, so here is the **campaign-stratified rerun (E2, 21d) — the
+effect survives within campaign, and it's steeper on revive:**
+
+| dials/DID/day | WIFRESH answered % | WINDOW answered % |
+|---|---|---|
+| 1–10 | **67.5%** | **13.2%** |
+| 11–25 | 67.3% | 9.1% |
+| 26–50 | 61.1% | 6.5% |
+| 51–100 | **55.2%** | **4.0%** |
+
+Within WINDOW (revive bulk), a DID worked at 51–100 dials/day answers at less than **a
+third** of its ≤10/day rate. WIFRESH holds flat to ~25/day, then bleeds (−12 pp by 51–100).
+Two independent campaigns showing the same monotonic shape makes a pure lead-quality
+explanation much less likely (though heavier DIDs correlating with worse area codes can't be
+fully excluded without a controlled test — which our platform can run natively).
+
+**The knee is ≈10–25 dials/DID/day — and TD's observed median (~10/day) sits exactly on the
+flat part.** Their ~10K-pool sizing is empirically rational, not paranoia. Our optimization
+target: hold each DID at/below the knee per campaign type, automatically.
 
 ## 4. Carrier-reputation signal: SIP 603 is real and measurable
 
@@ -67,6 +82,18 @@ This is literally what TD's custom `603lock` column in `vicidial_campaign_cid_ar
 manages by hand. For AICC: per-DID 603/403 share is a *free, in-band* reputation feed — a
 second input to the `retire_did` directive alongside contact-rate decay, no external
 number-reputation API required (Pier's 7/29 question).
+
+**The 30-day worst-DID leaderboard (H2) proves the directive would fire on real targets:**
+
+- **Eight zombie DIDs at 36–69% decline rates still in rotation** (worst: 214-472-8138,
+  206 declines on 300 dials = 68.7%). TD's manual process is missing these entirely —
+  every dial on them is near-guaranteed waste. An automated nightly `retire_did` pulls them
+  on day one.
+- **Block-level degradation:** whole purchased blocks (928-268-3xxx, 480-996-08xx,
+  623-309-57xx, 602-806-67xx) run uniformly at ~6.5–9% decline on ~2.2K dials/30d each —
+  4–6× the ~1.5% floor baseline. Reputation decays at the *block* level, so retirement
+  logic should watch prefixes, not just individual numbers.
+- The default CID (§1) runs 6.8% decline on 74K dials/30d — burned, as expected.
 
 ## 5. Campaign mix & volume context (30 days)
 
@@ -86,14 +113,22 @@ number-reputation API required (Pier's 7/29 question).
 3. **Decay curve is real** → the pool-size-vs-usage optimization is worth automating; we can
    beat TD's static ~10K pool by sitting at the curve's knee per area code.
 4. **603/403 share per DID** joins contact-rate decay as the DID-health inputs.
-5. Concurrency sizing note: hourly slot-time data from the thin live window was unreliable;
-   use the archive rerun (F2) before hardening the pacer math.
+5. Concurrency sizing note: the archive rerun (F2, 14d) shows dialing runs 7:00–16:00 MST,
+   heavily front-loaded (7–8am ≈ 2× midday volume), with answered talk time averaging only
+   ~8–9s (fast screen-outs on a soundboard floor). **But `vicidial_log.length_in_sec` does
+   not include ring time**, so it measures talk occupancy, not full channel occupancy — the
+   avg-slot-time `S` for pacer sizing must come from the Telnyx PoC (T2), not this replica.
+6. **The knee finding (§3) is the pool-sizing rule:** ≈10–25 dials/DID/day per campaign
+   type. Pool size needed ≈ planned daily dials ÷ knee value, per area-code coverage — that
+   turns Ashley's DID fights with the call centers into arithmetic.
 
 ## Follow-ups
 
-- ❓ Run `did_followup_query.py` (E2 stratified decay, F2 archive hourly, H2 603-share worst
-  DIDs) — same env vars.
+- ✅ ~~Run `did_followup_query.py`~~ (done 7/31 — E2/F2/H2 results folded into §3–§5 above).
 - ❓ Repeat on td-bathroom (swap host) and KB boxes (needs `CCDB_BARETEL_*`) for
   cross-floor comparison.
 - ❓ Decode TD's answered-status flags (`vicidial_campaign_statuses.human_answered`) before
-  quoting absolute answer rates anywhere.
+  quoting absolute answer rates anywhere (WIFRESH's 67% is a flag artifact ceiling, not a
+  literal human-answer rate).
+- ❓ Controlled decay test on our own platform (randomize DID usage intensity) to make §3
+  causal — the human floors can't run that experiment; we can, natively.
