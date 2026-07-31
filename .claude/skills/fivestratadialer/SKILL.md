@@ -62,7 +62,9 @@ pipeline, paced ~2 min; dashboard fills live). Real-call tier lands when Telnyx 
 - **Node 24** at `C:\Program Files\nodejs` — shells predating install need
   `PATH="/c/Program Files/nodejs:$PATH"` prefixed per command.
 - **No admin rights**: UAC prompts fail (winget MSI installs died twice; Node came via IT).
-  No python (Store stubs), no pandoc/poppler/LibreOffice/gh. **File-conversion fallbacks are
+  **Python IS available** (Sean confirmed 2026-07-31 — earlier "Store stubs only" note was
+  stale/wrong for Sean's own shell; pymysql pattern from the callcenterdb profiler works).
+  No pandoc/poppler/LibreOffice/gh. **File-conversion fallbacks are
   Node-based** in `C:\Claude\scratch\xlsb-analysis` (npm: `xlsx` reads .xlsb — use
   `dense:true`, sheet-as-array, `sheetRows` cap + bigger heap for large books; `pdf-parse` v2:
   `new PDFParse({data}).getText()`). docx: extract via `/c/Windows/System32/tar.exe -xOf` +
