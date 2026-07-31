@@ -2,6 +2,27 @@
 
 How the soundboard paradigm interfaces with an LLM+TTS endpoint. Design note (Sean + Claude,
 2026-07-28); feeds workstream W1 in `../PRD.md`. ➤ direction — hardens after the W1 latency PoC.
+Engine-selector decision ✅ added 7/29 (Sean↔Pier sync); explainer section added 7/31.
+
+## The 60-second explainer (start here — this gets asked constantly)
+
+Today, a human soundboard operator at KB sits at a keyboard listening to a live call and
+presses hotkeys; each hotkey plays a pre-recorded sentence. The operator never speaks — they
+*choose*. Our system keeps that exact model and **replaces the human's ears and fingers with
+an LLM**: per turn, the model hears what the caller said (as text, via speech-to-text) and
+picks which pre-generated clip to play. It is a *chooser*, not a *talker*.
+
+Why not just let the AI talk freely (pure TTS)? **We tested that — it's V1, and it died at
+~$157/sale.** Per-minute generative pricing was 83% of spend, billed against all dial handling
+rather than talk time. At our conversion rates (sub-1%), paying generation + synthesis on
+every turn of every call is fatal; playing a pre-made clip costs ~nothing. That's why the
+soundboard is **built in from the beginning, not bolted on later**: the economics only work
+canned-first, with TTS as a guarded escape hatch for the long tail — and every TTS escape gets
+mined weekly into new clips, so the canned share only grows.
+
+The bonus that no pure-TTS system gets: because every turn is a discrete choice from a menu,
+every choice is loggable (`context → clip → outcome`), A/B-testable, and **transferable back
+to the human floors** ("this line wins, we proved it on 40k calls").
 
 ## The principle: the LLM presses buttons, it doesn't talk
 
@@ -86,6 +107,26 @@ sequenceDiagram
 Working assumption: **shape A** is where the soundboard paradigm lives comfortably; shape B is
 the fast-start fallback if A's latency engineering runs long. Both keep the same tool-call
 contract, so the turn engine and logging don't change — only the audio transport does.
+
+## Engine selector: soundboard mode vs. free-agent mode (✅ 7/29)
+
+Decided at the Sean↔Pier 7/29 sync: the platform ships **both** response engines, selected
+**per program** at onboarding ("it's just a selector" — Pier). One playbook field
+(`engine_mode`), same turn loop, same logging:
+
+| | `soundboard` (CV / high-volume programs) | `agent` (low-volume / spin-up programs) |
+|---|---|---|
+| Response source | Clip library + guarded `speak()` gate | LLM+TTS free generation (optionally Telnyx AI Assistant) |
+| Economics | Clips ≈ free to play; TTS is the exception | Pays generation + synthesis every turn — acceptable at low volume / fresh-lead value |
+| Optimization | Discrete A/B on clips/variants; learnings transfer to human floors | Prompt-level iteration only |
+| When | Volume justifies building the clip library (CV: yes, trivially — clips are API-generated, not studio-recorded) | Many different low-volume call types; fastest possible spin-up |
+
+Both modes share `dispose`/`transfer` tools, canonical disposition logging, and the fact
+stream — so a program can *start* in `agent` mode on day one and *graduate* to `soundboard`
+once its `speak()` logs have seeded a clip library (the flywheel below runs regardless).
+Pier's original worry ("soundboard will take months to perfect") is answered by generation:
+clips are batch TTS calls in the chosen AI voice, minutes not months; the library converges
+via the flywheel rather than needing to be perfect up front.
 
 ## Why not "LLM writes text, TTS reads it" everywhere?
 

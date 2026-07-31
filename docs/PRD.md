@@ -27,7 +27,7 @@ flowchart LR
     API["Intake API<br/>program resolution · payload validation<br/>DNC check · FS-code parse"]
     Q["Dial Queue<br/>cadence patterns · retry ladders<br/>LIFO fresh / FIFO revive"]
     DIDM["DID Manager<br/>buy/retire via benchmark<br/>~1,500-dial caps"]
-    CSEL["Client Selection<br/>two-phase + fallback"]
+    CSEL["Client Selection<br/>dial-time pre-auth ·<br/>re-check + fallback"]
     CTRL["Ops Controls<br/>kill switches · pacing ·<br/>transfer priorities"]
   end
 
@@ -128,9 +128,9 @@ canonical dictionary that all reporting computes from.
 
 **P0 — the call machine**
 5. Intake API (LeadConduit recipient + revive endpoint; DNC inheritance; FS-code parsing to first-class columns).
-6. Dial queue with testable cadence variables (hour-gap, daypart, wait-time; LIFO/FIFO), pacing matched to human-floor rates (carrier hygiene), TZ-aware windows.
-7. AI agent, soundboard-first: clip selection policy over voice packs (clips + TTS voice + script version, swappable as a unit; 3–5 rotating variants on high-frequency slots), per-turn logging (context → clip/variant → outcome), canned-vs-TTS second telemetry.
-8. Warm-transfer leg: two-phase client selection (pre-auth default → re-request at qualification → fallback), bridge + whisper, tAtt/tSucc/tAgree instrumented, crediting rules recorded.
+6. Dial queue with testable cadence variables (hour-gap, daypart, wait-time; LIFO/FIFO), pacing matched to human-floor rates (carrier hygiene), TZ-aware windows. **Concurrency-aware from day one** (7/29 requirement): Telnyx channel/CPS caps as config, slot-ledger pacer with event-driven backpressure, cap-visibility KPIs — see `architecture/concurrency-queueing.md`.
+7. AI agent, soundboard-first: clip selection policy over voice packs (clips + TTS voice + script version, swappable as a unit; 3–5 rotating variants on high-frequency slots), per-turn logging (context → clip/variant → outcome), canned-vs-TTS second telemetry. **Per-program engine selector** (✅ 7/29): `soundboard` mode vs. free `agent` mode, same turn loop/logging; programs can graduate agent → soundboard.
+8. Warm-transfer leg: **pre-auth at dial time, every dial** (✅ 7/29 sync — Joseph confirmed 60M pings/mo is fine; his mid-call design only existed for the branding-removal scenario; dial-time auth enables whole-call branding and removes the mid-call API race on a live qualified caller), with re-check at qualification + default-fallback as the safety net; bridge + whisper, tAtt/tSucc/tAgree instrumented, crediting rules recorded (7/29: FS is paid for the transfer *attempt* even on client no-answer).
 9. IVA/connection classification: AMD + live IVA disposition; connection rate as the trustworthy KPI.
 10. Ops controls: kill switches (global, per-program, per-client at SC×CP granularity — the Sunrun pattern, native), transfer priorities (Command Center emulation), volume throttles.
 
