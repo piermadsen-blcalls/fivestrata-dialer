@@ -1,16 +1,20 @@
-# Pier's Vercel Prototype — "AI Dialer — Prototype" (T1/T2 intel)
+# Pier's Vercel Prototype — "AI Dialer — Prototype" (reference only)
 
 Documented 2026-08-03 by introspecting the deployed JS bundle (the app is a static
 Vite/React SPA — no backend, no API calls, no credentials embedded). Shared by Pier in the
 Sean↔Pier 1:1 Teams chat on **2026-07-28**: https://ai-dialer-prototype-e7ia.vercel.app/
 
+> **Status (Sean, 2026-08-03): old artifact, frame of reference at best.** It does NOT
+> trump anything planned for the new concept — `docs/PRD.md` remains the governing
+> artifact. Value here is (a) vocabulary insight into how Pier pictures the system, useful
+> for the PRD-merge conversation, and (b) the credential/T2 status it settled (below).
+
 ## What it is (and isn't)
 
 It is **not** a live dialer and holds no secrets — it's an interactive architecture
 walkthrough with a hardcoded demo narrative (555 numbers, fictional "Michael Chen" bath
-remodel lead). Treat it as **Pier's requirements spec for the end-to-end dialer, encoded as
-a clickable demo**. It complements — and should be reconciled with — `docs/PRD.md` (the
-7/29 "prd diffs" sync and Pier's 7/30 demo-flow message are the same conversation).
+remodel lead): a snapshot of Pier's mental model around the 7/29 "prd diffs" sync and his
+7/30 demo-flow Teams message, not a spec.
 
 Three-panel system model: **Lead source** (form provider / list supplier / API partner) →
 **Orchestration (this app)** ("Lead/campaign/cadence/DID logic") → **Telnyx (dialer + AI)**
@@ -19,7 +23,7 @@ Three-panel system model: **Lead source** (form provider / list supplier / API p
 release"), "8 agents · all hosted on Telnyx AI Assistants", named agents seen:
 `bath_remodel_warm`, `home_warranty_warm`.
 
-## The 10-step end-to-end flow (verbatim-adjacent from the bundle)
+## The 10-step flow it depicts (verbatim-adjacent from the bundle; not binding)
 
 | # | System | Step | Detail |
 |---|---|---|---|
@@ -34,22 +38,23 @@ release"), "8 agents · all hosted on Telnyx AI Assistants", named agents seen:
 | 8 | telnyx | Transfer triggered | AI invokes **`transfer_call` tool**; warm transfer to sales line |
 | 9 | orchestration | Outcomes captured | `call.completed` webhook (duration, recording URL, transcript, transfer outcome) → **attempts / conversations / transfers** tables; lead status → transferred |
 
-## Reconciliation notes vs PRD Draft v1 (diffs to settle in the merge)
+## How it compares to PRD Draft v1 (context for the merge conversation, not diffs to "settle")
 
-- **Converges:** no ViciDial; orchestration app owns queue/cadence/DID logic; Telnyx owns
-  telephony; AMD-before-AI cost gating (same instinct as soundboard cost control); webhook
-  event capture into per-call tables; DID burn/rotate via Telnyx number APIs; warm transfer
-  as an AI tool call (matches `soundboard-llm-interface.md` tool-calling frame).
-- **Diverges / to reconcile:** (1) conversation layer is **Telnyx-hosted AI Assistants**
-  (generative voice) vs PRD's soundboard-first hybrid — Pier's 7/30 Teams message already
-  bridges this ("soundboard plays, ai assistant picks voice responses from soundboard
-  (and/or a telnyx voice ai picks up)"); (2) **fresh-lead form intake + person dedup +
-  lead scoring + cadence engine** are in Pier's flow but thin/absent in PRD P0 (revive-first,
-  LeadConduit intake); (3) his table vocabulary (person/attempts/conversations/transfers) vs
-  our migration vocabulary (leads/calls/call_turns/call_events); (4) no OLeadID/FS-code
-  anywhere in the prototype narrative — FiveStrata plumbing is out of its frame.
-- **Ops signal:** Pier deployed this on **Vercel** — a candidate deploy target for the
-  orchestration app's public webhook endpoint (the "tunnel/deploy" unblocker).
+- **Where it already agrees with the PRD:** no ViciDial; orchestration app owns
+  queue/cadence/DID logic; Telnyx owns telephony; AMD-before-AI cost gating (same instinct
+  as soundboard cost control); webhook event capture into per-call tables; DID burn/rotate
+  via Telnyx number APIs; warm transfer as an AI tool call (matches
+  `soundboard-llm-interface.md` tool-calling frame).
+- **Where it's older thinking the PRD supersedes:** (1) conversation layer shown as
+  **Telnyx-hosted AI Assistants** (pure generative voice) — the PRD's soundboard-first
+  hybrid stands, and Pier's own 7/30 Teams message already moved toward it ("soundboard
+  plays, ai assistant picks voice responses from soundboard"); (2) fresh-lead form intake +
+  person dedup + lead scoring framing vs the PRD's revive-first LeadConduit intake;
+  (3) generic table vocabulary (person/attempts/conversations/transfers) vs our migration
+  schema (leads/calls/call_turns/call_events); (4) no OLeadID/FS-code anywhere —
+  the FiveStrata plumbing that is the PRD's whole point is absent from its frame.
+- **Ops signal worth keeping:** Pier has a working Vercel deploy path — a candidate target
+  for the orchestration app's public webhook endpoint (the "tunnel/deploy" unblocker).
 
 ## Credential status this settles (2026-08-03)
 
