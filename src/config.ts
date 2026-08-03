@@ -23,14 +23,18 @@ export const config = {
   },
 
   telnyx: {
-    apiKey: required('TELNYX_API_KEY'),
-    publicKey: required('TELNYX_PUBLIC_KEY'),
+    // Blank until T2 lands (key from Pier's Telnyx org). The simulated tier
+    // never dials, and webhook signature verification fails closed on a blank
+    // public key, so the server may boot without these.
+    apiKey: process.env.TELNYX_API_KEY ?? '',
+    publicKey: process.env.TELNYX_PUBLIC_KEY ?? '',
   },
 
   vicidial: {
-    baseUrl: required('VICIDIAL_BASE_URL'),
-    user: required('VICIDIAL_API_USER'),
-    pass: required('VICIDIAL_API_PASS'),
+    // Vestigial (no ViciDial instance per the PRD decision) — never required.
+    baseUrl: process.env.VICIDIAL_BASE_URL ?? '',
+    user: process.env.VICIDIAL_API_USER ?? '',
+    pass: process.env.VICIDIAL_API_PASS ?? '',
     source: process.env.VICIDIAL_SOURCE ?? 'ccai',
   },
 } as const;
