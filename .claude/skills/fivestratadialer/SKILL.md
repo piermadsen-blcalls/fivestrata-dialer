@@ -47,9 +47,12 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   `C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe`, pass via `MYSQL_PWD`.
   **`seans_ro` is NOT read-only** — self-enforce SELECT/SHOW/DESCRIBE on `techss_*`; writes
   only in own `*_poc` schemas; **never execute someone else's stored procedure**.
-- Still missing for a live-call demo (owners): Telnyx API+public key + test DIDs (Pier, T2);
-  LLM key (Telnyx-hosted model avoids it for demos; Anthropic key for real W1); public webhook
-  endpoint (tunnel/deploy — IT). NOT needed for demos: LeadConduit, Snowflake, Retell.
+- **Telnyx keys LIVE as of 2026-08-03** (T2 closed): API key + public key in `.env`, validated
+  via `scripts/telnyx-check.ts` (prints OK/FAIL only, never values; billing-read hidden from
+  Sean's user). Account owned 0 DIDs at validation — Pier's 7/30 demo ran from a different
+  account/org. Still missing for a live call: test DID (a purchase — ask Sean), Call Control
+  app/connection id, public webhook endpoint (tunnel/deploy — IT); LLM key for real W1
+  (Telnyx-hosted model avoids it for demos). NOT needed: LeadConduit, Snowflake, Retell.
 
 ## Demo / PoC runbook (simulated tier — no external creds)
 
