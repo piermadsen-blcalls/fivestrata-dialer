@@ -23,11 +23,13 @@ export const config = {
   },
 
   telnyx: {
-    // Blank until T2 lands (key from Pier's Telnyx org). The simulated tier
-    // never dials, and webhook signature verification fails closed on a blank
-    // public key, so the server may boot without these.
+    // The simulated tier never dials, and webhook signature verification
+    // fails closed on a blank public key, so the server may boot without
+    // these. Live dialing requires all three (connectionId comes from
+    // scripts/telnyx-setup.ts).
     apiKey: process.env.TELNYX_API_KEY ?? '',
     publicKey: process.env.TELNYX_PUBLIC_KEY ?? '',
+    connectionId: process.env.TELNYX_CONNECTION_ID ?? '',
   },
 
   vicidial: {
