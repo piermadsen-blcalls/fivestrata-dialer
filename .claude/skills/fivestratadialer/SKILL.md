@@ -30,9 +30,10 @@ dial_queue, call_log, retell_*, agent_routing, zip_allowlist, system_flags, v_ca
 v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
 `docs/architecture/v1-build.md`; non-PII V1 archive: `C:\Claude\v1-archive`.
 
-- Check migration state: `npx tsx scripts/verify-setup.ts` (13 objects). **As of 2026-07-30 the
-  migrations had NEVER been run** — applying 0001+0002 in the dashboard SQL editor is a
-  Sean-manual step (Claude's browser tooling is policy-blocked from supabase.com).
+- Check migration state: `npx tsx scripts/verify-setup.ts` (13 objects). **Migrations 0001+0002
+  APPLIED 2026-08-03** (Sean, dashboard SQL editor; all 13 objects verified via real GETs).
+  Any future migration remains a Sean-manual dashboard step (Claude's browser tooling is
+  policy-blocked from supabase.com).
 - Supabase HEAD requests return success for nonexistent tables — verify with real GETs.
 - PostgREST caps responses at 1,000 rows/page regardless of `limit`.
 
