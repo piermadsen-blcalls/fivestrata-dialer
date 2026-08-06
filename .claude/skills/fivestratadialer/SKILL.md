@@ -48,9 +48,11 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   **`seans_ro` is NOT read-only** — self-enforce SELECT/SHOW/DESCRIBE on `techss_*`; writes
   only in own `*_poc` schemas; **never execute someone else's stored procedure**.
 - **Telnyx keys LIVE as of 2026-08-03** (T2 closed): API key + public key in `.env`, validated
-  via `scripts/telnyx-check.ts` (prints OK/FAIL only, never values; billing-read hidden from
-  Sean's user). Account owned 0 DIDs at validation — Pier's 7/30 demo ran from a different
-  account/org. Still missing for a live call: test DID (a purchase — ask Sean), Call Control
+  via `scripts/telnyx-check.ts` (prints OK/FAIL only, never values; billing-read failure was
+  **no credit card on the account**, not a user-permission issue — corporate card procurement
+  in progress as of 2026-08-05; the card gates the test-DID purchase → `docs/roadmap.md` M1).
+  Account owned 0 DIDs at validation — Pier's 7/30 demo ran from a different
+  account/org. Still missing for a live call: test DID (a purchase, blocked on card), Call Control
   app/connection id, public webhook endpoint (tunnel/deploy — IT); LLM key for real W1
   (Telnyx-hosted model avoids it for demos). NOT needed: LeadConduit, Snowflake, Retell.
 
