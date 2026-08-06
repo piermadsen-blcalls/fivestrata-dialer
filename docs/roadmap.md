@@ -79,9 +79,9 @@ $/qualified-transfer vs KB ($25–35), IVA-adjusted connection rate, SPH-equival
   simulated lead→dial→turn→disposition pipeline filling a live dashboard. Already demonstrable
   today with `demo-simulate`. Telnyx keys validated (T2 closed 8/3).
 - **M1 — the voice thesis holds.** One real outbound call where the AI fires canned clips with a
-  seam a human can't hear. This is the single riskiest assumption in the PRD (it's what killed
-  V1's economics), which is why it's the first real-world gate and sits directly behind the
-  credit card.
+  seam a human can't hear — a scalable soundboard + TTS model. This is the cost line the whole
+  architecture is built around (clips replace V1's per-minute generative pricing), which is why
+  it's the first real-world gate and sits directly behind the credit card.
 - **M2 — the whole machine runs dark.** Every call-path function live against internal test
   numbers. Nothing outside the team sees it. This is PRD §7 ramp stage 1 — full functionality,
   zero exposure.
@@ -91,8 +91,8 @@ $/qualified-transfer vs KB ($25–35), IVA-adjusted connection rate, SPH-equival
 - **M4 — the business case gets its number.** Small % of revive volume, one vertical, paced to
   human-floor rates. Exit is evidence, not a date: $/transfer and connection rate against the
   KB/TD/CD baselines decide whether volume scales (ramp stage 3).
-- **M5 — the platform claim is proven.** A second program (different tenant if possible) onboards
-  via playbook manifest in days. This is the differentiator slide made real.
+- **M5 — new programs launch as configuration.** A second program (different tenant if possible)
+  onboards via playbook manifest in days, with no new engineering — PRD §2b working in practice.
 
 ---
 
@@ -120,9 +120,9 @@ playbook manifest that becomes config rows — zero code, zero schema change
 
 - **M2** is when the core AutoWeb would run on is complete — program resolution is in the
   intake path from the start, not retrofitted.
-- **M4 is FiveStrata de-risking the platform on its own leads and its own dime.** By the time
-  an AutoWeb program dials, the economics ($/transfer vs human-floor baselines), carrier
-  hygiene, and IVA-adjusted connection rates are proven on CV revive traffic.
+- **M4 is FiveStrata proving the platform on its own leads.** By the time an AutoWeb program
+  dials, the economics ($/transfer vs human-floor baselines), carrier hygiene, and IVA-adjusted
+  connection rates are already demonstrated on CV revive traffic.
 - **M5 is an AutoWeb program live** — the gate is *days from manifest to first dial, zero
   engineering*. Named candidate: **trade-in acquisition** (PRD §2b). The playbook can be
   drafted **now, in parallel** — it's the only AutoWeb-side item on the M5 path, so M5's date
@@ -130,7 +130,7 @@ playbook manifest that becomes config rows — zero code, zero schema change
 - Reporting comparability is free: every program's dispositions map to one canonical
   dictionary, so AutoWeb KPIs read against CV benchmarks with no translation work.
 
-❓ Flagged honestly: **SMS follow-up** (Payam via Andre) is a *channel* extension — the P0
+❓ Scope note: **SMS follow-up** (Payam via Andre) is a *channel* extension — the P0
 platform is voice-first. The queue/program/fact-stream design accommodates it, but it is not
 in the M0–M5 scope and would be its own scoped addition after M5.
 
@@ -138,7 +138,7 @@ in the M0–M5 scope and would be its own scoped addition after M5.
 
 ## 4. Open items, forced to a deadline
 
-The design intent: nothing on this list is *debated* at a milestone — each has an owner, a due
+The design intent: nothing on this list holds up a milestone — each has an owner, a due
 milestone, and a ➤ proposed default that stands if no decision arrives by then. (Defaults are
 directions, not decisions, until their due date passes — provenance rule intact.)
 
