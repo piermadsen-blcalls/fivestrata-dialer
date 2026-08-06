@@ -18,8 +18,10 @@ Center repo, describes the system as it runs today.
 An outbound AI call center that turns leads the company already owns into sales.
 
 A "sale" happens when the AI gets an interested person on the phone and connects
-them to a company that buys those calls. We judge the platform on two numbers: how
-many sales we get per hour of calling, and how much each sale costs.
+them to a company that buys those calls. The platform's job is to run these calls at
+scale, give the team full control over how they run, and let them test and improve
+them over time. How much each sale costs is something each business unit tracks for
+its own leads. It is not how we judge whether the platform is built well.
 
 Two things make this more than a single call center:
 
@@ -41,18 +43,15 @@ later goal, but we design the record now so it can support that when the time co
 
 ## 2. Why we're rebuilding
 
-There was a version one. It worked, and it taught us the one lesson that shapes
-everything here.
+There was a version one. It worked as a pilot, but it was hard-wired for a single
+use, hard to see into, and hard to change without an engineer. It proved the
+approach and showed us what to build differently.
 
-Version one cost about $157 per sale. The human call centers do the same work for
-$25 to $35. The reason for the gap was simple: version one had the AI speak every
-word out loud, live, on every call, and that live speech was 83% of the cost. It
-ran up charges even on calls nobody answered.
-
-Version two fixes exactly that. The AI plays polished pre-recorded lines for almost
+The main change is how the AI talks. Version one had the AI speak every word out
+loud, live, on every call. Version two plays polished pre-recorded lines for almost
 everything a call needs, and only speaks freely for the rare moment the script
-doesn't cover. Pre-recorded audio costs almost nothing to play. That single change
-is what closes the cost gap.
+doesn't cover. That makes every line something we can log, test, and improve, keeps
+the AI on script, and is far lighter to run at high volume.
 
 Everything else version one proved out carries forward: the line of people waiting
 to be called, the safety checks, and the plumbing that talks to our partner. We're
@@ -62,8 +61,7 @@ is faster than untangling something that was hard-wired for a single use.
 We build the whole platform now, not a small pilot, because AI-assisted development
 makes the full build a matter of weeks rather than a quarter. What ramps up slowly
 is how many calls we make and how visible we are to clients, not how much of the
-platform is finished. Every feature has to earn its place the same way: it either
-makes money directly, or it teaches a lesson that makes the human floors better.
+platform is finished.
 
 ---
 
@@ -496,13 +494,18 @@ A first piece of the brain already exists, so this is not starting from zero.
 
 ## 11. How we measure success
 
-- **Sales per hour** of talking.
-- **Cost per sale,** with the goal of beating the $25 to $35 the human floors cost.
-- **How often we reach a real person,** as opposed to a voicemail or a screening
-  robot.
-- **How much of the talking is pre-recorded** versus spoken live. More pre-recorded
-  means cheaper, so this number going up is a good sign.
-- **How fast a new calling effort can be set up,** measured in days, not weeks.
+Success is about what the platform can do, not about any one business unit's sale
+economics. Each business unit watches its own numbers, like sales per hour and cost
+per sale, on its own leads. The platform's job is to give them those numbers and the
+controls, not to hit a particular one. We judge the platform itself on:
+
+- It runs outbound calls at scale, up to the limit we have bought.
+- Teams set up and run their own calling efforts without an engineer.
+- Teams can test versions against each other and use the results to improve.
+- More than one business unit can run on it at once, sealed off from each other.
+- A new calling effort, or a new business unit, can be set up in days, not weeks.
+- We reach a real person often enough for the calls to be worth making, with real
+  people counted honestly and kept separate from voicemails and screening robots.
 
 ---
 
