@@ -1,8 +1,10 @@
 # AICC Roadmap — Functions → Milestones
 
-**Status:** Draft v1 (Sean, 2026-08-05), requested by Pier. Derived 1:1 from `PRD.md` Draft v1 —
-this document adds *sequencing and gates*, not scope. Scope questions were settled in the PRD;
-see §5 ("What this roadmap does not reopen").
+**Status:** Draft v1.1 (Sean, 2026-08-05), requested by Pier — the ask originates with **Jina
+Yoon and Ammie Lin (AutoWeb)**, who read this from the AutoWeb-onboarding perspective; §3b is
+addressed to them. Derived 1:1 from `PRD.md` Draft v1 — this document adds *sequencing and
+gates*, not scope. Scope questions were settled in the PRD; see §5 ("What this roadmap does not
+reopen").
 
 **How to read it:** the PRD's stance is **one build, exposure ramps** — we are not phasing
 functionality, we are ordering *proof points*. A milestone is a demonstrable gate: a thing we can
@@ -24,6 +26,7 @@ flowchart LR
 
   M0 --> M1 --> M2 --> M3 --> M4 --> M5
   CARD["🔑 corporate credit card<br/>(procurement in progress 8/5)"] -.gates.-> M1
+  AW["AutoWeb: playbook manifest<br/>(Jina/Ammie — can draft in parallel, from today)"] -.gates.-> M5
   JOS["Joseph: T3/T4/T11 contracts"] -.gates.-> M2
   SNOW["Shelly Teh: Snowflake landing<br/>Sam/Tatevik: cost approval (W5)"] -.gates.-> M3
   KIN["Kinsey: crediting sign-off"] -.gates.-> M2
@@ -39,7 +42,7 @@ floats with it):
 | M2 Call machine complete (dark) | ~1 week after M1 (est. w/o 8/17) | Joseph: LeadConduit payload (T3/F8), pre-auth contract (T4), DNC surface (T11) · Kinsey: crediting rule |
 | M3 Results loop closed | ~1 week after M2 (est. w/o 8/24) | Shelly Teh: Snowflake landing (T8) · Cromwel/Joseph: write-back contract (T6) · Sam/Tatevik: cost approval (W5) |
 | M4 Quiet volume pilot | w/o 8/31 | Ashley: pilot-vertical script final · upstream split % change (Alex/Ashley) |
-| M5 Second program | September, opportunistic | A second demand owner (AutoWeb trade-in is the standing candidate) |
+| M5 Second program | September — gated by M4 evidence + playbook readiness, **not engineering** | AutoWeb program playbook (trade-in acquisition is the named candidate — see §3b); drafting can start today, in parallel with M1–M4 |
 
 ---
 
@@ -93,6 +96,46 @@ $/qualified-transfer vs KB ($25–35), IVA-adjusted connection rate, SPH-equival
 
 ---
 
+## 3b. The AutoWeb lens (for Jina & Ammie)
+
+The platform was designed tenant-agnostic from the first schema migration — **the CV call
+center is the first workload, not the product** (PRD §2b). AutoWeb is the named second tenant.
+What that means concretely for an AutoWeb program:
+
+**Onboarding is a manifest, not a project.** A program onboards by submitting a versioned
+playbook manifest that becomes config rows — zero code, zero schema change
+(`architecture/tenant-program-onboarding.md`). What AutoWeb brings:
+
+| Playbook section | Req? | AutoWeb supplies |
+|---|---|---|
+| Product profile | ✅ | Offer, talk-track facts, objection handling (e.g. trade-in valuation basics) |
+| Scripts & disclosures | ✅ | One call script minimum; compliance disclosures flagged (locked, never A/B'd) |
+| Dispositions | ✅ | Required codes mapped to canonical — or accept platform defaults for a fast start |
+| Lead field schema | if custom | Field defs for intake validation |
+| Connections | ✅ ≥1 | Lead source in; transfer destination (SIP/PSTN) or results ETL out; recording delivery |
+| Compliance | ✅ | Calling hours, DNC policy/feed, state exclusions |
+| Benchmarks | ➤ rec. | Expected contact/conversion — seeds their reporting from day one |
+
+**How the milestones read from the AutoWeb chair:**
+
+- **M2** is when the core AutoWeb would run on is complete — program resolution is in the
+  intake path from the start, not retrofitted.
+- **M4 is FiveStrata de-risking the platform on its own leads and its own dime.** By the time
+  an AutoWeb program dials, the economics ($/transfer vs human-floor baselines), carrier
+  hygiene, and IVA-adjusted connection rates are proven on CV revive traffic.
+- **M5 is an AutoWeb program live** — the gate is *days from manifest to first dial, zero
+  engineering*. Named candidate: **trade-in acquisition** (PRD §2b). The playbook can be
+  drafted **now, in parallel** — it's the only AutoWeb-side item on the M5 path, so M5's date
+  is set by M4 evidence plus AutoWeb's manifest readiness, not by a build queue.
+- Reporting comparability is free: every program's dispositions map to one canonical
+  dictionary, so AutoWeb KPIs read against CV benchmarks with no translation work.
+
+❓ Flagged honestly: **SMS follow-up** (Payam via Andre) is a *channel* extension — the P0
+platform is voice-first. The queue/program/fact-stream design accommodates it, but it is not
+in the M0–M5 scope and would be its own scoped addition after M5.
+
+---
+
 ## 4. Open items, forced to a deadline
 
 The design intent: nothing on this list is *debated* at a milestone — each has an owner, a due
@@ -111,6 +154,7 @@ directions, not decisions, until their due date passes — provenance rule intac
 | CDC route to Snowflake | Sean/Shelly | M3 | nightly incremental watermark sync (per `snowflake-value.md`, 8/3 analysis) |
 | Pilot DID pool size | Sean/Ashley | M2 | start ~50–100 DIDs, benchmark-retire from day one; pool fallback per 7/31 study |
 | Recordings storage target | Sean/Shelly | M2 capture / M3 catalog | S3, cataloged in Snowflake (per `snowflake-value.md`) |
+| AutoWeb M5 program pick + playbook owner | Jina/Ammie (via Pier) | M4 start | trade-in acquisition, platform-default dispositions (fast-start path) |
 
 ## 5. What this roadmap does not reopen
 

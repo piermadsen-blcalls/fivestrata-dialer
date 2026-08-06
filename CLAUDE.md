@@ -15,7 +15,7 @@ Project context for Claude Code. Read this first, then the files in "Repo map" b
 |---|---|
 | `README.md` | Living project doc: vision, stack, quasi-decided list (15 items), repo layout, open questions, action items, people |
 | `docs/PRD.md` | **The governing artifact** (Draft v1, Sean 2026-07-27, awaiting merge with Pier's draft): the decision, system diagrams, full P0 scope, data architecture, workstreams W1–W7 with owners/gates, exposure ramp, success measures |
-| `docs/roadmap.md` | Function→milestone roadmap (Draft v1, Sean 2026-08-05, Pier-requested): M0–M5 proof gates, P0-function matrix, target dates keyed to the credit-card unblocker, open items forced to deadlines with proposed defaults, settled-decision list |
+| `docs/roadmap.md` | Function→milestone roadmap (Draft v1.1, Sean 2026-08-05, Pier-requested; audience: Jina Yoon/Ammie Lin, AutoWeb): M0–M5 proof gates, P0-function matrix, dates keyed to the credit-card unblocker, §3b AutoWeb-onboarding lens (playbook checklist, M5 = AutoWeb program live), open items forced to deadlines with defaults, settled-decision list |
 | `docs/meetings/2026-07-17-scoping-call.md` | Distilled founding meeting (59m transcript → 12 topic sections + scope-coverage map) |
 | `docs/meetings/2026-07-22-scoping-call-2.md` | Distilled 2nd scoping call (39m): must-have list, revive intake, cadence, results DB, DID mgmt, IVA/contact-rate, recordings, KPIs |
 | `docs/scoping-outline-redlined.md` | Sean's scope outline with inline ✅/➤/❓ answers — the shareable decided-vs-open summary (Word/Google Doc versions live in Drive, doc id `1r5FL-ySMmLCcUo_YFSPN9POWtXY2q29O4XJDWgbzHWg`) |
