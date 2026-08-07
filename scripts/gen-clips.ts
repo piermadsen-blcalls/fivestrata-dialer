@@ -24,6 +24,8 @@ if (!apiKey) {
 const CLIPS: Record<string, string> = {
   cv_greet:
     "Hi Sean! This is Sky calling from Five Strata, on a recorded line. I'm the platform's AI agent, and this is my first two way conversation. Mind if I ask you one quick question?",
+  demo_greet:
+    "Hi! This is Sky, the AI agent on the Five Strata call center platform, on a recorded line. Everything you hear from me is either a pre recorded clip in my voice, or a decision I'm making live on this call. Mind if I ask you one quick question?",
   cv_q1:
     'On a scale of one to ten, how natural does this call feel so far?',
   // Acks are real words, ~1-2s: ultra-short clips ("Mm hm") arrive garbled

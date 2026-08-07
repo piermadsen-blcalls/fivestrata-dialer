@@ -45,6 +45,7 @@ interface CallState {
   phase: 'dialing' | 'greeting' | 'consent_listen' | 'question' | 'rating_listen' | 'wrapup' | 'done';
   ackFired?: boolean;
   lastAck?: string;
+  greet?: string; // greeting media_name — set via the dial command's client_state (demo uses demo_greet)
 }
 const MEM = new Map<string, CallState>();
 
@@ -59,20 +60,37 @@ function b64ToBytes(b64: string): Uint8Array {
 
 // --- config (env -> dialer_config fallback), cached per isolate ---------------
 const cfgCache = new Map<string, string>();
-async function cfg(envName: string, tableKey: string): Promise<string> {
-  const fromEnv = Deno.env.get(envName);
-  if (fromEnv) return fromEnv;
-  if (cfgCache.has(tableKey)) return cfgCache.get(tableKey)!;
+// `valid` guards against the wrong value landing in either source (8/7: the
+// 44-char PUBLIC key was pasted as the API key in both the env secret and the
+// table — Telnyx 401'd every command and the agent went silent). Trim + strip
+// quotes: a trailing newline poisons the Authorization header (fetch throws).
+async function cfg(
+  envName: string,
+  tableKey: string,
+  valid: (v: string) => boolean = () => true,
+): Promise<string> {
+  const clean = (s: string) => s.trim().replace(/^["']|["']$/g, '');
+  const fromEnv = clean(Deno.env.get(envName) ?? '');
+  if (fromEnv && valid(fromEnv)) return fromEnv;
+  const cached = cfgCache.get(tableKey);
+  if (cached && valid(cached)) return cached;
   const { data, error } = await supabase
     .from('dialer_config')
     .select('value')
     .eq('key', tableKey)
     .maybeSingle();
   if (error) console.error(`dialer_config read failed (${tableKey}):`, error.message);
-  const v = data?.value ?? '';
-  if (v) cfgCache.set(tableKey, v);
-  return v;
+  const fromTable = clean(data?.value ?? '');
+  if (fromTable && valid(fromTable)) {
+    cfgCache.set(tableKey, fromTable);
+    return fromTable;
+  }
+  // Nothing validates — return whatever exists so the error is visible upstream.
+  return fromEnv || fromTable;
 }
+
+const isApiKey = (v: string) => v.startsWith('KEY');
+const getApiKey = () => cfg('TELNYX_API_KEY', 'telnyx_api_key', isApiKey);
 
 let verifyKey: CryptoKey | null = null;
 async function getVerifyKey(): Promise<CryptoKey> {
@@ -84,7 +102,7 @@ async function getVerifyKey(): Promise<CryptoKey> {
 
 // --- Telnyx commands ------------------------------------------------------------
 async function telnyxCmd(path: string, body: Record<string, unknown> = {}): Promise<boolean> {
-  const apiKey = await cfg('TELNYX_API_KEY', 'telnyx_api_key');
+  const apiKey = await getApiKey();
   if (!apiKey) {
     console.error('No TELNYX_API_KEY (env or dialer_config) — cannot command');
     return false;
@@ -127,7 +145,7 @@ function pickAck(state: CallState): string {
 async function chooseClip(transcript: string): Promise<{ clip: string; ms: number }> {
   const t0 = Date.now();
   try {
-    const apiKey = await cfg('TELNYX_API_KEY', 'telnyx_api_key');
+    const apiKey = await getApiKey();
     const res = await fetch(`${TELNYX}/ai/chat/completions`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -191,8 +209,8 @@ async function handle(data: any): Promise<void> {
     (await telnyxCmd(`/calls/${ccid}/actions/transcription_start`, { ...base, transcription_engine: 'Deepgram', interim_results: true })) ||
       (await telnyxCmd(`/calls/${ccid}/actions/transcription_start`, { ...base, transcription_engine: 'Deepgram' })) ||
       (await telnyxCmd(`/calls/${ccid}/actions/transcription_start`, { ...base, transcription_engine: 'B' }));
-    await play(ccid, 'cv_greet', state);
-  } else if (et === 'call.playback.ended' && p.media_name === 'cv_greet' && state.phase === 'greeting') {
+    await play(ccid, state.greet ?? 'cv_greet', state);
+  } else if (et === 'call.playback.ended' && state.phase === 'greeting') {
     state.phase = 'consent_listen';
     armFallback(ccid, 'consent_listen', CONSENT_FALLBACK_MS, async (s) => {
       s.phase = 'question';
@@ -231,6 +249,32 @@ async function handle(data: any): Promise<void> {
 
 // --- HTTP entry ---------------------------------------------------------------------
 Deno.serve(async (req) => {
+  // Self-diagnostic (no secrets leaked — booleans, lengths, status codes only).
+  if (req.method === 'GET' && new URL(req.url).searchParams.has('diag')) {
+    const envKey = (Deno.env.get('TELNYX_API_KEY') ?? '').trim();
+    const effective = await getApiKey();
+    let telnyxPing = -1;
+    let pingErr = '';
+    try {
+      const r = await fetch(`${TELNYX}/phone_numbers?page[size]=1`, {
+        headers: { Authorization: `Bearer ${effective}` },
+      });
+      telnyxPing = r.status;
+    } catch (e) {
+      pingErr = String(e).slice(0, 120);
+    }
+    return new Response(
+      JSON.stringify({
+        envKeyPresent: !!envKey,
+        envKeyLooksValid: isApiKey(envKey),
+        effectiveKeyLen: effective.length,
+        effectiveLooksValid: isApiKey(effective),
+        telnyxPing,
+        pingErr,
+      }),
+      { headers: { 'Content-Type': 'application/json' } },
+    );
+  }
   if (req.method !== 'POST') return new Response('method not allowed', { status: 405 });
 
   const rawBody = await req.text();

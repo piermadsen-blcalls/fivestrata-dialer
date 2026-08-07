@@ -1,10 +1,13 @@
 // Observer for the CO-LOCATED conversational loop (telnyx-agent edge
 // function). This script only DIALS and WATCHES — the conversation runs
 // entirely in the cloud; the laptop is out of the loop. Prints the live event
-// stream from call_events and a seam report at the end.
+// stream from call_events and a seam report at the end. Records the call
+// (record-from-answer) and prints the MP3 URL — every demo run produces a
+// shareable artifact (and it's P0 #2's first light).
 // Prereq: telnyx-agent deployed + Call Control app webhook pointed at it +
 // telnyx_api_key available to the function (secret or dialer_config).
-// Run: npx tsx scripts/edge-convo-call.ts +1XXXXXXXXXX
+// Run: npx tsx scripts/edge-convo-call.ts +1XXXXXXXXXX [greetClip=cv_greet]
+//   demo (neutral greeting): npx tsx scripts/edge-convo-call.ts +1XXXXXXXXXX demo_greet
 import 'dotenv/config';
 
 const TELNYX = 'https://api.telnyx.com/v2';
@@ -40,7 +43,8 @@ async function fetchEvents(ccid: string, afterId: number): Promise<any[]> {
   return res.json();
 }
 
-console.log(`Dialing ${to} from ${from} — conversation runs in the edge function ...`);
+const greet = process.argv[3] ?? 'cv_greet';
+console.log(`Dialing ${to} from ${from} — conversation runs in the edge function (greet: ${greet}, recording on) ...`);
 const dialRes = await fetch(`${TELNYX}/calls`, {
   method: 'POST',
   headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -50,6 +54,10 @@ const dialRes = await fetch(`${TELNYX}/calls`, {
     from,
     timeout_secs: 30,
     answering_machine_detection: 'detect',
+    record: 'record-from-answer',
+    record_channels: 'single',
+    record_format: 'mp3',
+    client_state: Buffer.from(JSON.stringify({ phase: 'dialing', greet })).toString('base64'),
   }),
 });
 const dialBody: any = await dialRes.json().catch(() => ({}));
@@ -102,4 +110,12 @@ for (const ev of all) {
     callerAt = null;
   }
   prev = t;
+}
+
+const rec = all.find((ev) => ev.event_type === 'call.recording.saved');
+if (rec) {
+  const urls = rec.payload?.recording_urls ?? rec.payload?.public_recording_urls ?? {};
+  console.log(`\nRecording (time-limited URL): ${urls.mp3 ?? JSON.stringify(urls)}`);
+} else {
+  console.log('\n(no recording.saved event yet — it can trail the hangup by a few seconds)');
 }
