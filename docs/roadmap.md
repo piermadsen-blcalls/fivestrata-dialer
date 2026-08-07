@@ -79,9 +79,13 @@ the card landed: test number purchased, call path provisioned, webhook receiver 
 (Supabase Edge Function; repoints to the platform's own home at step 3 with a one-line `.env`
 change), and a live call placed from the platform DID, answered, and traced
 `call.initiated → call.answered → call.hangup` into `call_events` through the signature-verified
-webhook (`scripts/test-call.ts`). Remaining for the step-2 gate: the voice half — the command
-loop that reacts to `call.answered` and plays the pre-recorded lines, where the no-audible-seam
-criterion is measured (Telnyx-hosted model avoids needing an LLM key).
+webhook (`scripts/test-call.ts`). **Voice loop v0 ran the same day** (`scripts/voice-loop-test.ts`):
+the platform spoke two TTS lines on a live call, driven by a real command loop
+(answered → speak → speak.ended → next speak → hangup), with a measured **1300ms seam** between
+lines via the deliberately-conservative dev path (webhook → Postgres → 250ms poll → command from
+Sean's box → TTS synthesis spin-up). Remaining for the step-2 gate: pre-recorded **clip** playback
+(kills TTS spin-up) and a tighter loop (pre-queue / co-location kills poll + cross-country RTT) to
+hit the no-audible-seam criterion.
 
 **Why it's the first real-world gate:** this is the cost line the whole architecture is built
 around — pre-recorded lines replacing version one's per-minute generative pricing. Everything

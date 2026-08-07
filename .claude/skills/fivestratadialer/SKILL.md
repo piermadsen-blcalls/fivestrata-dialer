@@ -66,10 +66,13 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   applied + `telnyx_public_key` seeded 8/7, verified via REST GET). **FIRST REAL CALL
   2026-08-07 ~18:04 UTC**: `scripts/test-call.ts` dialed Sean's cell from the platform DID;
   full trace `call.initiated → call.answered → call.hangup` landed in `call_events` through
-  the signature-verified webhook — step-2 wiring proven end to end. Remaining for the
-  step-2 gate: the voice/command loop (react to `call.answered`, play clips, measure the
-  seam); LLM key for real W1 (Telnyx-hosted model avoids it for demos). NOT needed:
-  LeadConduit, Snowflake, Retell. Pier's 7/30 demo ran from a different account/org.
+  the signature-verified webhook — step-2 wiring proven end to end. **Voice loop v0 same
+  day** (`scripts/voice-loop-test.ts`): platform spoke 2 TTS lines on a live call via
+  poll-driven command loop; **seam baseline 1300ms** (webhook→Postgres→250ms poll→command
+  RTT ~410ms from Sean's box→TTS spin-up). Remaining for the step-2 gate: clip playback
+  (hosted audio — Supabase Storage candidate) + pre-queue/co-location to hit ~200ms seam;
+  LLM key for real W1 (Telnyx-hosted model avoids it for demos). NOT needed: LeadConduit,
+  Snowflake, Retell. Pier's 7/30 demo ran from a different account/org.
 
 ## Demo / PoC runbook (simulated tier — no external creds)
 
