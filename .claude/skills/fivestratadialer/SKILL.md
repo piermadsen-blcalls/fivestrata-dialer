@@ -49,12 +49,16 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   only in own `*_poc` schemas; **never execute someone else's stored procedure**.
 - **Telnyx keys LIVE as of 2026-08-03** (T2 closed): API key + public key in `.env`, validated
   via `scripts/telnyx-check.ts` (prints OK/FAIL only, never values; billing-read failure was
-  **no credit card on the account**, not a user-permission issue — corporate card procurement
-  in progress as of 2026-08-05; the card gates the test-DID purchase → `docs/roadmap.md` M1).
-  Account owned 0 DIDs at validation — Pier's 7/30 demo ran from a different
-  account/org. Still missing for a live call: test DID (a purchase, blocked on card), Call Control
-  app/connection id, public webhook endpoint (tunnel/deploy — IT); LLM key for real W1
-  (Telnyx-hosted model avoids it for demos). NOT needed: LeadConduit, Snowflake, Retell.
+  **no credit card on the account**, not a user-permission issue — **card landed 2026-08-07**).
+  **Call path provisioned 2026-08-07**: outbound voice profile `fivestrata-dialer-dev`
+  (dev cap 10) + Call Control app `fivestrata-dialer` = connection `3021367032303060958`
+  (`scripts/telnyx-setup.ts`, idempotent); test DID **+1 447 842 9621** purchased
+  ($1 + $1/mo, `scripts/did-purchase.ts` — guarded: one number, $2 cap, no-op if account
+  owns any) and active on the connection. Sean pastes `TELNYX_CONNECTION_ID` +
+  `TELNYX_FROM_NUMBER` into `.env`. Still missing for a live call: public webhook endpoint
+  (tunnel/deploy — IT; then set `TELNYX_WEBHOOK_URL` and re-run telnyx-setup); LLM key for
+  real W1 (Telnyx-hosted model avoids it for demos). NOT needed: LeadConduit, Snowflake,
+  Retell. Pier's 7/30 demo ran from a different account/org.
 
 ## Demo / PoC runbook (simulated tier — no external creds)
 

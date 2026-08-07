@@ -10,8 +10,9 @@ the whole platform first, then start making real calls a few at a time, then ope
 business units. Steps 1–4 are the build order from PRD §9; steps 5–6 turn on real calls and open
 the platform up.
 
-**Dates are rough targets, not promises.** Step 2 waits on a company credit card, and every step
-after it moves if that one moves. A step is a demonstrable gate — a thing we can show working,
+**Dates are rough targets, not promises.** Step 2 waited on a company credit card — **landed
+2026-08-07** (test number purchased same day); the remaining step-2 dependency is the public
+webhook endpoint (IT). A step is a demonstrable gate — a thing we can show working,
 with a pass/fail criterion, that unlocks the next level of exposure. Every feature in PRD §6/§8
 appears in exactly one step; the matrix in §3 is the checksum.
 
@@ -29,7 +30,7 @@ flowchart LR
   M5["Step 6 · OPEN TO OTHER UNITS<br/>a second unit onboards as config<br/>gate: days, zero engineering"]
 
   M0 --> M1 --> M2 --> M3 --> M4 --> M5
-  CARD["🔑 corporate credit card<br/>(procurement in progress 8/5)"] -.gates.-> M1
+  CARD["🔑 corporate credit card ✅ landed 8/7<br/>test number purchased; webhook endpoint (IT) remains"] -.gates.-> M1
   JOS["Joseph: lead payload · buyer<br/>pre-approval · DNC"] -.gates.-> M2
   KIN["Kinsey: crediting sign-off"] -.gates.-> M2
   SNOW["Shelly Teh: long-term memory<br/>Sam/Tatevik: cost approval"] -.gates.-> M3
@@ -39,7 +40,7 @@ flowchart LR
 | Step | Target | External dependency on the critical path |
 |---|---|---|
 | 1 · Record locked | ✅ **done 2026-08-03** | — |
-| 2 · First real call | ~1 week after the card lands (est. w/o 8/10) | **Credit card** (buying test numbers) · public webhook endpoint (IT) |
+| 2 · First real call | est. w/o 8/10 (card landed 8/7 ✅; test number purchased + call path provisioned same day) | public webhook endpoint (IT) |
 | 3 · Whole system, private | ~1 week after step 2 (est. w/o 8/17) | Joseph: lead payload, buyer pre-approval contract, DNC surface · Kinsey: crediting rule |
 | 4 · Results trustworthy | ~1 week after step 3 (est. w/o 8/24) | Shelly Teh: long-term memory landing · Cromwel/Joseph: results-back contract · Sam/Tatevik: cost approval |
 | 5 · Real leads, controlled pace | w/o 8/31 | Ashley: final pilot script · switching on our share of incoming leads (Alex/Ashley) |
@@ -72,7 +73,8 @@ free-speech agent, and it follows the call-completion rules.
 lines play with a seam a human can't hear, or a free-speech agent runs correctly; and the
 completion rules are followed.
 
-**Waiting on:** the company credit card, which unlocks buying test numbers.
+**Waiting on:** ~~the company credit card~~ (landed 8/7 — test number purchased, Call Control
+app + outbound voice profile provisioned same day). Remaining: the public webhook endpoint (IT).
 
 **Why it's the first real-world gate:** this is the cost line the whole architecture is built
 around — pre-recorded lines replacing version one's per-minute generative pricing. Everything
