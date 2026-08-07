@@ -129,6 +129,70 @@ const decodeState = (cs: string | null | undefined): CallState | null => {
   }
 };
 
+// --- Durable per-call state (8/7 wife-call bug): transcription events echo
+// the STALE client_state of transcription_start, and webhooks fan out across
+// isolates — warm memory alone goes deaf mid-call. State lives in
+// dialer_config ('call_state:<ccid>'); speech-triggered transitions use
+// compare-and-set so exactly one isolate wins even when Deepgram partial/
+// final pairs land concurrently. MEM stays as the fast path.
+const stateKey = (ccid: string) => `call_state:${ccid}`;
+
+async function loadState(ccid: string, clientState?: string): Promise<CallState> {
+  const m = MEM.get(ccid);
+  if (m) return m;
+  const { data } = await supabase
+    .from('dialer_config')
+    .select('value')
+    .eq('key', stateKey(ccid))
+    .maybeSingle();
+  if (data?.value) {
+    try {
+      const s = JSON.parse(data.value) as CallState;
+      MEM.set(ccid, s);
+      return s;
+    } catch { /* fall through */ }
+  }
+  const s = decodeState(clientState) ?? { phase: 'dialing' as const };
+  MEM.set(ccid, s);
+  return s;
+}
+
+async function saveState(ccid: string, s: CallState): Promise<void> {
+  MEM.set(ccid, s);
+  const { error } = await supabase.from('dialer_config').upsert({
+    key: stateKey(ccid),
+    value: JSON.stringify(s),
+    updated_at: new Date().toISOString(),
+  });
+  if (error) console.error('saveState failed:', error.message);
+}
+
+// CAS: apply `next` only if the stored phase (or marker) still matches — the
+// LIKE filter makes Postgres the arbiter; losers skip their side effects.
+async function casTransition(ccid: string, expectMarker: string, next: CallState): Promise<boolean> {
+  MEM.set(ccid, next);
+  const { data, error } = await supabase
+    .from('dialer_config')
+    .update({ value: JSON.stringify(next), updated_at: new Date().toISOString() })
+    .eq('key', stateKey(ccid))
+    .like('value', `%${expectMarker}%`)
+    .select('key');
+  if (error) {
+    console.error('casTransition failed:', error.message);
+    return false;
+  }
+  return (data?.length ?? 0) > 0;
+}
+
+const dropState = (ccid: string) => {
+  MEM.delete(ccid);
+  waitUntil(
+    supabase.from('dialer_config').delete().eq('key', stateKey(ccid)).then(({ error }) => {
+      if (error) console.error('dropState failed:', error.message);
+    }),
+  );
+};
+
 const play = (ccid: string, media: string, state: CallState) =>
   telnyxCmd(`/calls/${ccid}/actions/playback_start`, {
     media_name: media,
@@ -171,13 +235,13 @@ async function chooseClip(transcript: string): Promise<{ clip: string; ms: numbe
   }
 }
 
-// --- Fallback timers (warm-isolate best effort — production owns this in Phase B)
-function armFallback(ccid: string, expectPhase: CallState['phase'], ms: number, act: (s: CallState) => Promise<void>) {
+// --- Fallback timers: CAS-guarded, so a stale timer in one isolate can't
+// double-fire a transition another isolate already made.
+function armFallback(ccid: string, expectMarker: string, ms: number, next: CallState, act: () => Promise<void>) {
   waitUntil(
     (async () => {
       await new Promise((r) => setTimeout(r, ms));
-      const s = MEM.get(ccid);
-      if (s && s.phase === expectPhase) await act(s);
+      if (await casTransition(ccid, expectMarker, next)) await act();
     })(),
   );
 }
@@ -190,59 +254,62 @@ async function handle(data: any): Promise<void> {
   const et: string = data.event_type;
 
   if (et === 'call.hangup') {
-    MEM.delete(ccid);
+    dropState(ccid);
     return;
   }
 
-  const state: CallState =
-    MEM.get(ccid) ?? decodeState(p.client_state) ?? { phase: 'dialing' };
-  MEM.set(ccid, state);
-
+  const state = await loadState(ccid, p.client_state);
   const transcript: string = (p.transcription_data?.transcript ?? '').trim();
   const isFinal = p.transcription_data?.is_final !== false;
 
   if (et === 'call.answered' && state.phase === 'dialing') {
-    state.phase = 'greeting';
+    const next: CallState = { ...state, phase: 'greeting' };
+    await saveState(ccid, next); // durable row must exist before speech events arrive
     // Listen from the first instant (inbound only); Deepgram + interims,
     // graceful degradation to finals-only, then engine B.
-    const base = { language: 'en', transcription_tracks: 'inbound', client_state: encodeState(state) };
+    const base = { language: 'en', transcription_tracks: 'inbound', client_state: encodeState(next) };
     (await telnyxCmd(`/calls/${ccid}/actions/transcription_start`, { ...base, transcription_engine: 'Deepgram', interim_results: true })) ||
       (await telnyxCmd(`/calls/${ccid}/actions/transcription_start`, { ...base, transcription_engine: 'Deepgram' })) ||
       (await telnyxCmd(`/calls/${ccid}/actions/transcription_start`, { ...base, transcription_engine: 'B' }));
-    await play(ccid, state.greet ?? 'cv_greet', state);
+    await play(ccid, next.greet ?? 'cv_greet', next);
   } else if (et === 'call.playback.ended' && state.phase === 'greeting') {
-    state.phase = 'consent_listen';
-    armFallback(ccid, 'consent_listen', CONSENT_FALLBACK_MS, async (s) => {
-      s.phase = 'question';
-      await play(ccid, 'cv_q1', s);
+    const next: CallState = { ...state, phase: 'consent_listen' };
+    await saveState(ccid, next);
+    armFallback(ccid, '"phase":"consent_listen"', CONSENT_FALLBACK_MS, { ...next, phase: 'question' }, async () => {
+      await play(ccid, 'cv_q1', { ...next, phase: 'question' });
     });
   } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
-    state.phase = 'question'; // set BEFORE awaiting — partial/final pairs must not double-fire
-    await play(ccid, pickAck(state), state);
-    await play(ccid, 'cv_q1', state); // within-turn sequence: safe to queue
-  } else if (et === 'call.playback.ended' && p.media_name === 'cv_q1') {
-    state.phase = 'rating_listen';
-    state.ackFired = false;
-    armFallback(ccid, 'rating_listen', RATING_FALLBACK_MS, async (s) => {
-      s.phase = 'wrapup';
-      await play(ccid, 'cv_resp_unclear', s);
-      await play(ccid, 'cv_goodbye', s);
+    const next: CallState = { ...state, phase: 'question' };
+    if (await casTransition(ccid, '"phase":"consent_listen"', next)) {
+      await play(ccid, pickAck(next), next);
+      await play(ccid, 'cv_q1', next); // within-turn sequence: safe to queue
+    }
+  } else if (et === 'call.playback.ended' && p.media_name === 'cv_q1' && (state.phase === 'question' || state.phase === 'consent_listen')) {
+    const next: CallState = { ...state, phase: 'rating_listen', ackFired: false };
+    await saveState(ccid, next);
+    armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'wrapup' }, async () => {
+      await play(ccid, 'cv_resp_unclear', { ...next, phase: 'wrapup' });
+      await play(ccid, 'cv_goodbye', { ...next, phase: 'wrapup' });
     });
   } else if (et === 'call.transcription' && state.phase === 'rating_listen' && transcript.length > 0) {
     if (!state.ackFired) {
-      state.ackFired = true;
-      await play(ccid, pickAck(state), state); // instant mask, before any thinking
+      const acked: CallState = { ...state, ackFired: true };
+      if (await casTransition(ccid, '"ackFired":false', acked)) {
+        await play(ccid, pickAck(acked), acked); // instant mask, exactly once
+      }
     }
     if (isFinal && transcript.length > 1) {
-      state.phase = 'wrapup';
-      waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-      const { clip, ms } = await chooseClip(transcript);
-      console.log(`LLM chose ${clip} in ${ms}ms for "${transcript}"`);
-      await play(ccid, clip, state);
-      await play(ccid, 'cv_goodbye', state);
+      const next: CallState = { ...state, phase: 'wrapup', ackFired: true };
+      if (await casTransition(ccid, '"phase":"rating_listen"', next)) {
+        waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+        const { clip, ms } = await chooseClip(transcript);
+        console.log(`LLM chose ${clip} in ${ms}ms for "${transcript}"`);
+        await play(ccid, clip, next);
+        await play(ccid, 'cv_goodbye', next);
+      }
     }
   } else if (et === 'call.playback.ended' && p.media_name === 'cv_goodbye') {
-    state.phase = 'done';
+    await saveState(ccid, { ...state, phase: 'done' });
     await telnyxCmd(`/calls/${ccid}/actions/hangup`, {});
   }
 }
