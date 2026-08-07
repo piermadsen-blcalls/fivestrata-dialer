@@ -1,0 +1,8 @@
+# Supabase CLI config. Shared project with V1 (see CLAUDE.md) — this file only
+# declares what WE deploy; never manage V1 objects through it.
+project_id = "wcftuethlcgeasopayed"
+
+# Telnyx posts webhooks with its own Ed25519 signature, not a Supabase JWT —
+# the function does its own auth. Without this the platform 401s every event.
+[functions.telnyx-webhook]
+verify_jwt = false

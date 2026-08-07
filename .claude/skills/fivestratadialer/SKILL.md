@@ -55,10 +55,14 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   (`scripts/telnyx-setup.ts`, idempotent); test DID **+1 447 842 9621** purchased
   ($1 + $1/mo, `scripts/did-purchase.ts` — guarded: one number, $2 cap, no-op if account
   owns any) and active on the connection. Sean pastes `TELNYX_CONNECTION_ID` +
-  `TELNYX_FROM_NUMBER` into `.env`. Still missing for a live call: public webhook endpoint
-  (tunnel/deploy — IT; then set `TELNYX_WEBHOOK_URL` and re-run telnyx-setup); LLM key for
-  real W1 (Telnyx-hosted model avoids it for demos). NOT needed: LeadConduit, Snowflake,
-  Retell. Pier's 7/30 demo ran from a different account/org.
+  `TELNYX_FROM_NUMBER` into `.env`. Webhook receiver: **Supabase Edge Function built 8/7**
+  (`supabase/functions/telnyx-webhook/` — Ed25519 verify → insert `call_events`; deploy
+  runbook in its README; `supabase/config.toml` sets `verify_jwt=false`). Deploy needs
+  Sean's dashboard access token (Claude is browser-blocked from supabase.com); then set
+  `TELNYX_WEBHOOK_URL=https://wcftuethlcgeasopayed.supabase.co/functions/v1/telnyx-webhook`
+  and re-run telnyx-setup. Still missing for a live call: that deploy; LLM key for real W1
+  (Telnyx-hosted model avoids it for demos). NOT needed: LeadConduit, Snowflake, Retell.
+  Pier's 7/30 demo ran from a different account/org.
 
 ## Demo / PoC runbook (simulated tier — no external creds)
 
