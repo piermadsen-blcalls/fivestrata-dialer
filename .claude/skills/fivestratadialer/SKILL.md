@@ -87,7 +87,18 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   connectors ≠ stalls ("one second" before immediate speech is incongruous); no immediate
   ack-variant repeats; seam tolerance lowest right after a direct question. Turn-taking
   rule (Sean): never pre-queue behind a clip that invites a response. AMD unreliable on
-  Sean's handset (persistent false `machine` on live answers — try `premium`).
+  Sean's handset (persistent false `machine` on live answers — try `premium`; correct
+  `human` on Pier's). **CO-LOCATED AGENT LIVE 8/7 pm** (`supabase/functions/telnyx-agent`
+  — full state machine at the edge, durable CAS call state in dialer_config after the
+  stale-client_state/multi-isolate deafness bug; laptop = dial+observe via
+  `edge-convo-call.ts [num] [greet]`; recording-from-answer per call, MP3 URL expires
+  10min — download immediately). **PIER DEMO COMPLETED 8/7 ~23:04 UTC**: clean 2-turn
+  conversation, AMD human, LLM response, recording in Sean's Downloads
+  (aicc-demo-call-pier-2026-08-07.mp3). CAS added latency: co-located turn seam ~640ms
+  pre-CAS → ~1.5s with CAS roundtrips — optimize via region-pinning/Phase B AWS. Call
+  screening (wife's phone: "name and reason for calling") eats greetings — demo rule:
+  callee saves the DID to contacts first. Late-arriving human ("Hello?" mid-call) needs a
+  re-greet clip — taxonomy item.
   DID reputation: spam-labeled from first dial; after ~4 calls carrier diverted DID
   straight to voicemail; CNAM `FIVESTRATA` enabled (`did-cnam.ts`); Free Caller Registry
   = Sean web form, pending. Warm-transfer bridge script ready, unrun (needs 2nd number):
