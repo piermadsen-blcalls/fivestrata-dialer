@@ -80,8 +80,14 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   pre-queued seam to **~320ms** vs 550ms WAV). **Conversational loop ran live**
   (`convo-loop-test.ts`): transcription (engine B — engine A returns EMPTY transcripts) →
   instant ack clip (latency mask) → LLM clip choice ~1s → response; turn seam 1597ms via
-  dev path. Turn-taking rule (Sean): never pre-queue behind a clip that invites a
-  response. AMD 3/4 accurate (one false `machine` on fast human answer — try `premium`).
+  dev path — then **465ms after live iteration** (calls 5–9): transcription starts at
+  answered, **Deepgram + `interim_results: true`** (ack fires on partials; engine B = 3-5s
+  finals, engine A = empty), ack on first speech / LLM on final. Clip-taxonomy rules from
+  Sean's ears: acks must be real 1-2s phrases (short clips garble over telephony);
+  connectors ≠ stalls ("one second" before immediate speech is incongruous); no immediate
+  ack-variant repeats; seam tolerance lowest right after a direct question. Turn-taking
+  rule (Sean): never pre-queue behind a clip that invites a response. AMD unreliable on
+  Sean's handset (persistent false `machine` on live answers — try `premium`).
   DID reputation: spam-labeled from first dial; after ~4 calls carrier diverted DID
   straight to voicemail; CNAM `FIVESTRATA` enabled (`did-cnam.ts`); Free Caller Registry
   = Sean web form, pending. Warm-transfer bridge script ready, unrun (needs 2nd number):

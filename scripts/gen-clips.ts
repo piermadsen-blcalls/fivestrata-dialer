@@ -28,9 +28,13 @@ const CLIPS: Record<string, string> = {
     'On a scale of one to ten, how natural does this call feel so far?',
   // Acks are real words, ~1-2s: ultra-short clips ("Mm hm") arrive garbled
   // over telephony (Sean, 8/7 call 6), and longer acks mask more latency.
+  // Taxonomy (Sean, 8/7 call 7): these are CONNECTORS — they flow into
+  // immediate speech. Wait-promising phrases ("one second") are STALL clips,
+  // a separate category the engine fires only when the decision is genuinely
+  // slow; a stall followed instantly by speech is incongruous.
   cv_ack_1: 'Okay, got it.',
   cv_ack_2: 'Alright, perfect.',
-  cv_ack_3: 'Okay, one second.',
+  cv_ack_3: 'Okay, thanks.',
   cv_resp_positive:
     "That's great to hear. Logging that straight into the fact stream.",
   cv_resp_negative:

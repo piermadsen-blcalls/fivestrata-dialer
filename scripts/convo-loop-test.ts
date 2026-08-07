@@ -141,20 +141,33 @@ while (!done && Date.now() < deadline) {
       // and added engine spin-up to the perceived gap (Sean, 8/7 call 5).
       // Engine B sends finals only, ~2-3s after end of speech — try Deepgram
       // (fast endpointing + interim results) and fall back to B.
+      // Preference order: Deepgram + interim results (ack can fire mid-
+      // transcription — the endpointing wait is the perceived gap, Sean 8/7
+      // call 8) -> Deepgram finals-only -> engine B.
       try {
         await telnyx(`/calls/${ccid}/actions/transcription_start`, {
           language: 'en',
           transcription_engine: 'Deepgram',
           transcription_tracks: 'inbound',
+          interim_results: true,
         });
-        console.log('  >> transcription engine: Deepgram');
+        console.log('  >> transcription engine: Deepgram (interim results requested)');
       } catch {
-        await telnyx(`/calls/${ccid}/actions/transcription_start`, {
-          language: 'en',
-          transcription_engine: 'B',
-          transcription_tracks: 'inbound',
-        });
-        console.log('  >> transcription engine: B (Deepgram unavailable)');
+        try {
+          await telnyx(`/calls/${ccid}/actions/transcription_start`, {
+            language: 'en',
+            transcription_engine: 'Deepgram',
+            transcription_tracks: 'inbound',
+          });
+          console.log('  >> transcription engine: Deepgram (finals only)');
+        } catch {
+          await telnyx(`/calls/${ccid}/actions/transcription_start`, {
+            language: 'en',
+            transcription_engine: 'B',
+            transcription_tracks: 'inbound',
+          });
+          console.log('  >> transcription engine: B (Deepgram unavailable)');
+        }
       }
       await play(ccid, 'cv_greet'); // asks consent — turn ENDS here, nothing pre-queued
       console.log('  >> greeting sent, transcription already running');
