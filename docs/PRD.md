@@ -642,12 +642,12 @@ yet. That's the distinction worth holding.
 
 ## 14. Dependencies and stakeholders
 
-Telnyx account fully enabled — **corporate credit card is the live blocker** (procurement in
-progress as of 8/5; it gates buying test numbers) · lead payload, buyer pre-approval and DNC
+Telnyx account fully enabled — ✅ **corporate credit card landed 2026-08-07**; test number
+purchased and the call path provisioned the same day. The remaining step-2 dependency is a
+**public webhook endpoint** (IT) · lead payload, buyer pre-approval and DNC
 surface (Joseph) · long-term memory setup (Shelly Teh) · running-cost approval (Sam / Tatevik) ·
 outcome-code dictionary (Brandon / Joseph / Cromwel) · pilot script and reporting sign-off
-(Ashley) · crediting rules (Kinsey) · public webhook endpoint (IT) · AutoWeb playbook (Jina Yoon,
-Ammie Lin, via Pier).
+(Ashley) · crediting rules (Kinsey) · AutoWeb playbook (Jina Yoon, Ammie Lin, via Pier).
 
 ## 15. Out of scope, and where the detail lives
 
