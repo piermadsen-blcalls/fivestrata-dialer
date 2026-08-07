@@ -1,14 +1,14 @@
-// Deploy the telnyx-webhook Edge Function + its secret via the Supabase
+// Deploy an Edge Function + the TELNYX_PUBLIC_KEY secret via the Supabase
 // Management API — no supabase CLI, no Docker. Reads credentials from
 // C:\Claude\supabase-cli-env.sh (export-format, outside the repo); prints
 // statuses only, never values.
-// Run: npx tsx scripts/deploy-webhook.ts
+// Run: npx tsx scripts/deploy-webhook.ts [slug=telnyx-webhook]
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const PROJECT_REF = 'wcftuethlcgeasopayed';
-const SLUG = 'telnyx-webhook';
+const SLUG = process.argv[2] ?? 'telnyx-webhook';
 const ENV_SCRIPT = 'C:/Claude/supabase-cli-env.sh';
 const API = 'https://api.supabase.com/v1';
 

@@ -3,6 +3,9 @@
 project_id = "wcftuethlcgeasopayed"
 
 # Telnyx posts webhooks with its own Ed25519 signature, not a Supabase JWT —
-# the function does its own auth. Without this the platform 401s every event.
+# the functions do their own auth. Without this the platform 401s every event.
 [functions.telnyx-webhook]
+verify_jwt = false
+
+[functions.telnyx-agent]
 verify_jwt = false
