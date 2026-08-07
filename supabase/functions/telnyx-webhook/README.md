@@ -23,6 +23,19 @@ function goes quiet. No other changes needed to switch.
    SUPABASE_ACCESS_TOKEN=<token> npx supabase secrets set TELNYX_PUBLIC_KEY=<value> --project-ref wcftuethlcgeasopayed
    ```
 
+   **If this 403s** (org role lacks secrets privileges — Sean's does, 8/7): the function
+   falls back to reading the key from the `dialer_config` table. Apply migration
+   `0003_dialer_config.sql` in the dashboard SQL editor, then seed:
+
+   ```sql
+   insert into dialer_config (key, value) values ('telnyx_public_key', '<value from .env>')
+   on conflict (key) do update set value = excluded.value, updated_at = now();
+   ```
+
+   *(Deployed 2026-08-07 via `scripts/deploy-webhook.ts` — Management API, no CLI — after
+   the CLI path fought both the permission layer and the terminal. That script is now the
+   preferred deploy route; steps 2–3 above are the CLI equivalent.)*
+
 4. **Point Telnyx at it** — add to `.env`:
 
    ```

@@ -41,7 +41,7 @@ flowchart LR
 | Step | Target | External dependency on the critical path |
 |---|---|---|
 | 1 · Record locked | ✅ **done 2026-08-03** | — |
-| 2 · First real call | est. w/o 8/10 (card landed 8/7 ✅; test number purchased + call path provisioned same day) | webhook receiver deploy (Supabase Edge Function, built 8/7 — Sean's CLI token) |
+| 2 · First real call | est. w/o 8/10 (card landed 8/7 ✅; test number purchased, call path provisioned, webhook receiver deployed + Telnyx repointed same day) | seed `dialer_config` key (migration 0003, Sean's SQL editor) · LLM key or Telnyx-hosted model |
 | 3 · Whole system, private | ~1 week after step 2 (est. w/o 8/17) | Joseph: lead payload, buyer pre-approval contract, DNC surface · Kinsey: crediting rule |
 | 4 · Results trustworthy | ~1 week after step 3 (est. w/o 8/24) | Shelly Teh: long-term memory landing · Cromwel/Joseph: results-back contract · Sam/Tatevik: cost approval |
 | 5 · Real leads, controlled pace | w/o 8/31 | Ashley: final pilot script · switching on our share of incoming leads (Alex/Ashley) |
@@ -75,10 +75,11 @@ lines play with a seam a human can't hear, or a free-speech agent runs correctly
 completion rules are followed.
 
 **Waiting on:** ~~the company credit card~~ (landed 8/7 — test number purchased, Call Control
-app + outbound voice profile provisioned same day). Remaining: deploying the webhook receiver —
-built as a Supabase Edge Function (`supabase/functions/telnyx-webhook/`, runbook in its README);
-events land in `call_events`, and the URL repoints to the platform's own home at step 3 with a
-one-line `.env` change.
+app + outbound voice profile provisioned, webhook receiver deployed as a Supabase Edge Function
+and Telnyx repointed at it, all same day; events land in `call_events`, and the URL repoints to
+the platform's own home at step 3 with a one-line `.env` change). Remaining: seed the
+signature-verification key (migration 0003 + one insert, Sean's SQL editor) and pick the first
+call's voice path (Telnyx-hosted model needs no LLM key).
 
 **Why it's the first real-world gate:** this is the cost line the whole architecture is built
 around — pre-recorded lines replacing version one's per-minute generative pricing. Everything

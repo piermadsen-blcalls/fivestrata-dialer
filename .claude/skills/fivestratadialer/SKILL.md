@@ -55,14 +55,18 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   (`scripts/telnyx-setup.ts`, idempotent); test DID **+1 447 842 9621** purchased
   ($1 + $1/mo, `scripts/did-purchase.ts` — guarded: one number, $2 cap, no-op if account
   owns any) and active on the connection. Sean pastes `TELNYX_CONNECTION_ID` +
-  `TELNYX_FROM_NUMBER` into `.env`. Webhook receiver: **Supabase Edge Function built 8/7**
-  (`supabase/functions/telnyx-webhook/` — Ed25519 verify → insert `call_events`; deploy
-  runbook in its README; `supabase/config.toml` sets `verify_jwt=false`). Deploy needs
-  Sean's dashboard access token (Claude is browser-blocked from supabase.com); then set
-  `TELNYX_WEBHOOK_URL=https://wcftuethlcgeasopayed.supabase.co/functions/v1/telnyx-webhook`
-  and re-run telnyx-setup. Still missing for a live call: that deploy; LLM key for real W1
-  (Telnyx-hosted model avoids it for demos). NOT needed: LeadConduit, Snowflake, Retell.
-  Pier's 7/30 demo ran from a different account/org.
+  `TELNYX_FROM_NUMBER` into `.env`. Webhook receiver: **Supabase Edge Function DEPLOYED
+  2026-08-07** (`supabase/functions/telnyx-webhook/` — Ed25519 verify → insert
+  `call_events`; verified live: unsigned POST→400, GET→405; Call Control app repointed at
+  `https://wcftuethlcgeasopayed.supabase.co/functions/v1/telnyx-webhook` same day).
+  Deploys via `scripts/deploy-webhook.ts` (Management API multipart — the supabase CLI
+  path failed on Sean's box; token read from `/c/Claude/supabase-cli-env.sh`, export
+  format, LF endings required — `tr -d '\r'` if recreated). Management-API secret-setting
+  403s on Sean's org role → function falls back to `dialer_config` table (migration 0003;
+  seed `telnyx_public_key` per function README — the one open item before webhooks verify).
+  Still missing for a live call: that seed; LLM key for real W1 (Telnyx-hosted model
+  avoids it for demos). NOT needed: LeadConduit, Snowflake, Retell. Pier's 7/30 demo ran
+  from a different account/org.
 
 ## Demo / PoC runbook (simulated tier — no external creds)
 

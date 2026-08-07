@@ -31,8 +31,22 @@ function b64ToBytes(b64: string): Uint8Array {
 let verifyKey: CryptoKey | null = null;
 async function getVerifyKey(): Promise<CryptoKey> {
   if (verifyKey) return verifyKey;
-  const raw = b64ToBytes(Deno.env.get('TELNYX_PUBLIC_KEY') ?? '');
-  verifyKey = await crypto.subtle.importKey('raw', raw, { name: 'Ed25519' }, false, ['verify']);
+  // Prefer the function secret; fall back to dialer_config (migration 0003 —
+  // used when Management-API secret-setting is blocked by org role). The
+  // Telnyx public key is verification material, not a credential.
+  let b64 = Deno.env.get('TELNYX_PUBLIC_KEY') ?? '';
+  if (!b64) {
+    const { data, error } = await supabase
+      .from('dialer_config')
+      .select('value')
+      .eq('key', 'telnyx_public_key')
+      .maybeSingle();
+    if (error) console.error('dialer_config read failed:', error.message);
+    b64 = data?.value ?? '';
+  }
+  verifyKey = await crypto.subtle.importKey('raw', b64ToBytes(b64), { name: 'Ed25519' }, false, [
+    'verify',
+  ]);
   return verifyKey;
 }
 
