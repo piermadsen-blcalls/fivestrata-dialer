@@ -15,7 +15,7 @@
 import 'dotenv/config';
 
 const TELNYX = 'https://api.telnyx.com/v2';
-const POLL_MS = 250;
+const POLL_MS = 100;
 const MAX_CALL_SECONDS = 150;
 const LLM_MODEL = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
 const ACKS = ['cv_ack_1', 'cv_ack_2', 'cv_ack_3'];
@@ -115,6 +115,7 @@ let phase: Phase = 'dialing';
 let lastId = 0;
 let done = false;
 let listenStartedAt = 0;
+let ratingAckFired = false;
 const deadline = Date.now() + MAX_CALL_SECONDS * 1000;
 
 while (!done && Date.now() < deadline) {
@@ -135,20 +136,36 @@ while (!done && Date.now() < deadline) {
 
     if (ev.event_type === 'call.answered' && phase === 'dialing') {
       phase = 'greeting';
+      // Start listening NOW (inbound track only — our clips don't pollute it):
+      // starting after the greeting ends missed the caller's immediate consent
+      // and added engine spin-up to the perceived gap (Sean, 8/7 call 5).
+      // Engine B sends finals only, ~2-3s after end of speech — try Deepgram
+      // (fast endpointing + interim results) and fall back to B.
+      try {
+        await telnyx(`/calls/${ccid}/actions/transcription_start`, {
+          language: 'en',
+          transcription_engine: 'Deepgram',
+          transcription_tracks: 'inbound',
+        });
+        console.log('  >> transcription engine: Deepgram');
+      } catch {
+        await telnyx(`/calls/${ccid}/actions/transcription_start`, {
+          language: 'en',
+          transcription_engine: 'B',
+          transcription_tracks: 'inbound',
+        });
+        console.log('  >> transcription engine: B (Deepgram unavailable)');
+      }
       await play(ccid, 'cv_greet'); // asks consent — turn ENDS here, nothing pre-queued
-      console.log('  >> greeting sent (turn-ending clip: nothing queued behind it)');
+      console.log('  >> greeting sent, transcription already running');
     } else if (ev.event_type === 'call.machine.detection.ended') {
       console.log(`  >> AMD verdict: ${p.result}`);
     } else if (ev.event_type === 'call.playback.ended' && p.media_name === 'cv_greet') {
       phase = 'consent_listen';
       listenStartedAt = Date.now();
-      await telnyx(`/calls/${ccid}/actions/transcription_start`, {
-        language: 'en',
-        transcription_engine: 'B',
-        transcription_tracks: 'inbound',
-      });
       console.log('  >> listening for consent');
-    } else if (ev.event_type === 'call.transcription' && phase === 'consent_listen' && transcript.length > 1 && isFinal) {
+    } else if (ev.event_type === 'call.transcription' && phase === 'consent_listen' && transcript.length > 0) {
+      // ANY speech (even a partial) counts as consent — don't wait for finals.
       phase = 'question';
       await play(ccid, randomAck());
       await play(ccid, 'cv_q1'); // within-turn sequence: ack -> question is fine to queue
@@ -156,17 +173,25 @@ while (!done && Date.now() < deadline) {
     } else if (ev.event_type === 'call.playback.ended' && p.media_name === 'cv_q1') {
       phase = 'rating_listen';
       listenStartedAt = Date.now();
+      ratingAckFired = false;
       console.log('  >> listening for rating');
-    } else if (ev.event_type === 'call.transcription' && phase === 'rating_listen' && transcript.length > 1 && isFinal) {
-      phase = 'wrapup';
-      const tAck = Date.now();
-      await play(ccid, randomAck()); // instant latency mask, fired before any thinking
-      console.log(`  >> ack sent (${Date.now() - tAck}ms command RTT) — masking LLM decision`);
-      await telnyx(`/calls/${ccid}/actions/transcription_stop`).catch(() => {});
-      const { clip, ms } = await chooseClip(transcript);
-      await play(ccid, clip);
-      await play(ccid, 'cv_goodbye');
-      console.log(`  >> LLM chose ${clip} in ${ms}ms — response + goodbye queued behind ack`);
+    } else if (ev.event_type === 'call.transcription' && phase === 'rating_listen' && transcript.length > 0) {
+      // Ack on the FIRST sign of speech (partial) — mask starts immediately;
+      // the LLM decision waits for the final transcript.
+      if (!ratingAckFired) {
+        ratingAckFired = true;
+        const tAck = Date.now();
+        await play(ccid, randomAck());
+        console.log(`  >> ack sent on first speech (${Date.now() - tAck}ms command RTT)`);
+      }
+      if (isFinal && transcript.length > 1) {
+        phase = 'wrapup';
+        await telnyx(`/calls/${ccid}/actions/transcription_stop`).catch(() => {});
+        const { clip, ms } = await chooseClip(transcript);
+        await play(ccid, clip);
+        await play(ccid, 'cv_goodbye');
+        console.log(`  >> LLM chose ${clip} in ${ms}ms — response + goodbye queued behind ack`);
+      }
     } else if (ev.event_type === 'call.playback.ended' && p.media_name === 'cv_goodbye') {
       await telnyx(`/calls/${ccid}/actions/hangup`).catch(() => {});
       console.log('  >> hangup sent');
@@ -175,7 +200,7 @@ while (!done && Date.now() < deadline) {
     }
   }
   // Fallbacks so silence never strands the call
-  if (phase === 'consent_listen' && Date.now() - listenStartedAt > 10_000) {
+  if (phase === 'consent_listen' && Date.now() - listenStartedAt > 6_000) {
     phase = 'question';
     await play(ccid, 'cv_q1');
     console.log('  >> no consent heard in 10s — proceeding to question');

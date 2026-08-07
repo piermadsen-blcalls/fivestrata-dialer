@@ -26,9 +26,11 @@ const CLIPS: Record<string, string> = {
     "Hi Sean! This is Sky calling from Five Strata, on a recorded line. I'm the platform's AI agent, and this is my first two way conversation. Mind if I ask you one quick question?",
   cv_q1:
     'On a scale of one to ten, how natural does this call feel so far?',
-  cv_ack_1: 'Got it.',
-  cv_ack_2: 'Okay, perfect.',
-  cv_ack_3: 'Mm hm.',
+  // Acks are real words, ~1-2s: ultra-short clips ("Mm hm") arrive garbled
+  // over telephony (Sean, 8/7 call 6), and longer acks mask more latency.
+  cv_ack_1: 'Okay, got it.',
+  cv_ack_2: 'Alright, perfect.',
+  cv_ack_3: 'Okay, one second.',
   cv_resp_positive:
     "That's great to hear. Logging that straight into the fact stream.",
   cv_resp_negative:
