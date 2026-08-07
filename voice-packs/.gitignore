@@ -1,0 +1,4 @@
+# Generated audio stays out of git — regenerate with scripts/gen-dev-clips.ps1
+# (real voice packs will come from the W6 pipeline, versioned in storage, not here)
+*.wav
+*.mp3

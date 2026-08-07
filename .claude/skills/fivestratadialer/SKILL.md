@@ -67,12 +67,16 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   2026-08-07 ~18:04 UTC**: `scripts/test-call.ts` dialed Sean's cell from the platform DID;
   full trace `call.initiated → call.answered → call.hangup` landed in `call_events` through
   the signature-verified webhook — step-2 wiring proven end to end. **Voice loop v0 same
-  day** (`scripts/voice-loop-test.ts`): platform spoke 2 TTS lines on a live call via
-  poll-driven command loop; **seam baseline 1300ms** (webhook→Postgres→250ms poll→command
-  RTT ~410ms from Sean's box→TTS spin-up). Remaining for the step-2 gate: clip playback
-  (hosted audio — Supabase Storage candidate) + pre-queue/co-location to hit ~200ms seam;
-  LLM key for real W1 (Telnyx-hosted model avoids it for demos). NOT needed: LeadConduit,
-  Snowflake, Retell. Pier's 7/30 demo ran from a different account/org.
+  day**: TTS 2-liner (`voice-loop-test.ts`, 1300ms seam), then **real clip playback**
+  (`gen-dev-clips.ps1` Windows-TTS placeholders → `clips-upload.ts` Telnyx media storage →
+  `clip-loop-test.ts`): **pre-queued seam ~550ms** (Telnyx queue-pickup floor,
+  format-independent — 22k vs 8k identical), **reactive ~1450ms** (dev loop: 250ms poll +
+  ~420ms command RTT). W1 consequence: Call Control playback can't hit ≤200ms alone —
+  concatenate fixed clip sequences at authoring time and/or media-streaming BYO audio
+  (details in open-questions "AI conversation engine"). Voice quality = W6 (placeholder
+  clips sound 1990s-robot per Sean — fine for latency work). LLM key still wanted for
+  real W1. NOT needed: LeadConduit, Snowflake, Retell. Pier's 7/30 demo ran from a
+  different account/org.
 
 ## Demo / PoC runbook (simulated tier — no external creds)
 

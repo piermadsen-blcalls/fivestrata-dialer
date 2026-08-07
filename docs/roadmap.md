@@ -79,13 +79,15 @@ the card landed: test number purchased, call path provisioned, webhook receiver 
 (Supabase Edge Function; repoints to the platform's own home at step 3 with a one-line `.env`
 change), and a live call placed from the platform DID, answered, and traced
 `call.initiated → call.answered → call.hangup` into `call_events` through the signature-verified
-webhook (`scripts/test-call.ts`). **Voice loop v0 ran the same day** (`scripts/voice-loop-test.ts`):
-the platform spoke two TTS lines on a live call, driven by a real command loop
-(answered → speak → speak.ended → next speak → hangup), with a measured **1300ms seam** between
-lines via the deliberately-conservative dev path (webhook → Postgres → 250ms poll → command from
-Sean's box → TTS synthesis spin-up). Remaining for the step-2 gate: pre-recorded **clip** playback
-(kills TTS spin-up) and a tighter loop (pre-queue / co-location kills poll + cross-country RTT) to
-hit the no-audible-seam criterion.
+webhook (`scripts/test-call.ts`). **Voice loop v0 ran the same day** (`scripts/voice-loop-test.ts`,
+then `scripts/clip-loop-test.ts`): the platform spoke on live calls — first two TTS lines
+(1300ms seam), then **pre-recorded clips from Telnyx media storage** with both seam strategies
+measured in one call: **pre-queued ~550ms** (Telnyx queue-pickup floor; audio-format-independent)
+vs **reactive ~1450ms** (dev-loop path). Remaining for the step-2 gate: the ~550ms floor means
+Call Control playback alone doesn't reach no-audible-seam — the paths are clip-sequence
+concatenation at authoring time (intra-turn seam → 0) and/or the media-streaming loop (the W1
+bake-off's remaining question, now posed with real numbers). Voice quality itself is W6
+(today's clips are Windows-TTS placeholders).
 
 **Why it's the first real-world gate:** this is the cost line the whole architecture is built
 around — pre-recorded lines replacing version one's per-minute generative pricing. Everything
