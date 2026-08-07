@@ -73,10 +73,20 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   format-independent — 22k vs 8k identical), **reactive ~1450ms** (dev loop: 250ms poll +
   ~420ms command RTT). W1 consequence: Call Control playback can't hit ≤200ms alone —
   concatenate fixed clip sequences at authoring time and/or media-streaming BYO audio
-  (details in open-questions "AI conversation engine"). Voice quality = W6 (placeholder
-  clips sound 1990s-robot per Sean — fine for latency work). LLM key still wanted for
-  real W1. NOT needed: LeadConduit, Snowflake, Retell. Pier's 7/30 demo ran from a
-  different account/org.
+  (details in open-questions "AI conversation engine"). **Telnyx hosted AI works under
+  the same API key (8/7 pm)**: `/v2/ai/chat/completions` (25 LLMs incl. Llama 3.3-70B),
+  `/v2/text-to-speech/speech` (4,450 voices incl. Polly Neural) — LLM-key gap CLOSED;
+  W6 clip gen = `scripts/gen-clips.ts` (dev-pack-1, Joanna-Neural MP3s; MP3 cut the
+  pre-queued seam to **~320ms** vs 550ms WAV). **Conversational loop ran live**
+  (`convo-loop-test.ts`): transcription (engine B — engine A returns EMPTY transcripts) →
+  instant ack clip (latency mask) → LLM clip choice ~1s → response; turn seam 1597ms via
+  dev path. Turn-taking rule (Sean): never pre-queue behind a clip that invites a
+  response. AMD 3/4 accurate (one false `machine` on fast human answer — try `premium`).
+  DID reputation: spam-labeled from first dial; after ~4 calls carrier diverted DID
+  straight to voicemail; CNAM `FIVESTRATA` enabled (`did-cnam.ts`); Free Caller Registry
+  = Sean web form, pending. Warm-transfer bridge script ready, unrun (needs 2nd number):
+  `transfer-test.ts` (tAtt/tSucc + whisper + no-answer fallback). NOT needed: LeadConduit,
+  Snowflake, Retell. Pier's 7/30 demo ran from a different account/org.
 
 ## Demo / PoC runbook (simulated tier — no external creds)
 
