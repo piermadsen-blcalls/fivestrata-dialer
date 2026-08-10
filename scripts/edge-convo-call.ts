@@ -6,8 +6,9 @@
 // shareable artifact (and it's P0 #2's first light).
 // Prereq: telnyx-agent deployed + Call Control app webhook pointed at it +
 // telnyx_api_key available to the function (secret or dialer_config).
-// Run: npx tsx scripts/edge-convo-call.ts +1XXXXXXXXXX [greetClip=cv_greet]
-//   demo (neutral greeting): npx tsx scripts/edge-convo-call.ts +1XXXXXXXXXX demo_greet
+// Run: npx tsx scripts/edge-convo-call.ts +1XXXXXXXXXX [greet=cv_greet] [question=cv_q1] [goodbye=cv_goodbye]
+//   meta demo:    ... +1X demo_greet
+//   vertical demo: ... +1X demo_greet q_windows goodbye_biz   (also q_flooring/q_bathroom/q_solar)
 import 'dotenv/config';
 
 const TELNYX = 'https://api.telnyx.com/v2';
@@ -44,7 +45,9 @@ async function fetchEvents(ccid: string, afterId: number): Promise<any[]> {
 }
 
 const greet = process.argv[3] ?? 'cv_greet';
-console.log(`Dialing ${to} from ${from} — conversation runs in the edge function (greet: ${greet}, recording on) ...`);
+const question = process.argv[4] ?? 'cv_q1';
+const goodbye = process.argv[5] ?? 'cv_goodbye';
+console.log(`Dialing ${to} from ${from} — edge conversation (greet: ${greet}, question: ${question}, goodbye: ${goodbye}, recording on) ...`);
 const dialRes = await fetch(`${TELNYX}/calls`, {
   method: 'POST',
   headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -57,7 +60,7 @@ const dialRes = await fetch(`${TELNYX}/calls`, {
     record: 'record-from-answer',
     record_channels: 'single',
     record_format: 'mp3',
-    client_state: Buffer.from(JSON.stringify({ phase: 'dialing', greet })).toString('base64'),
+    client_state: Buffer.from(JSON.stringify({ phase: 'dialing', greet, question, goodbye })).toString('base64'),
   }),
 });
 const dialBody: any = await dialRes.json().catch(() => ({}));

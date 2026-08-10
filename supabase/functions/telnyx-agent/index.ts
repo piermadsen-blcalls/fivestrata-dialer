@@ -46,6 +46,8 @@ interface CallState {
   ackFired?: boolean;
   lastAck?: string;
   greet?: string; // greeting media_name — set via the dial command's client_state (demo uses demo_greet)
+  question?: string; // question media_name — vertical slots q_windows/q_flooring/q_bathroom/q_solar; default cv_q1 (rating)
+  goodbye?: string; // goodbye media_name — default cv_goodbye (meta); verticals use goodbye_biz
   playlist?: string[]; // lineup mode: play these in order, then hang up (voice auditions)
 }
 const MEM = new Map<string, CallState>();
@@ -207,8 +209,18 @@ function pickAck(state: CallState): string {
   return ack;
 }
 
-async function chooseClip(transcript: string): Promise<{ clip: string; ms: number }> {
+// Longest-first: 'resp_interested' is a substring of 'resp_not_interested',
+// and the matcher scans in order.
+const INTEREST_RESPONSES = ['resp_not_interested', 'resp_interested', 'cv_resp_unclear'];
+
+async function chooseClip(transcript: string, question: string): Promise<{ clip: string; ms: number }> {
   const t0 = Date.now();
+  const interestMode = question.startsWith('q_');
+  const system = interestMode
+    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (yes/sure/positive/asks details), resp_not_interested (no/decline/remove me), cv_resp_unclear (anything else/ambiguous).`
+    : 'You are a soundboard operator on a phone call. The caller was just asked: "On a scale of one to ten, how natural does this call feel so far?" Pick the response clip for what they said. Reply ONLY with JSON like {"clip":"cv_resp_positive"}. Clips: cv_resp_positive (rating 7+/enthusiastic), cv_resp_negative (rating 6 or below/critical), cv_resp_unclear (anything else/ambiguous).';
+  const options = interestMode ? INTEREST_RESPONSES : RESPONSES;
+  const fallback = 'cv_resp_unclear';
   try {
     const apiKey = await getApiKey();
     const res = await fetch(`${TELNYX}/ai/chat/completions`, {
@@ -218,21 +230,17 @@ async function chooseClip(transcript: string): Promise<{ clip: string; ms: numbe
         model: LLM_MODEL,
         max_tokens: 30,
         messages: [
-          {
-            role: 'system',
-            content:
-              'You are a soundboard operator on a phone call. The caller was just asked: "On a scale of one to ten, how natural does this call feel so far?" Pick the response clip for what they said. Reply ONLY with JSON like {"clip":"cv_resp_positive"}. Clips: cv_resp_positive (rating 7+/enthusiastic), cv_resp_negative (rating 6 or below/critical), cv_resp_unclear (anything else/ambiguous).',
-          },
+          { role: 'system', content: system },
           { role: 'user', content: `Caller said: "${transcript}"` },
         ],
       }),
     });
     const body: any = await res.json().catch(() => ({}));
     const text: string = body?.choices?.[0]?.message?.content ?? '';
-    const match = RESPONSES.find((r) => text.includes(r));
-    return { clip: match ?? 'cv_resp_unclear', ms: Date.now() - t0 };
+    const match = options.find((r) => text.includes(r));
+    return { clip: match ?? fallback, ms: Date.now() - t0 };
   } catch {
-    return { clip: 'cv_resp_unclear', ms: Date.now() - t0 };
+    return { clip: fallback, ms: Date.now() - t0 };
   }
 }
 
@@ -286,20 +294,20 @@ async function handle(data: any): Promise<void> {
     const next: CallState = { ...state, phase: 'consent_listen' };
     await saveState(ccid, next);
     armFallback(ccid, '"phase":"consent_listen"', CONSENT_FALLBACK_MS, { ...next, phase: 'question' }, async () => {
-      await play(ccid, 'cv_q1', { ...next, phase: 'question' });
+      await play(ccid, next.question ?? 'cv_q1', { ...next, phase: 'question' });
     });
   } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
     const next: CallState = { ...state, phase: 'question' };
     if (await casTransition(ccid, '"phase":"consent_listen"', next)) {
       await play(ccid, pickAck(next), next);
-      await play(ccid, 'cv_q1', next); // within-turn sequence: safe to queue
+      await play(ccid, next.question ?? 'cv_q1', next); // within-turn sequence: safe to queue
     }
-  } else if (et === 'call.playback.ended' && p.media_name === 'cv_q1' && (state.phase === 'question' || state.phase === 'consent_listen')) {
+  } else if (et === 'call.playback.ended' && p.media_name === (state.question ?? 'cv_q1') && (state.phase === 'question' || state.phase === 'consent_listen')) {
     const next: CallState = { ...state, phase: 'rating_listen', ackFired: false };
     await saveState(ccid, next);
     armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'wrapup' }, async () => {
       await play(ccid, 'cv_resp_unclear', { ...next, phase: 'wrapup' });
-      await play(ccid, 'cv_goodbye', { ...next, phase: 'wrapup' });
+      await play(ccid, next.goodbye ?? 'cv_goodbye', { ...next, phase: 'wrapup' });
     });
   } else if (et === 'call.transcription' && state.phase === 'rating_listen' && transcript.length > 0) {
     if (!state.ackFired) {
@@ -312,13 +320,13 @@ async function handle(data: any): Promise<void> {
       const next: CallState = { ...state, phase: 'wrapup', ackFired: true };
       if (await casTransition(ccid, '"phase":"rating_listen"', next)) {
         waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-        const { clip, ms } = await chooseClip(transcript);
+        const { clip, ms } = await chooseClip(transcript, next.question ?? 'cv_q1');
         console.log(`LLM chose ${clip} in ${ms}ms for "${transcript}"`);
         await play(ccid, clip, next);
-        await play(ccid, 'cv_goodbye', next);
+        await play(ccid, next.goodbye ?? 'cv_goodbye', next);
       }
     }
-  } else if (et === 'call.playback.ended' && p.media_name === 'cv_goodbye') {
+  } else if (et === 'call.playback.ended' && p.media_name === (state.goodbye ?? 'cv_goodbye')) {
     await saveState(ccid, { ...state, phase: 'done' });
     await telnyxCmd(`/calls/${ccid}/actions/hangup`, {});
   }

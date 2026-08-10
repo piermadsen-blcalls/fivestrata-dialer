@@ -9,7 +9,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const API = 'https://api.telnyx.com/v2';
-const VOICE = 'AWS.Polly.Joanna-Neural';
+const VOICE = 'Azure.en-US-Ava:DragonHDLatestNeural'; // Claire's voice (Sean pick, 8/10 — Joanna-Neural retired at a career-best 2/10)
 const OUT_DIR = 'C:/Claude/fivestrata-dialer/voice-packs/dev-pack-1';
 
 const apiKey = process.env.TELNYX_API_KEY ?? '';
@@ -45,6 +45,25 @@ const CLIPS: Record<string, string> = {
     "I'll take that as a maybe. The transcription engine and I are still getting acquainted.",
   cv_goodbye:
     'That was everything. Every turn of this call was transcribed, decided by a language model, and logged per turn. Talk soon!',
+  // Vertical question slots — language from the PRODUCTION script workbooks
+  // (docs/call-scripts/, Pitch-Full blocks; disfluencies are intentional per
+  // the soundboard format). Swap in via client_state like the greeting — the
+  // demo picks a vertical, the agent doesn't change. q_solar is a placeholder:
+  // no solar workbook in the repo (Sean owes the script).
+  q_windows:
+    "Uhm, actually the reason we're calling today is to follow up on your request for more information about replacing your home windows. Whether you're looking to replace your windows for an affordable price, or you want to upgrade or become more energy efficient, now is the time to get a free quote. I just need to ask a few quick questions, and it will take just a minute of your time, okay?",
+  q_flooring:
+    "Uhm, actually the reason we're calling today is to follow up on your inquiry about your flooring project. Right now we're offering fifty percent off the install, some incredible same as cash financing options, along with senior and veteran discounts — and all of our customers also qualify for one free room when they purchase two. I just need to ask a few quick questions, and it will take just a minute of your time, okay?",
+  q_bathroom:
+    "Uhm, actually the reason we're calling today is to follow up on your request for more information about remodeling your bathroom. Whether you're looking to update your bathroom for an affordable price, or make modifications like installing a walk in tub or shower, now is the time to get a free quote. I just need to ask a few quick questions, and this will only take a moment of your time, okay?",
+  q_solar:
+    "Uhm, actually the reason we're calling today is to follow up on your interest in solar for your home. With the current incentives, it takes about thirty seconds to see if you still qualify. I just need to ask a few quick questions, okay?",
+  // Interest-mode responses (vertical questions)
+  resp_interested:
+    "Great news — I can get that set up for you right away. Let me connect you with a specialist. One moment please.",
+  resp_not_interested:
+    "No problem at all — I'll make a note of that, and we won't call you about this again. Thanks for your time!",
+  goodbye_biz: 'Thanks so much for your time. Have a great day!',
   // Warm-transfer leg (W2 / P0 #8)
   xfer_announce:
     "Great news — I'm connecting you to a specialist right now. One moment please.",
