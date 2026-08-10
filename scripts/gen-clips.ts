@@ -58,6 +58,11 @@ const CLIPS: Record<string, string> = {
     "Uhm, actually the reason we're calling today is to follow up on your request for more information about remodeling your bathroom. Whether you're looking to update your bathroom for an affordable price, or make modifications like installing a walk in tub or shower, now is the time to get a free quote. I just need to ask a few quick questions, and this will only take a moment of your time, okay?",
   q_solar:
     "Uhm, actually the reason we're calling today is to follow up on your interest in solar for your home. With the current incentives, it takes about thirty seconds to see if you still qualify. I just need to ask a few quick questions, okay?",
+  // Placeholder in the house template pattern — real HW script lives in
+  // Kombea's soundboard (not in the repo, Teams, SharePoint, or the fshw
+  // replica — checked 8/10); Ashley owes the workbook, like solar.
+  q_homewarranty:
+    "Uhm, actually the reason we're calling today is to follow up on your request for more information about a home warranty plan. Whether you're looking to cover unexpected repair costs on your appliances and home systems, or you just want peace of mind, now is the time to get a free quote. I just need to ask a few quick questions, and it will take just a minute of your time, okay?",
   // Interest-mode responses (vertical questions)
   resp_interested:
     "Great news — I can get that set up for you right away. Let me connect you with a specialist. One moment please.",
