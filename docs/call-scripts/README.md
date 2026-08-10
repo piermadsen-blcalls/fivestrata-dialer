@@ -7,6 +7,7 @@ Production call-center script workbooks (Ashley Smith is the source; sent via Te
 | `Windows -CD 7.7.26.xlsx` | Windows vertical script (most recent template revision, 2026-07-07) |
 | `Bathrooms - 02-12-26 (2).xlsx` | Bathrooms vertical (2026-02-12) — richest variant: transfer stalls, TCPA unclear-yes confirms, R3/R5/R7/R8/R11/R13–R19/R26 rebuttals the Windows file dropped |
 | `Flooring - Premier Home Pros 7.22.26.xlsx` | Flooring script converted 2026-07-22 (by Claude/Sean) from prospective client Premier Home Pros' appointment-setting doc ([source Google Doc](https://docs.google.com/document/d/1z6htzNau4_UwtQ_nNPZQKFyj5c5BACnm3C-uajI6Y4s)) into this format |
+| `HW - Final Script.xlsx` | Home warranty vertical (Ashley, 2026-08-10) — brand NationalHomeProject.com, avatar Brian Lee. Internal sheet is named "Solar Script": direct evidence of the clone lineage noted below |
 
 ## Workbook anatomy (identical across verticals)
 

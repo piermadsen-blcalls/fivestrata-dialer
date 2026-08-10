@@ -14,10 +14,9 @@ every event lands in the platform database as it happens; the call is recorded.
 | Vertical revive (windows / flooring / bathroom / solar / home warranty) | The business — production script language, interested → transfer announce, not-interested → polite opt-out | `... demo_greet q_windows goodbye_biz` (or `q_flooring` / `q_bathroom` / `q_solar` / `q_homewarranty`) |
 
 Vertical pitch lines are taken from the **production call-center script workbooks**
-(`docs/call-scripts/`, Pitch-Full blocks) — windows, flooring, bathrooms verbatim-adapted.
-Solar and home warranty are placeholders composed in the same template pattern: no workbook
-exists for either (HW's script lives inside Kombea's soundboard — checked Teams, SharePoint,
-Drive, and the fshw replica 8/10; Ashley is the source for both).
+(`docs/call-scripts/`, Pitch-Full blocks) — windows, flooring, bathrooms, and home warranty
+(Ashley, 8/10) verbatim-adapted. Solar remains a template-pattern placeholder pending its
+workbook.
 
 **Pre-flight (non-negotiable, learned live):** the callee saves **+1 447 842 9621** to
 contacts before the call. The test DID carries a spam label (expected for a fresh number —

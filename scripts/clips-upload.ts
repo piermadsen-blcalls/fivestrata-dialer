@@ -21,16 +21,25 @@ if (files.length === 0) {
   process.exit(1);
 }
 
-const existing: Set<string> = new Set(
-  ((await (await fetch(`${API}/media`, { headers: auth })).json()).data ?? []).map(
-    (m: any) => m.media_name,
-  ),
-);
+// Media list is paginated — page through all of it or the existence check
+// misses items and replaces fail with 422 'already been taken'.
+const existing: Set<string> = new Set();
+for (let page = 1; page < 20; page++) {
+  const res = await fetch(`${API}/media?page[size]=250&page[number]=${page}`, { headers: auth });
+  const body: any = await res.json().catch(() => ({}));
+  const items = body.data ?? [];
+  for (const m of items) existing.add(m.media_name);
+  if (items.length < 250) break;
+}
 
 for (const f of files) {
   const mediaName = basename(f).replace(/\.(wav|mp3)$/i, '');
   if (existing.has(mediaName)) {
-    await fetch(`${API}/media/${encodeURIComponent(mediaName)}`, { method: 'DELETE', headers: auth });
+    const del = await fetch(`${API}/media/${encodeURIComponent(mediaName)}`, { method: 'DELETE', headers: auth });
+    if (!del.ok && del.status !== 404) {
+      console.error(`${mediaName}  DELETE failed ${del.status} — skipping`);
+      continue;
+    }
   }
   const bytes = readFileSync(join(packDir, f));
   const form = new FormData();
