@@ -14,7 +14,7 @@ const OUT_DIR = 'C:/Claude/fivestrata-dialer/voice-packs/voice-lineup';
 const LABEL_VOICE = 'AWS.Polly.Matthew-Neural'; // male announcer — stands apart from samples
 
 const SAMPLE_TEXT =
-  "Hi, this is Sky calling from Five Strata on a recorded line. Everything you're hearing is a pre recorded clip in my voice. On a scale of one to ten, how natural do I sound?";
+  "Hi, this is Claire calling from Five Strata on a recorded line. Everything you're hearing is a pre recorded clip in my voice. On a scale of one to ten, how natural do I sound?";
 
 const CANDIDATES: Array<{ n: number; label: string; voice: string }> = [
   { n: 1, label: 'Voice one.', voice: 'AWS.Polly.Joanna-Neural' }, // incumbent baseline
