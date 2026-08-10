@@ -42,10 +42,11 @@ const supabase = createClient(
 );
 
 interface CallState {
-  phase: 'dialing' | 'greeting' | 'consent_listen' | 'question' | 'rating_listen' | 'wrapup' | 'done';
+  phase: 'dialing' | 'greeting' | 'consent_listen' | 'question' | 'rating_listen' | 'wrapup' | 'lineup' | 'done';
   ackFired?: boolean;
   lastAck?: string;
   greet?: string; // greeting media_name — set via the dial command's client_state (demo uses demo_greet)
+  playlist?: string[]; // lineup mode: play these in order, then hang up (voice auditions)
 }
 const MEM = new Map<string, CallState>();
 
@@ -262,7 +263,16 @@ async function handle(data: any): Promise<void> {
   const transcript: string = (p.transcription_data?.transcript ?? '').trim();
   const isFinal = p.transcription_data?.is_final !== false;
 
-  if (et === 'call.answered' && state.phase === 'dialing') {
+  if (et === 'call.answered' && state.phase === 'dialing' && state.playlist?.length) {
+    // Lineup mode: sequential playback only (voice auditions), no conversation.
+    const next: CallState = { ...state, phase: 'lineup' };
+    await saveState(ccid, next);
+    for (const m of next.playlist!) await play(ccid, m, next);
+  } else if (et === 'call.playback.ended' && state.phase === 'lineup') {
+    if (p.media_name === state.playlist?.[state.playlist.length - 1]) {
+      await telnyxCmd(`/calls/${ccid}/actions/hangup`, {});
+    }
+  } else if (et === 'call.answered' && state.phase === 'dialing') {
     const next: CallState = { ...state, phase: 'greeting' };
     await saveState(ccid, next); // durable row must exist before speech events arrive
     // Listen from the first instant (inbound only); Deepgram + interims,
