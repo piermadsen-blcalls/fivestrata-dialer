@@ -98,7 +98,15 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   pre-CAS → ~1.5s with CAS roundtrips — optimize via region-pinning/Phase B AWS. Call
   screening (wife's phone: "name and reason for calling") eats greetings — demo rule:
   callee saves the DID to contacts first. Late-arriving human ("Hello?" mid-call) needs a
-  re-greet clip — taxonomy item.
+  re-greet clip — taxonomy item. **8/10 demo prep**: agent = Claire, voice Azure Ava
+  DragonHD (Sean 9/10 in lineup call; auditions via gen-voice-lineup + agent playlist
+  mode); 5 vertical question slots from production workbooks (solar = placeholder, others
+  verbatim; HW workbook landed 8/10, sheet literally named 'Solar Script' — clone lineage);
+  interest-mode LLM (interested→transfer announce / not-interested→opt-out); **decline
+  handling live-verified**: consent 'no'→opt-out, decline barge-in stops mid-clip,
+  mid-clip answers buffered (matcher must strip punctuation — Deepgram's "No. Thank you."
+  evaded "no thank you"). Demo brief: docs/demo/2026-08-11-demo-brief.md. Rehearsals
+  8/10: windows yes-path + HW decline paths clean; recordings in Sean's Downloads.
   DID reputation: spam-labeled from first dial; after ~4 calls carrier diverted DID
   straight to voicemail; CNAM `FIVESTRATA` enabled (`did-cnam.ts`); Free Caller Registry
   = Sean web form, pending. Warm-transfer bridge script ready, unrun (needs 2nd number):
