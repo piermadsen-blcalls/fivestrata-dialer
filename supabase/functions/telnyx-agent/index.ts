@@ -49,6 +49,18 @@ interface CallState {
   question?: string; // question media_name — vertical slots q_windows/q_flooring/q_bathroom/q_solar; default cv_q1 (rating)
   goodbye?: string; // goodbye media_name — default cv_goodbye (meta); verticals use goodbye_biz
   playlist?: string[]; // lineup mode: play these in order, then hang up (voice auditions)
+  pending?: string; // answer spoken WHILE a clip was playing — processed the moment the clip ends
+}
+
+// Decline detection (8/10 rehearsal finding: "No. Sorry." at consent got
+// "Alright, perfect!" and the pitch anyway). Local keyword check — no LLM
+// latency on the compliance-relevant path.
+function isDecline(t: string): boolean {
+  // Strip punctuation first — Deepgram punctuates aggressively ("No. Thank
+  // you." failed a "no thank you" match on the 8/10 retest).
+  const s = t.toLowerCase().replace(/['’‛`]/g, '').replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (/^(no|nope|no thanks|no thank you|nah)$/.test(s)) return true;
+  return /(not interested|no thanks|no thank you|dont call|do not call|stop calling|remove me|take me off|dont want)/.test(s);
 }
 const MEM = new Map<string, CallState>();
 
@@ -297,18 +309,54 @@ async function handle(data: any): Promise<void> {
       await play(ccid, next.question ?? 'cv_q1', { ...next, phase: 'question' });
     });
   } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
-    const next: CallState = { ...state, phase: 'question' };
-    if (await casTransition(ccid, '"phase":"consent_listen"', next)) {
-      await play(ccid, pickAck(next), next);
-      await play(ccid, next.question ?? 'cv_q1', next); // within-turn sequence: safe to queue
+    // A decline at consent is an opt-out, not a yes (8/10 rehearsal finding).
+    if (isFinal && isDecline(transcript)) {
+      const next: CallState = { ...state, phase: 'wrapup' };
+      if (await casTransition(ccid, '"phase":"consent_listen"', next)) {
+        await play(ccid, 'resp_not_interested', next);
+        await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+      }
+    } else if (!isDecline(transcript)) {
+      const next: CallState = { ...state, phase: 'question' };
+      if (await casTransition(ccid, '"phase":"consent_listen"', next)) {
+        await play(ccid, pickAck(next), next);
+        await play(ccid, next.question ?? 'cv_q1', next); // within-turn sequence: safe to queue
+      }
+    } // decline partials: wait for the final
+  } else if (et === 'call.transcription' && state.phase === 'question' && transcript.length > 0 && isFinal) {
+    // Caller spoke WHILE the question clip was playing (real callers do —
+    // 8/10 rehearsal). Declines barge in and stop the clip; anything else is
+    // buffered and processed the moment the clip ends.
+    if (isDecline(transcript)) {
+      const next: CallState = { ...state, phase: 'wrapup' };
+      if (await casTransition(ccid, '"phase":"question"', next)) {
+        await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+        await play(ccid, 'resp_not_interested', next);
+        await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+      }
+    } else {
+      await saveState(ccid, { ...state, pending: transcript });
     }
   } else if (et === 'call.playback.ended' && p.media_name === (state.question ?? 'cv_q1') && (state.phase === 'question' || state.phase === 'consent_listen')) {
-    const next: CallState = { ...state, phase: 'rating_listen', ackFired: false };
-    await saveState(ccid, next);
-    armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'wrapup' }, async () => {
-      await play(ccid, 'cv_resp_unclear', { ...next, phase: 'wrapup' });
-      await play(ccid, next.goodbye ?? 'cv_goodbye', { ...next, phase: 'wrapup' });
-    });
+    if (state.pending) {
+      // They already answered mid-clip — respond immediately.
+      const next: CallState = { ...state, phase: 'wrapup', ackFired: true, pending: undefined };
+      if (await casTransition(ccid, '"phase":"question"', next)) {
+        await play(ccid, pickAck(next), next);
+        waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+        const { clip, ms } = await chooseClip(state.pending, next.question ?? 'cv_q1');
+        console.log(`LLM chose ${clip} in ${ms}ms for buffered "${state.pending}"`);
+        await play(ccid, clip, next);
+        await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+      }
+    } else {
+      const next: CallState = { ...state, phase: 'rating_listen', ackFired: false };
+      await saveState(ccid, next);
+      armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'wrapup' }, async () => {
+        await play(ccid, 'cv_resp_unclear', { ...next, phase: 'wrapup' });
+        await play(ccid, next.goodbye ?? 'cv_goodbye', { ...next, phase: 'wrapup' });
+      });
+    }
   } else if (et === 'call.transcription' && state.phase === 'rating_listen' && transcript.length > 0) {
     if (!state.ackFired) {
       const acked: CallState = { ...state, ackFired: true };
