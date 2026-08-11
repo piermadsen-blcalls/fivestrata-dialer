@@ -50,7 +50,33 @@ interface CallState {
   goodbye?: string; // goodbye media_name — default cv_goodbye (meta); verticals use goodbye_biz
   playlist?: string[]; // lineup mode: play these in order, then hang up (voice auditions)
   pending?: string; // answer spoken WHILE a clip was playing — processed the moment the clip ends
+  // Persona mode (synthetic customers, Sean 8/11): inbound legs to our own
+  // DID are answered by a persona — Claire trains against fake callers.
+  mode?: 'persona';
+  persona?: string;
+  history?: Array<{ role: 'claire' | 'me'; text: string }>;
+  heard?: number; // finals heard from Claire (debounce sequencing)
+  replied?: number; // last `heard` value we replied to
+  turns?: number;
 }
+
+// Synthetic customer personas. Cheap on purpose: basic TTS voice, small LLM.
+const PERSONA_VOICE = 'female'; // Telnyx basic tier — cheapest intelligible
+const PERSONA_MODEL = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
+const PERSONA_REPLY_DEBOUNCE_MS = 2000; // wait for Claire to finish talking
+const PERSONA_MAX_TURNS = 10;
+const PERSONAS: Record<string, string> = {
+  curmudgeon:
+    "You are Frank, 61, answering a sales call. You are grumpy and suspicious: demand to know who's calling and how they got your number, complain about telemarketers, give short hostile answers. You do NOT want anything sold to you. After a few exchanges, demand to be removed from the list.",
+  wishy_washy:
+    "You are Dana, 45, answering a sales call. You cannot commit to anything: hedge every answer ('maybe... I mean... I'd have to ask my husband... what do you think?'), change your mind mid-sentence, ask the caller to decide for you. Never give a clear yes or no.",
+  talker:
+    'You are Bill, 58, answering a sales call. You are extremely chatty: answer every question with a long rambling story involving your nephew, your knee surgery, or the weather in Tucson. Eventually circle back to a vague answer. You are friendly but exhausting.',
+  confused_elder:
+    "You are Doris, 84, answering the phone. You are sweet but confused: mishear things, ask 'who is this again?' repeatedly, answer questions that weren't asked, mention your late husband Harold. You don't understand what the caller wants.",
+  normal:
+    'You are Maria, 52, answering a sales call. You GENUINELY need a bathroom remodel (leaky shower, old tile) and are interested — but you are detail-oriented: ask about price ranges, timeline, licensing/insurance, and what happens next. Cooperative but thorough.',
+};
 
 // Decline detection (8/10 rehearsal finding: "No. Sorry." at consent got
 // "Alright, perfect!" and the pitch anyway). Local keyword check — no LLM
@@ -153,20 +179,24 @@ const decodeState = (cs: string | null | undefined): CallState | null => {
 const stateKey = (ccid: string) => `call_state:${ccid}`;
 
 async function loadState(ccid: string, clientState?: string): Promise<CallState> {
-  const m = MEM.get(ccid);
-  if (m) return m;
-  const { data } = await supabase
+  // DB FIRST (8/11 persona-call finding): MEM-first served stale phases across
+  // isolates — a duplicate event on a stale isolate replayed the question
+  // after goodbye and swallowed the hangup. MEM is only the fallback when the
+  // DB read fails; ~50ms is cheap next to a wrong turn.
+  const { data, error } = await supabase
     .from('dialer_config')
     .select('value')
     .eq('key', stateKey(ccid))
     .maybeSingle();
-  if (data?.value) {
+  if (!error && data?.value) {
     try {
       const s = JSON.parse(data.value) as CallState;
       MEM.set(ccid, s);
       return s;
     } catch { /* fall through */ }
   }
+  const m = MEM.get(ccid);
+  if (m) return m;
   const s = decodeState(clientState) ?? { phase: 'dialing' as const };
   MEM.set(ccid, s);
   return s;
@@ -214,9 +244,30 @@ const play = (ccid: string, media: string, state: CallState) =>
     client_state: encodeState(state),
   });
 
-function pickAck(state: CallState): string {
-  const pool = ACKS.filter((a) => a !== state.lastAck);
-  const ack = pool[Math.floor(Math.random() * pool.length)];
+// Category-aligned acks (Sean 8/11): pick by what the caller just said, via a
+// zero-latency local classifier — an LLM here would cost the milliseconds the
+// ack exists to mask. Categories mirror the production Hot Keys sheet.
+const ACK_SETS: Record<string, string[]> = {
+  positive: ['ack_pos_1', 'ack_pos_2'],
+  soft: ['ack_soft_1', 'ack_soft_2'],
+  question: ['ack_question_1', 'ack_question_2'],
+  sorry: ['ack_sorry_1', 'ack_sorry_2'],
+  neutral: ACKS, // cv_ack_1..3
+};
+
+function ackCategory(t: string): string {
+  const s = t.toLowerCase().replace(/['’‛`]/g, '').replace(/[^a-z ?]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (/(annoy|frustrat|angry|already told|called me (before|already)|again\?|leave me alone)/.test(s)) return 'sorry';
+  if (/\?$/.test(t.trim()) || /^(how|what|why|when|who|where|can you|do you|is this|are you)\b/.test(s)) return 'question';
+  if (/^(yes|yeah|yep|sure|okay|ok|sounds good|go ahead|absolutely|definitely|of course)\b/.test(s)) return 'positive';
+  if (/(maybe|i guess|not sure|i dont know|possibly|we ll see|depends)/.test(s)) return 'soft';
+  return 'neutral';
+}
+
+function pickAck(state: CallState, transcript = ''): string {
+  const set = ACK_SETS[ackCategory(transcript)] ?? ACKS;
+  const pool = set.filter((a) => a !== state.lastAck);
+  const ack = pool[Math.floor(Math.random() * pool.length)] ?? set[0];
   state.lastAck = ack;
   return ack;
 }
@@ -267,6 +318,88 @@ function armFallback(ccid: string, expectMarker: string, ms: number, next: CallS
   );
 }
 
+// --- Persona side (synthetic customer on the inbound leg) --------------------------
+async function personaReply(ccid: string, state: CallState): Promise<void> {
+  const persona = PERSONAS[state.persona ?? 'normal'] ?? PERSONAS.normal;
+  const history = (state.history ?? []).slice(-12);
+  try {
+    const apiKey = await getApiKey();
+    const res = await fetch(`${TELNYX}/ai/chat/completions`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: PERSONA_MODEL,
+        max_tokens: 90,
+        messages: [
+          {
+            role: 'system',
+            content: `${persona} You are ON A PHONE CALL. Reply with ONE short spoken line (no stage directions, no quotes). If you would hang up now, end your line with [HANGUP].`,
+          },
+          ...history.map((h) => ({ role: h.role === 'claire' ? 'user' : 'assistant', content: h.text })),
+        ],
+      }),
+    });
+    const body: any = await res.json().catch(() => ({}));
+    let text: string = (body?.choices?.[0]?.message?.content ?? '').trim();
+    const wantsHangup = text.includes('[HANGUP]') || (state.turns ?? 0) >= PERSONA_MAX_TURNS;
+    text = text.replace(/\[HANGUP\]/g, '').replace(/^["']|["']$/g, '').trim() || 'Hello?';
+    console.log(`persona(${state.persona}) says: ${text}${wantsHangup ? ' [will hang up]' : ''}`);
+    await telnyxCmd(`/calls/${ccid}/actions/speak`, { payload: text, voice: PERSONA_VOICE, language: 'en-US' });
+    const next: CallState = {
+      ...state,
+      history: [...history, { role: 'me' as const, text }],
+      turns: (state.turns ?? 0) + 1,
+    };
+    await saveState(ccid, next);
+    if (wantsHangup) {
+      waitUntil(
+        (async () => {
+          await new Promise((r) => setTimeout(r, Math.min(text.length * 70 + 2000, 15000)));
+          await telnyxCmd(`/calls/${ccid}/actions/hangup`, {});
+        })(),
+      );
+    }
+  } catch (err) {
+    console.error('personaReply failed:', err);
+  }
+}
+
+async function handlePersona(ccid: string, et: string, p: any, state: CallState): Promise<void> {
+  const transcript: string = (p.transcription_data?.transcript ?? '').trim();
+  const isFinal = p.transcription_data?.is_final !== false;
+
+  if (et === 'call.answered') {
+    await telnyxCmd(`/calls/${ccid}/actions/transcription_start`, {
+      language: 'en',
+      transcription_engine: 'Deepgram',
+      transcription_tracks: 'inbound',
+      interim_results: true,
+    });
+    // Personas answer the phone like humans do.
+    await telnyxCmd(`/calls/${ccid}/actions/speak`, { payload: 'Hello?', voice: PERSONA_VOICE, language: 'en-US' });
+  } else if (et === 'call.transcription' && isFinal && transcript.length > 0) {
+    const heard = (state.heard ?? 0) + 1;
+    const next: CallState = {
+      ...state,
+      heard,
+      history: [...(state.history ?? []).slice(-12), { role: 'claire' as const, text: transcript }],
+    };
+    await saveState(ccid, next);
+    // Debounce: reply only if Claire stays quiet after this segment; the CAS
+    // on `replied` guarantees one reply per quiet point across isolates.
+    waitUntil(
+      (async () => {
+        await new Promise((r) => setTimeout(r, PERSONA_REPLY_DEBOUNCE_MS));
+        const cur = await loadState(ccid);
+        if ((cur.heard ?? 0) !== heard || (cur.replied ?? 0) >= heard) return;
+        if (await casTransition(ccid, `"replied":${cur.replied ?? 0}`, { ...cur, replied: heard })) {
+          await personaReply(ccid, { ...cur, replied: heard });
+        }
+      })(),
+    );
+  }
+}
+
 // --- The state machine ------------------------------------------------------------
 async function handle(data: any): Promise<void> {
   const p = data.payload ?? {};
@@ -279,7 +412,24 @@ async function handle(data: any): Promise<void> {
     return;
   }
 
+  // Inbound legs to our DID = synthetic customer (persona mode).
+  if (et === 'call.initiated' && p.direction === 'incoming') {
+    const { data: pn } = await supabase
+      .from('dialer_config')
+      .select('value')
+      .eq('key', 'persona_next')
+      .maybeSingle();
+    const persona = pn?.value?.trim() || 'normal';
+    await saveState(ccid, { phase: 'dialing', mode: 'persona', persona, heard: 0, replied: 0, turns: 0, history: [] });
+    await telnyxCmd(`/calls/${ccid}/actions/answer`, {});
+    return;
+  }
+
   const state = await loadState(ccid, p.client_state);
+  if (state.mode === 'persona') {
+    await handlePersona(ccid, et, p, state);
+    return;
+  }
   const transcript: string = (p.transcription_data?.transcript ?? '').trim();
   const isFinal = p.transcription_data?.is_final !== false;
 
@@ -319,7 +469,7 @@ async function handle(data: any): Promise<void> {
     } else if (!isDecline(transcript)) {
       const next: CallState = { ...state, phase: 'question' };
       if (await casTransition(ccid, '"phase":"consent_listen"', next)) {
-        await play(ccid, pickAck(next), next);
+        await play(ccid, pickAck(next, transcript), next);
         await play(ccid, next.question ?? 'cv_q1', next); // within-turn sequence: safe to queue
       }
     } // decline partials: wait for the final
@@ -342,7 +492,7 @@ async function handle(data: any): Promise<void> {
       // They already answered mid-clip — respond immediately.
       const next: CallState = { ...state, phase: 'wrapup', ackFired: true, pending: undefined };
       if (await casTransition(ccid, '"phase":"question"', next)) {
-        await play(ccid, pickAck(next), next);
+        await play(ccid, pickAck(next, state.pending), next);
         waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
         const { clip, ms } = await chooseClip(state.pending, next.question ?? 'cv_q1');
         console.log(`LLM chose ${clip} in ${ms}ms for buffered "${state.pending}"`);
@@ -350,18 +500,21 @@ async function handle(data: any): Promise<void> {
         await play(ccid, next.goodbye ?? 'cv_goodbye', next);
       }
     } else {
+      // CAS, not save: a duplicate/stale q-ended event must not clobber a
+      // later phase back to rating_listen (8/11 persona-call finding).
       const next: CallState = { ...state, phase: 'rating_listen', ackFired: false };
-      await saveState(ccid, next);
-      armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'wrapup' }, async () => {
-        await play(ccid, 'cv_resp_unclear', { ...next, phase: 'wrapup' });
-        await play(ccid, next.goodbye ?? 'cv_goodbye', { ...next, phase: 'wrapup' });
-      });
+      if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
+        armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'wrapup' }, async () => {
+          await play(ccid, 'cv_resp_unclear', { ...next, phase: 'wrapup' });
+          await play(ccid, next.goodbye ?? 'cv_goodbye', { ...next, phase: 'wrapup' });
+        });
+      }
     }
   } else if (et === 'call.transcription' && state.phase === 'rating_listen' && transcript.length > 0) {
     if (!state.ackFired) {
       const acked: CallState = { ...state, ackFired: true };
       if (await casTransition(ccid, '"ackFired":false', acked)) {
-        await play(ccid, pickAck(acked), acked); // instant mask, exactly once
+        await play(ccid, pickAck(acked, transcript), acked); // instant mask, exactly once
       }
     }
     if (isFinal && transcript.length > 1) {
@@ -376,6 +529,9 @@ async function handle(data: any): Promise<void> {
     }
   } else if (et === 'call.playback.ended' && p.media_name === (state.goodbye ?? 'cv_goodbye')) {
     await saveState(ccid, { ...state, phase: 'done' });
+    // Flush any stray queued playback before hanging up (8/11: a stale-state
+    // replay sat in the queue and outlived the goodbye).
+    await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
     await telnyxCmd(`/calls/${ccid}/actions/hangup`, {});
   }
 }

@@ -34,9 +34,21 @@ const CLIPS: Record<string, string> = {
   // immediate speech. Wait-promising phrases ("one second") are STALL clips,
   // a separate category the engine fires only when the decision is genuinely
   // slow; a stall followed instantly by speech is incongruous.
+  // Category-aligned acks (Sean, 8/11: "align the acks with what's going on")
+  // — chosen by a zero-latency local classifier on the caller's words,
+  // mirroring the production Hot Keys sheet (Agree/I understand/Sorry/Uh huh
+  // variants). Legacy cv_ack_* kept as the neutral set.
   cv_ack_1: 'Okay, got it.',
-  cv_ack_2: 'Alright, perfect.',
-  cv_ack_3: 'Okay, thanks.',
+  cv_ack_2: 'Alright, thanks.',
+  cv_ack_3: 'Okay, noted.',
+  ack_pos_1: 'Great, thanks!',
+  ack_pos_2: 'Perfect, thank you.',
+  ack_soft_1: 'Okay, fair enough.',
+  ack_soft_2: 'Alright, I hear you.',
+  ack_question_1: "That's a good question.",
+  ack_question_2: 'Sure, happy to explain.',
+  ack_sorry_1: 'I understand — sorry about that.',
+  ack_sorry_2: 'I hear you, apologies.',
   cv_resp_positive:
     "That's great to hear. Logging that straight into the fact stream.",
   cv_resp_negative:
