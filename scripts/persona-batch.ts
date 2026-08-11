@@ -7,7 +7,7 @@ import 'dotenv/config';
 import { appendFileSync } from 'node:fs';
 
 const TELNYX = 'https://api.telnyx.com/v2';
-const PERSONAS = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal'];
+const PERSONAS = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal', 'hobby_litigator'];
 const VERTICALS = ['q_windows', 'q_bathroom', 'q_flooring', 'q_homewarranty', 'q_solar'];
 const BALANCE_FLOOR_USD = 2.0;
 const CALL_TIMEOUT_MS = 240_000;

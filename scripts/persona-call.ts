@@ -19,7 +19,7 @@ const persona = process.argv[2] ?? '';
 const question = process.argv[3] ?? 'q_bathroom';
 const greet = process.argv[4] ?? 'demo_greet';
 
-const VALID = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal'];
+const VALID = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal', 'hobby_litigator'];
 if (!VALID.includes(persona) || !apiKey || !connectionId || !from || !supabaseUrl || !supabaseKey) {
   console.error(`Usage: npx tsx scripts/persona-call.ts <${VALID.join('|')}> [question] [greet]`);
   process.exit(1);

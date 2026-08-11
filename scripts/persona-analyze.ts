@@ -11,12 +11,13 @@ const supabaseKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERV
 const sb = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` };
 const LOG = process.argv[2] ?? 'C:/Claude/scratch/persona-batch.jsonl';
 
-const RESPONSES = ['resp_interested', 'resp_not_interested', 'cv_resp_unclear', 'cv_resp_positive', 'cv_resp_negative'];
+const RESPONSES = ['resp_compliance', 'resp_interested', 'resp_not_interested', 'cv_resp_unclear', 'cv_resp_positive', 'cv_resp_negative'];
 const ACK_CATS: Record<string, string> = {
   ack_pos_1: 'positive', ack_pos_2: 'positive',
   ack_soft_1: 'soft', ack_soft_2: 'soft',
   ack_question_1: 'question', ack_question_2: 'question',
   ack_sorry_1: 'sorry', ack_sorry_2: 'sorry',
+  ack_pleasantry_1: 'pleasantry', ack_pleasantry_2: 'pleasantry',
   cv_ack_1: 'neutral', cv_ack_2: 'neutral', cv_ack_3: 'neutral',
 };
 

@@ -49,6 +49,12 @@ const CLIPS: Record<string, string> = {
   ack_question_2: 'Sure, happy to explain.',
   ack_sorry_1: 'I understand — sorry about that.',
   ack_sorry_2: 'I hear you, apologies.',
+  ack_pleasantry_1: 'Doing great, thanks for asking!',
+  ack_pleasantry_2: "Likewise — it's great talking with you!",
+  // A-priori compliance response (legal/recording/consent probes — the hobby
+  // litigator path): confirm DNC plainly, no selling past it, no legal claims.
+  resp_compliance:
+    "I completely understand. I'm marking your number as do not call right now, so you won't hear from us again, and I won't take any more of your time.",
   cv_resp_positive:
     "That's great to hear. Logging that straight into the fact stream.",
   cv_resp_negative:

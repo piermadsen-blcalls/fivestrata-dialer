@@ -76,6 +76,8 @@ const PERSONAS: Record<string, string> = {
     "You are Doris, 84, answering the phone. You are sweet but confused: mishear things, ask 'who is this again?' repeatedly, answer questions that weren't asked, mention your late husband Harold. You don't understand what the caller wants.",
   normal:
     'You are Maria, 52, answering a sales call. You GENUINELY need a bathroom remodel (leaky shower, old tile) and are interested — but you are detail-oriented: ask about price ranges, timeline, licensing/insurance, and what happens next. Cooperative but thorough.',
+  hobby_litigator:
+    "You are Gerald, 55, a self-taught 'hobby litigator' who answers sales calls hoping to catch legal violations he can sue over. Probe aggressively: ask whether the call is being recorded and whether you consented, announce that YOU are recording, claim you're in a two-party-consent state, cite statutes half-correctly (TCPA, 'section 632', state robocall laws), ask if this is an autodialer, demand their company's legal name and address, threaten small-claims court. If they promptly offer to put you on the do-not-call list, act satisfied and wrap up; if they keep selling, escalate the legal threats.",
 };
 
 // Decline detection (8/10 rehearsal finding: "No. Sorry." at consent got
@@ -252,15 +254,38 @@ const ACK_SETS: Record<string, string[]> = {
   soft: ['ack_soft_1', 'ack_soft_2'],
   question: ['ack_question_1', 'ack_question_2'],
   sorry: ['ack_sorry_1', 'ack_sorry_2'],
+  pleasantry: ['ack_pleasantry_1', 'ack_pleasantry_2'],
   neutral: ACKS, // cv_ack_1..3
 };
 
+// v2 from the 8/11 offline 70B audit (scripts/ack-audit.ts): hostility
+// outranks question-detection; pleasantries reciprocate; identity demands are
+// apologetic; and FRAGMENTS GET NO ACK AT ALL (39 of 104 judged misfires were
+// acks on half-sentences — silence beats a non-sequitur).
+function normalizeUtterance(t: string): string {
+  return t.toLowerCase().replace(/['’‛`]/g, '').replace(/[^a-z ?]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function shouldAck(t: string): boolean {
+  const s = normalizeUtterance(t);
+  const words = s.split(' ').filter(Boolean);
+  if (words.length < 2) return false; // "Claire.", "It's", "Hello?"
+  if (/^(hello|hi|hey)( there)?$/.test(s)) return false;
+  // Short and trailing off with no terminal punctuation = a fragment.
+  if (words.length < 4 && !/[.?!]\s*$/.test(t.trim()) && !/^(yes|yeah|yep|no|nope|sure|okay|ok)\b/.test(s)) return false;
+  return true;
+}
+
 function ackCategory(t: string): string {
-  const s = t.toLowerCase().replace(/['’‛`]/g, '').replace(/[^a-z ?]/g, ' ').replace(/\s+/g, ' ').trim();
-  if (/(annoy|frustrat|angry|already told|called me (before|already)|again\?|leave me alone)/.test(s)) return 'sorry';
-  if (/\?$/.test(t.trim()) || /^(how|what|why|when|who|where|can you|do you|is this|are you)\b/.test(s)) return 'question';
-  if (/^(yes|yeah|yep|sure|okay|ok|sounds good|go ahead|absolutely|definitely|of course)\b/.test(s)) return 'positive';
-  if (/(maybe|i guess|not sure|i dont know|possibly|we ll see|depends)/.test(s)) return 'soft';
+  const s = normalizeUtterance(t);
+  if (/(nice to (talk|meet|speak)|how are you|good (morning|afternoon|evening)|pleasure (talking|to meet))/.test(s)) return 'pleasantry';
+  if (
+    /(how did you get (my|this) number|annoy|frustrat|angry|already told|called me (before|already)|leave me alone|telemarketer|scam|spam|what do you want|save it|stop bothering|waste of|so sick of)/.test(s)
+  )
+    return 'sorry';
+  if (/\?\s*$/.test(t.trim()) || /^(how|what|why|when|where|can you|do you|is this|are you|whats)\b/.test(s)) return 'question';
+  if (/^(yes|yeah|yep|sure|okay|ok|sounds good|go ahead|absolutely|definitely|of course)\b/.test(s) || /(sounds good|that works|lets do it|im interested)/.test(s)) return 'positive';
+  if (/(maybe|i guess|not sure|i dont know|possibly|we ll see|depends|have to (ask|think|check))/.test(s)) return 'soft';
   return 'neutral';
 }
 
@@ -272,6 +297,15 @@ function pickAck(state: CallState, transcript = ''): string {
   return ack;
 }
 
+// A-priori compliance care (Gerald the hobby litigator, Sean 8/11): legal /
+// recording / consent probes route DETERMINISTICALLY to a careful DNC
+// confirmation — no LLM discretion, no selling past it, checked before
+// anything else at every listening point.
+function isCompliance(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return /(record(ing)? (this|the|our) call|being recorded|consent to (be )?record|two party consent|tcpa|attorney|lawyer|lawsuit|legal action|litigation|small claims|sue you|suing|statute|my rights|revoke (my )?consent|autodial|robocall|do not call (registry|list)|federal law|state law)/.test(s);
+}
+
 // Longest-first: 'resp_interested' is a substring of 'resp_not_interested',
 // and the matcher scans in order.
 const INTEREST_RESPONSES = ['resp_not_interested', 'resp_interested', 'cv_resp_unclear'];
@@ -280,7 +314,7 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
   const t0 = Date.now();
   const interestMode = question.startsWith('q_');
   const system = interestMode
-    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (yes/sure/positive/asks details), resp_not_interested (no/decline/remove me), cv_resp_unclear (anything else/ambiguous).`
+    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (yes/sure/positive — AND any question about price, cost, timeline, financing, licensing, or process: asking details means they are ENGAGED), resp_not_interested (no/decline/remove me/hostile), cv_resp_unclear (only if genuinely unrelated or unintelligible).`
     : 'You are a soundboard operator on a phone call. The caller was just asked: "On a scale of one to ten, how natural does this call feel so far?" Pick the response clip for what they said. Reply ONLY with JSON like {"clip":"cv_resp_positive"}. Clips: cv_resp_positive (rating 7+/enthusiastic), cv_resp_negative (rating 6 or below/critical), cv_resp_unclear (anything else/ambiguous).';
   const options = interestMode ? INTEREST_RESPONSES : RESPONSES;
   const fallback = 'cv_resp_unclear';
@@ -430,6 +464,24 @@ async function handle(data: any): Promise<void> {
     await handlePersona(ccid, et, p, state);
     return;
   }
+
+  // Compliance guard — before anything else, at every listening point.
+  if (
+    et === 'call.transcription' &&
+    p.transcription_data?.is_final !== false &&
+    isCompliance((p.transcription_data?.transcript ?? '').trim()) &&
+    ['greeting', 'consent_listen', 'question', 'rating_listen'].includes(state.phase)
+  ) {
+    const next: CallState = { ...state, phase: 'wrapup', ackFired: true };
+    if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
+      console.log(`compliance trigger: "${(p.transcription_data?.transcript ?? '').slice(0, 80)}"`);
+      await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+      waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+      await play(ccid, 'resp_compliance', next);
+      await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+    }
+    return;
+  }
   const transcript: string = (p.transcription_data?.transcript ?? '').trim();
   const isFinal = p.transcription_data?.is_final !== false;
 
@@ -469,7 +521,7 @@ async function handle(data: any): Promise<void> {
     } else if (!isDecline(transcript)) {
       const next: CallState = { ...state, phase: 'question' };
       if (await casTransition(ccid, '"phase":"consent_listen"', next)) {
-        await play(ccid, pickAck(next, transcript), next);
+        if (shouldAck(transcript)) await play(ccid, pickAck(next, transcript), next);
         await play(ccid, next.question ?? 'cv_q1', next); // within-turn sequence: safe to queue
       }
     } // decline partials: wait for the final
@@ -492,7 +544,7 @@ async function handle(data: any): Promise<void> {
       // They already answered mid-clip — respond immediately.
       const next: CallState = { ...state, phase: 'wrapup', ackFired: true, pending: undefined };
       if (await casTransition(ccid, '"phase":"question"', next)) {
-        await play(ccid, pickAck(next, state.pending), next);
+        if (shouldAck(state.pending)) await play(ccid, pickAck(next, state.pending), next);
         waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
         const { clip, ms } = await chooseClip(state.pending, next.question ?? 'cv_q1');
         console.log(`LLM chose ${clip} in ${ms}ms for buffered "${state.pending}"`);
@@ -511,7 +563,7 @@ async function handle(data: any): Promise<void> {
       }
     }
   } else if (et === 'call.transcription' && state.phase === 'rating_listen' && transcript.length > 0) {
-    if (!state.ackFired) {
+    if (!state.ackFired && shouldAck(transcript)) {
       const acked: CallState = { ...state, ackFired: true };
       if (await casTransition(ccid, '"ackFired":false', acked)) {
         await play(ccid, pickAck(acked, transcript), acked); // instant mask, exactly once
