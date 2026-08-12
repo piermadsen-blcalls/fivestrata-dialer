@@ -92,12 +92,21 @@ let aborted = false;
 outer: for (let round = 0; round < perPersona; round++) {
   for (const persona of PERSONAS) {
     if (n % 5 === 0) {
-      const bal = await balance();
+      let bal = await balance();
       console.log(`[balance] $${bal.toFixed(2)} before call ${n + 1}`);
       if (Number.isFinite(bal) && bal < BALANCE_FLOOR_USD) {
-        console.log(`Balance below floor — stopping cleanly after ${n} calls.`);
-        aborted = true;
-        break outer;
+        // Telnyx places provisional holds during active usage and releases
+        // them as charges settle (8/11: reading dipped to $1.91 then
+        // recovered to $6.94 with no top-up). Debounce before believing it.
+        console.log('[balance] below floor — waiting 90s for holds to settle ...');
+        await new Promise((r) => setTimeout(r, 90_000));
+        bal = await balance();
+        console.log(`[balance] re-read: $${bal.toFixed(2)}`);
+        if (Number.isFinite(bal) && bal < BALANCE_FLOOR_USD) {
+          console.log(`Balance below floor after settle — stopping cleanly after ${n} calls.`);
+          aborted = true;
+          break outer;
+        }
       }
     }
     n++;
