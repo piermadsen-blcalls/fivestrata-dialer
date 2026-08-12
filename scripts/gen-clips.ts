@@ -45,8 +45,10 @@ const CLIPS: Record<string, string> = {
   ack_pos_2: 'Perfect, thank you.',
   ack_soft_1: 'Okay, fair enough.',
   ack_soft_2: 'Alright, I hear you.',
+  // Non-promissory (round-3 audit: "happy to explain" before a clip that
+  // doesn't explain is incongruous — the "one second" lesson again)
   ack_question_1: "That's a good question.",
-  ack_question_2: 'Sure, happy to explain.',
+  ack_question_2: 'Ah — good question.',
   ack_sorry_1: 'I understand — sorry about that.',
   ack_sorry_2: 'I hear you, apologies.',
   ack_pleasantry_1: 'Doing great, thanks for asking!',

@@ -20,12 +20,25 @@ judgment applied to every batch, distilled back into faster reflexes.
 
 **Scorecard so far:**
 
-| Round | Neutral-ack naturalness | Notes |
-|---|---|---|
-| 1 (150 calls) | 46% | monoculture: 194 neutral, 0 positive, 1 sorry |
-| 2 (120 calls) | *audit pending inference re-enable* | distribution spread to 6 categories; formal re-score queued |
+| Round | Neutral-ack naturalness | Overall | Notes |
+|---|---|---|---|
+| 1 (150 calls) | 46% | 53% | monoculture: 194 neutral, 0 positive, 1 sorry |
+| 3 (123 calls, v2 heuristics) | **71%** | **64%** | sorry 100%, positive 100%, soft 73%; question 41% and pleasantry 27% flagged |
+| 4 (pending) | — | — | measures v3: non-promissory question acks, pleasantry length gate, stricter fragment bar, hedge≠engaged prompt |
 
-**Known next distillations (queued for the round-3 audit to confirm/deny):**
-- Hedge-vs-question distinction in the interest prompt (wishy-washy over-credited as engaged).
-- "Who is this again?" (both rounds' #1 utterance) wants an identity *re-greet* clip, not an ack (P1).
+*(Round 2's 120 calls were audited together with round 3's data batch; the negative-balance
+inference outage delayed its standalone score.)*
+
+**v3 distillations (deployed 8/12, commit pending measure):**
+- Question acks made non-promissory ("Sure, happy to explain" promised an explanation the
+  next clip doesn't deliver — the "one second" incongruity class again).
+- Pleasantry acks gated to short (≤8-word) social utterances — they fired on pleasantry
+  fragments inside longer turns.
+- Fragment bar raised (<3 words never acks; <6 without terminal punctuation).
+- Interest prompt: hedging/deferring explicitly ≠ engagement (wishy-washy was 14/21
+  over-credited).
+
+**Still queued:**
+- "Who is this again?" (three rounds' #1 utterance, 33× latest) wants an identity *re-greet*
+  clip, not an ack (P1).
 - Ack repetition within a call: no-repeat guard is per-category; consider per-call global.

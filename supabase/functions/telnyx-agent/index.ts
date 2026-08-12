@@ -269,18 +269,21 @@ function normalizeUtterance(t: string): string {
 function shouldAck(t: string): boolean {
   const s = normalizeUtterance(t);
   const words = s.split(' ').filter(Boolean);
-  if (words.length < 2) return false; // "Claire.", "It's", "Hello?"
+  // Round-3 audit tightening: fragments still slipped at <4 words.
+  if (words.length < 3 && !/^(yes|yeah|yep|no|nope|sure|okay|ok)\b/.test(s)) return false;
   if (/^(hello|hi|hey)( there)?$/.test(s)) return false;
-  // Short and trailing off with no terminal punctuation = a fragment.
-  if (words.length < 4 && !/[.?!]\s*$/.test(t.trim()) && !/^(yes|yeah|yep|no|nope|sure|okay|ok)\b/.test(s)) return false;
+  if (words.length < 6 && !/[.?!]\s*$/.test(t.trim()) && !/^(yes|yeah|yep|no|nope|sure|okay|ok)\b/.test(s)) return false;
   return true;
 }
 
 function ackCategory(t: string): string {
   const s = normalizeUtterance(t);
-  if (/(nice to (talk|meet|speak)|how are you|good (morning|afternoon|evening)|pleasure (talking|to meet))/.test(s)) return 'pleasantry';
+  const wordCount = s.split(' ').filter(Boolean).length;
+  // Pleasantry only for SHORT social utterances (round-3 audit: pleasantry
+  // acks fired on pleasantry-fragments buried in longer conversational turns).
+  if (wordCount <= 8 && /(nice to (talk|meet|speak)|how are you|good (morning|afternoon|evening)|pleasure (talking|to meet))/.test(s)) return 'pleasantry';
   if (
-    /(how did you get (my|this) number|annoy|frustrat|angry|already told|called me (before|already)|leave me alone|telemarketer|scam|spam|what do you want|save it|stop bothering|waste of|so sick of)/.test(s)
+    /(how did you get (my|this) number|annoy|frustrat|angry|already told|called me (before|already)|leave me alone|telemarketer|scam|spam|what do you want|what are you talking about|why are you calling|not this again|save it|stop bothering|waste of|so sick of)/.test(s)
   )
     return 'sorry';
   if (/\?\s*$/.test(t.trim()) || /^(how|what|why|when|where|can you|do you|is this|are you|whats)\b/.test(s)) return 'question';
@@ -314,7 +317,7 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
   const t0 = Date.now();
   const interestMode = question.startsWith('q_');
   const system = interestMode
-    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (yes/sure/positive — AND any question about price, cost, timeline, financing, licensing, or process: asking details means they are ENGAGED), resp_not_interested (no/decline/remove me/hostile), cv_resp_unclear (only if genuinely unrelated or unintelligible).`
+    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (clear yes/positive — AND any question about price, cost, timeline, financing, licensing, or process: asking details means they are ENGAGED), resp_not_interested (no/decline/remove me/hostile), cv_resp_unclear (hedging or deferring — "maybe", "I'd have to ask my husband", "not sure" — is NOT engagement: choose unclear; also anything unrelated or unintelligible).`
     : 'You are a soundboard operator on a phone call. The caller was just asked: "On a scale of one to ten, how natural does this call feel so far?" Pick the response clip for what they said. Reply ONLY with JSON like {"clip":"cv_resp_positive"}. Clips: cv_resp_positive (rating 7+/enthusiastic), cv_resp_negative (rating 6 or below/critical), cv_resp_unclear (anything else/ambiguous).';
   const options = interestMode ? INTEREST_RESPONSES : RESPONSES;
   const fallback = 'cv_resp_unclear';
