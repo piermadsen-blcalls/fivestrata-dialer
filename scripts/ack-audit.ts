@@ -24,6 +24,8 @@ const ACK_TEXT: Record<string, { cat: string; text: string }> = {
   ack_question_2: { cat: 'question', text: 'Sure, happy to explain.' },
   ack_sorry_1: { cat: 'sorry', text: 'I understand — sorry about that.' },
   ack_sorry_2: { cat: 'sorry', text: 'I hear you, apologies.' },
+  ack_pleasantry_1: { cat: 'pleasantry', text: 'Doing great, thanks for asking!' },
+  ack_pleasantry_2: { cat: 'pleasantry', text: "Likewise — it's great talking with you!" },
   cv_ack_1: { cat: 'neutral', text: 'Okay, got it.' },
   cv_ack_2: { cat: 'neutral', text: 'Alright, thanks.' },
   cv_ack_3: { cat: 'neutral', text: 'Okay, noted.' },

@@ -51,6 +51,35 @@ Ack alignment audit: neutral 194 / question 52 / soft 28 / sorry 1 / positive 0.
 category is earning its keep; positive never fired because personas rarely answer with a bare
 "yes" (real callers will); sorry under-fires per P4.
 
+## Round 2 — 120 calls (20/persona incl. hobby_litigator), 8/11 evening
+
+Post-improvement rerun (commit `7cf15f2`: no-ack-on-fragments, pleasantry category, hostility
+priority, P2 interest prompt, P4 hostility lexicon, a-priori compliance guard). Stopped at 120
+of the planned 240: the wallet went genuinely negative (–$1.25) — Telnyx then **disabled AI
+inference on the account**, which also blocks the ack re-audit until top-up.
+
+**Outcome deltas (right-ending rate):**
+
+| Persona | Round 1 | Round 2 | Δ |
+|---|---|---|---|
+| curmudgeon → opt-out | 83% | **95%** (20/21) | +12 |
+| normal → interested | 43% | **65%** (13/20) | **+22 — the P2 prompt fix** |
+| talker → unclear | 80% | 90% | +10 |
+| **hobby_litigator → compliance** | — | **95% (19/20)** | a-priori guard holds |
+| wishy_washy | 73% unclear | 43% unclear, 48% interested | P2 side-effect: hedgers now over-credited as engaged — needs a hedge-vs-question distinction in the prompt |
+
+**Ack diversity** (runtime heuristics, no LLM needed): round 1 was a 194-neutral monoculture
+with 0 positive / 1 sorry; round 2 spread to neutral 77 · question 30 · soft 14 · positive 9 ·
+pleasantry 9 · sorry 8. Formal naturalness re-score pending inference re-enable.
+
+**Backlog check:** "who is this again?" still #1 (32×) — P1 identity/repeat clips remain the
+top unimplemented item. New entrant: Gerald's consent probes now appear in the question log —
+correctly answered by the compliance path, not clips.
+
+**Caveats:** last few calls may have run with degraded LLM (inference died as the balance went
+negative; `chooseClip` falls back to unclear). Balance guard now debounces hold-dips but the
+floor needs raising (holds outran the $2 floor between checks) — real spend ≈ 4¢/call all-in.
+
 ## Method note
 
 This is the platform's optimization loop demonstrated end-to-end: synthetic adversarial
