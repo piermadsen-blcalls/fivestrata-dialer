@@ -27,9 +27,23 @@ if (!apiKey || !connectionId || !from || !supabaseUrl || !supabaseKey) {
 const sb = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' };
 const tx = { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
 
+// A multi-hour runner must survive transient network resets (8/11: one
+// ECONNRESET killed the batch 9 calls in). Retry with backoff, never throw.
+async function safeFetch(url: string, init?: RequestInit, tries = 4): Promise<Response | null> {
+  for (let a = 1; a <= tries; a++) {
+    try {
+      return await fetch(url, init);
+    } catch (e) {
+      console.error(`[net] attempt ${a}/${tries} failed: ${String(e).slice(0, 100)}`);
+      await new Promise((r) => setTimeout(r, 3000 * a));
+    }
+  }
+  return null;
+}
+
 async function balance(): Promise<number> {
   try {
-    const b: any = await (await fetch(`${TELNYX}/balance`, { headers: tx })).json();
+    const b: any = await (await safeFetch(`${TELNYX}/balance`, { headers: tx }))?.json();
     return parseFloat(b?.data?.balance ?? 'NaN');
   } catch {
     return NaN;
@@ -37,8 +51,8 @@ async function balance(): Promise<number> {
 }
 
 async function setPersona(p: string): Promise<void> {
-  await fetch(`${supabaseUrl}/rest/v1/dialer_config?key=eq.persona_next`, { method: 'DELETE', headers: sb });
-  await fetch(`${supabaseUrl}/rest/v1/dialer_config`, {
+  await safeFetch(`${supabaseUrl}/rest/v1/dialer_config?key=eq.persona_next`, { method: 'DELETE', headers: sb });
+  await safeFetch(`${supabaseUrl}/rest/v1/dialer_config`, {
     method: 'POST',
     headers: { ...sb, Prefer: 'return=minimal' },
     body: JSON.stringify({ key: 'persona_next', value: p }),
@@ -46,7 +60,7 @@ async function setPersona(p: string): Promise<void> {
 }
 
 async function dial(question: string): Promise<{ ccid: string; session: string } | null> {
-  const res = await fetch(`${TELNYX}/calls`, {
+  const res = await safeFetch(`${TELNYX}/calls`, {
     method: 'POST',
     headers: tx,
     body: JSON.stringify({
@@ -59,6 +73,7 @@ async function dial(question: string): Promise<{ ccid: string; session: string }
       ).toString('base64'),
     }),
   });
+  if (!res) return null;
   const body: any = await res.json().catch(() => ({}));
   if (!res.ok) {
     console.error(`dial failed: ${res.status} ${JSON.stringify(body).slice(0, 200)}`);
@@ -73,10 +88,11 @@ async function waitForEnd(ccid: string): Promise<{ ended: boolean; events: numbe
   let events = 0;
   let lastClip = '';
   while (Date.now() < deadline) {
-    const rows: any[] = await fetch(
+    const res = await safeFetch(
       `${supabaseUrl}/rest/v1/call_events?select=event_type,payload&call_control_id=eq.${enc}&order=id.asc`,
       { headers: sb },
-    ).then((r) => r.json());
+    );
+    const rows: any[] = res ? await res.json().catch(() => []) : [];
     events = rows.length;
     for (const ev of rows) if (ev.payload?.media_name) lastClip = ev.payload.media_name;
     if (rows.some((ev) => ev.event_type === 'call.hangup')) return { ended: true, events, lastClip };
