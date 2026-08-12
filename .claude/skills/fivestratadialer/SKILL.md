@@ -107,6 +107,15 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   mid-clip answers buffered (matcher must strip punctuation — Deepgram's "No. Thank you."
   evaded "no thank you"). Demo brief: docs/demo/2026-08-11-demo-brief.md. Rehearsals
   8/10: windows yes-path + HW decline paths clean; recordings in Sean's Downloads.
+  **Synthetic-customer test bench live 8/11** (persona mode in telnyx-agent: Claire dials
+  own DID, 6 personas incl. hobby_litigator w/ deterministic compliance guard;
+  persona-batch/persona-analyze/ack-audit scripts; soak results in
+  docs/testing/persona-soak-2026-08-11.md). **STANDING POLICY (Sean 8/11): run the
+  ack-improvement loop after every battery** — docs/testing/ack-improvement-loop.md
+  (70B audit → distill to heuristics/clips → next battery measures delta; acks are what
+  make Claire feel real). Telnyx billing: prepaid, provisional holds make balance readings
+  wobble; NEGATIVE balance disables AI inference account-wide (bricks Claire's brain) —
+  keep funded, auto-recharge recommended. Real cost ~4c/persona-call all-in.
   DID reputation: spam-labeled from first dial; after ~4 calls carrier diverted DID
   straight to voicemail; CNAM `FIVESTRATA` enabled (`did-cnam.ts`); Free Caller Registry
   = Sean web form, pending. Warm-transfer bridge script ready, unrun (needs 2nd number):
