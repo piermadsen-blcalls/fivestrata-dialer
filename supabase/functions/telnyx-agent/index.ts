@@ -52,6 +52,7 @@ interface CallState {
   pending?: string; // answer spoken WHILE a clip was playing — processed the moment the clip ends
   // Persona mode (synthetic customers, Sean 8/11): inbound legs to our own
   // DID are answered by a persona — Claire trains against fake callers.
+  regreets?: number; // identity re-greets used this call (cap 2)
   mode?: 'persona';
   persona?: string;
   history?: Array<{ role: 'claire' | 'me'; text: string }>;
@@ -302,6 +303,14 @@ function pickAck(state: CallState, transcript = ''): string {
   return ack;
 }
 
+// Identity re-greet (P1): "who is this again?" was the #1 utterance in four
+// straight audit rounds. It's a question that deserves an ANSWER, not an ack.
+// Capped at 2 per call to prevent loops (Doris can ask forever).
+function isIdentityAsk(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return /(who is this|whos this|who s this|who are you|whos calling|who is calling|who am i (talking|speaking) (to|with)|say that again|repeat that|didnt catch (that|your name)|what was your name|what company (is this|are you))/.test(s);
+}
+
 // A-priori compliance care (Gerald the hobby litigator, Sean 8/11): legal /
 // recording / consent probes route DETERMINISTICALLY to a careful DNC
 // confirmation — no LLM discretion, no selling past it, checked before
@@ -319,7 +328,7 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
   const t0 = Date.now();
   const interestMode = question.startsWith('q_');
   const system = interestMode
-    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (clear yes/positive — AND any question about price, cost, timeline, financing, licensing, or process: asking details means they are ENGAGED), resp_not_interested (no/decline/remove me/hostile), cv_resp_unclear (hedging or deferring — "maybe", "I'd have to ask my husband", "not sure" — is NOT engagement: choose unclear; also anything unrelated or unintelligible).`
+    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (clear yes/positive — AND any question about price, cost, timeline, financing, licensing, or process: asking details means they are ENGAGED), resp_not_interested (no/decline/remove me/hostile), cv_resp_unclear (hedging or deferring — "maybe", "I'd have to ask my husband", "not sure" — is NOT engagement; confusion, mishearing, or thinking you called the wrong person is NOT engagement either: choose unclear; also anything unrelated or unintelligible).`
     : 'You are a soundboard operator on a phone call. The caller was just asked: "On a scale of one to ten, how natural does this call feel so far?" Pick the response clip for what they said. Reply ONLY with JSON like {"clip":"cv_resp_positive"}. Clips: cv_resp_positive (rating 7+/enthusiastic), cv_resp_negative (rating 6 or below/critical), cv_resp_unclear (anything else/ambiguous).';
   const options = interestMode ? INTEREST_RESPONSES : RESPONSES;
   const fallback = 'cv_resp_unclear';
@@ -515,6 +524,20 @@ async function handle(data: any): Promise<void> {
     armFallback(ccid, '"phase":"consent_listen"', CONSENT_FALLBACK_MS, { ...next, phase: 'question' }, async () => {
       await play(ccid, next.question ?? 'cv_q1', { ...next, phase: 'question' });
     });
+  } else if (
+    et === 'call.transcription' &&
+    (state.phase === 'consent_listen' || state.phase === 'rating_listen') &&
+    p.transcription_data?.is_final !== false &&
+    transcript.length > 0 &&
+    isIdentityAsk(transcript) &&
+    (state.regreets ?? 0) < 2
+  ) {
+    // Answer "who is this?" with the identity re-greet, then re-ask.
+    const next: CallState = { ...state, regreets: (state.regreets ?? 0) + 1, ackFired: false };
+    if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
+      await play(ccid, 'regreet_identity', next);
+      await play(ccid, state.phase === 'consent_listen' ? (next.greet ?? 'cv_greet') : (next.question ?? 'cv_q1'), next);
+    }
   } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
     // A decline at consent is an opt-out, not a yes (8/10 rehearsal finding).
     if (isFinal && isDecline(transcript)) {
@@ -568,7 +591,11 @@ async function handle(data: any): Promise<void> {
       }
     }
   } else if (et === 'call.transcription' && state.phase === 'rating_listen' && transcript.length > 0) {
-    if (!state.ackFired && shouldAck(transcript)) {
+    // End-of-turn gate (round-4 neutral residue): Deepgram's speech_final is
+    // its endpointing verdict that the speaker actually finished — acks on
+    // mid-ramble pauses are what's left polluting the neutral bucket.
+    const speechFinal = p.transcription_data?.speech_final !== false;
+    if (!state.ackFired && speechFinal && shouldAck(transcript)) {
       const acked: CallState = { ...state, ackFired: true };
       if (await casTransition(ccid, '"ackFired":false', acked)) {
         await play(ccid, pickAck(acked, transcript), acked); // instant mask, exactly once

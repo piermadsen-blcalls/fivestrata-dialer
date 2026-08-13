@@ -53,6 +53,11 @@ const CLIPS: Record<string, string> = {
   ack_sorry_2: 'I hear you, apologies.',
   ack_pleasantry_1: 'Doing great, thanks for asking!',
   ack_pleasantry_2: "Likewise — it's great talking with you!",
+  // Identity re-greet (P1 — "who is this again?" topped FOUR straight audit
+  // rounds, ~130 occurrences; production scripts solve this with the
+  // Intro-Repeat discipline). Played, then the question replays.
+  regreet_identity:
+    "Of course — my name is Claire, and I'm calling from Five Strata on a recorded line. Happy to repeat that any time. So —",
   // A-priori compliance response (legal/recording/consent probes — the hobby
   // litigator path): confirm DNC plainly, no selling past it, no legal claims.
   resp_compliance:
