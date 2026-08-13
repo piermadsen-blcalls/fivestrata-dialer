@@ -281,7 +281,9 @@ function ackCategory(t: string): string {
   const wordCount = s.split(' ').filter(Boolean).length;
   // Pleasantry only for SHORT social utterances (round-3 audit: pleasantry
   // acks fired on pleasantry-fragments buried in longer conversational turns).
-  if (wordCount <= 8 && /(nice to (talk|meet|speak)|how are you|good (morning|afternoon|evening)|pleasure (talking|to meet))/.test(s)) return 'pleasantry';
+  // 15-word gate (round-4: 8 was too tight — "Hi Claire, so nice to talk to
+  // you today" fell through to neutral)
+  if (wordCount <= 15 && /(nice to (talk|meet|speak)|how are you|good (morning|afternoon|evening)|pleasure (talking|to meet))/.test(s)) return 'pleasantry';
   if (
     /(how did you get (my|this) number|annoy|frustrat|angry|already told|called me (before|already)|leave me alone|telemarketer|scam|spam|what do you want|what are you talking about|why are you calling|not this again|save it|stop bothering|waste of|so sick of)/.test(s)
   )
