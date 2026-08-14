@@ -303,6 +303,21 @@ function pickAck(state: CallState, transcript = ''): string {
   return ack;
 }
 
+// Deterministic INTEREST floor (Sean 8/14: "missing an interested person is
+// exactly the kind of thing that will burn me" — clear buying language must
+// not depend on an LLM's mood).
+function isInterested(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return /(im interested|i am interested|very interested|definitely interested|id love to (move forward|proceed|get started)|lets (do it|move forward|get started)|sign me up|sounds great|sounds good lets|yes please|please do|book (it|me)|schedule (it|me|that|the))/.test(s);
+}
+
+// Repeat-discipline (production Long/Short forms — Doris asks "what's the
+// question?"): replay the SHORT form of the current question.
+function isRepeatAsk(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return /(whats the question|what was the question|say (that|it) again|repeat (that|it|the question)|didnt (hear|catch|get) (that|you|the question)|what was that|one more time|come again|can you repeat)/.test(s);
+}
+
 // Identity re-greet (P1): "who is this again?" was the #1 utterance in four
 // straight audit rounds. It's a question that deserves an ANSWER, not an ack.
 // Capped at 2 per call to prevent loops (Doris can ask forever).
@@ -324,11 +339,15 @@ function isCompliance(t: string): boolean {
 // and the matcher scans in order.
 const INTEREST_RESPONSES = ['resp_not_interested', 'resp_interested', 'cv_resp_unclear'];
 
+const CHOOSE_MODEL = 'meta-llama/Llama-3.3-70B-Instruct'; // one decision/call, masked by the ack — worth the bigger judge (Sean 8/14: Maria must not be missed)
+
 async function chooseClip(transcript: string, question: string): Promise<{ clip: string; ms: number }> {
   const t0 = Date.now();
   const interestMode = question.startsWith('q_');
+  // Deterministic floor: unmistakable buying language never reaches the LLM.
+  if (interestMode && isInterested(transcript)) return { clip: 'resp_interested', ms: 0 };
   const system = interestMode
-    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (clear yes/positive — AND any question about price, cost, timeline, financing, licensing, or process: asking details means they are ENGAGED), resp_not_interested (no/decline/remove me/hostile), cv_resp_unclear (hedging or deferring — "maybe", "I'd have to ask my husband", "not sure" — is NOT engagement; confusion, mishearing, or thinking you called the wrong person is NOT engagement either: choose unclear; also anything unrelated or unintelligible).`
+    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (clear yes/positive — AND any question about price, cost, timeline, financing, licensing, or process: asking details means they are ENGAGED), resp_not_interested (no/decline/remove me/hostile), cv_resp_unclear (hedging or deferring — "maybe", "I'd have to ask my husband", "not sure" — is NOT engagement; confusion, mishearing, or thinking you called the wrong person is NOT engagement either: choose unclear; also anything unrelated or unintelligible). TIEBREAK: if torn between resp_interested and cv_resp_unclear for a caller engaging about the product itself, choose resp_interested — transferring a lukewarm caller is recoverable, dropping a real buyer is not.`
     : 'You are a soundboard operator on a phone call. The caller was just asked: "On a scale of one to ten, how natural does this call feel so far?" Pick the response clip for what they said. Reply ONLY with JSON like {"clip":"cv_resp_positive"}. Clips: cv_resp_positive (rating 7+/enthusiastic), cv_resp_negative (rating 6 or below/critical), cv_resp_unclear (anything else/ambiguous).';
   const options = interestMode ? INTEREST_RESPONSES : RESPONSES;
   const fallback = 'cv_resp_unclear';
@@ -338,7 +357,7 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: LLM_MODEL,
+        model: CHOOSE_MODEL,
         max_tokens: 30,
         messages: [
           { role: 'system', content: system },
@@ -542,6 +561,20 @@ async function handle(data: any): Promise<void> {
       await play(ccid, 'regreet_identity', next);
       await play(ccid, next.question ?? 'cv_q1', next);
     }
+  } else if (
+    et === 'call.transcription' &&
+    ['consent_listen', 'question', 'rating_listen'].includes(state.phase) &&
+    p.transcription_data?.is_final !== false &&
+    transcript.length > 0 &&
+    isRepeatAsk(transcript) &&
+    (state.regreets ?? 0) < 3
+  ) {
+    // "What was the question?" -> replay the SHORT form (shares the regreet cap).
+    const next: CallState = { ...state, phase: 'question', regreets: (state.regreets ?? 0) + 1, ackFired: false, pending: undefined };
+    if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
+      await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+      await play(ccid, `${next.question ?? 'cv_q1'}_short`, next);
+    }
   } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
     // A decline at consent is an opt-out, not a yes (8/10 rehearsal finding).
     if (isFinal && isDecline(transcript)) {
@@ -575,7 +608,7 @@ async function handle(data: any): Promise<void> {
       const joined = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-400);
       await saveState(ccid, { ...state, pending: joined });
     }
-  } else if (et === 'call.playback.ended' && p.media_name === (state.question ?? 'cv_q1') && (state.phase === 'question' || state.phase === 'consent_listen')) {
+  } else if (et === 'call.playback.ended' && [state.question ?? 'cv_q1', `${state.question ?? 'cv_q1'}_short`].includes(p.media_name) && (state.phase === 'question' || state.phase === 'consent_listen')) {
     if (state.pending) {
       // They already answered mid-clip — respond immediately.
       const next: CallState = { ...state, phase: 'wrapup', ackFired: true, pending: undefined };

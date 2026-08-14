@@ -53,6 +53,14 @@ const CLIPS: Record<string, string> = {
   ack_sorry_2: 'I hear you, apologies.',
   ack_pleasantry_1: 'Doing great, thanks for asking!',
   ack_pleasantry_2: "Likewise — it's great talking with you!",
+  // Short-repeat question forms (production Long/Short repeat discipline —
+  // Doris's "what's the question?" logged 8x in round 6)
+  cv_q1_short: 'Just quickly — one to ten, how natural does this call feel?',
+  q_windows_short: 'Just checking — are you still interested in a free quote on replacement windows? It only takes a minute, okay?',
+  q_flooring_short: 'Just checking — are you still interested in your flooring project? We have fifty percent off install right now. Okay?',
+  q_bathroom_short: 'Just checking — are you still interested in a free quote on your bathroom remodel? It only takes a minute, okay?',
+  q_solar_short: 'Just checking — still interested in seeing if you qualify for solar? Takes about thirty seconds, okay?',
+  q_homewarranty_short: 'Just checking — would you like to see if your home qualifies for the home warranty program? Just a couple of quick questions, okay?',
   // Identity re-greet (P1 — "who is this again?" topped FOUR straight audit
   // rounds, ~130 occurrences; production scripts solve this with the
   // Intro-Repeat discipline). Played, then the question replays.
