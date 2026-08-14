@@ -11,12 +11,15 @@
     "dev": "tsx watch src/index.ts",
     "start": "node --enable-source-maps dist/index.js",
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "snowflake:check": "tsx scripts/snowflake-check.ts",
+    "snowflake:sync": "tsx scripts/snowflake-sync.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.0",
+    "snowflake-sdk": "^3.1.0",
     "telnyx": "^2.0.0"
   },
   "devDependencies": {
