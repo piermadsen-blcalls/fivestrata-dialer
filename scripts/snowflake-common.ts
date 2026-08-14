@@ -4,8 +4,13 @@
 // Portability rule: every account coordinate comes from .env — repointing the
 // pipe at a different account is a .env change plus re-running
 // snowflake-setup.sql there, zero code changes.
-import 'dotenv/config';
+// env.template is loaded as a fallback (.env wins): the SNOWFLAKE_* block holds
+// no secrets, so it may live in the template alone.
+import dotenv from 'dotenv';
 import snowflake from 'snowflake-sdk';
+
+dotenv.config();
+dotenv.config({ path: 'env.template' });
 
 export interface SnowflakeEnv {
   account: string;

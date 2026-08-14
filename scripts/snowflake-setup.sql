@@ -1,20 +1,20 @@
--- AICC Snowflake scaffolding — paste-once worksheet script (idempotent).
+-- AICC Snowflake scaffolding --paste-once worksheet script (idempotent).
 -- Approved by Sean 2026-08-14. Creates everything the results-DB sync needs:
---   role AICC_LOADER · warehouse AICC_WH (X-Small, auto-suspend 60s)
---   database AICC · schema RAW · target tables mirroring Supabase
---   service user AICC_SVC (key-pair auth only — no password)
+--   role AICC_LOADER +warehouse AICC_WH (X-Small, auto-suspend 60s)
+--   database AICC +schema RAW +target tables mirroring Supabase
+--   service user AICC_SVC (key-pair auth only --no password)
 -- Everything is prefixed AICC_ so it is easy to audit and easy to drop.
 --
 -- Requires ACCOUNTADMIN (or split: SECURITYADMIN for the user/role block,
 -- SYSADMIN for objects). If your role lacks these, forward this file to the
--- account owner (Shelly Teh) — it is self-contained.
+-- account owner (Shelly Teh) --it is self-contained.
 --
 -- After running: the final SELECT prints the account identifier to paste
 -- into .env as SNOWFLAKE_ACCOUNT. Verify from the repo with:
 --   npx tsx scripts/snowflake-check.ts
 --
 -- Possible post-setup failure mode: if the account has an account-level
--- network policy, AICC_SVC may need to be exempted or the laptop IP allowed —
+-- network policy, AICC_SVC may need to be exempted or the laptop IP allowed --
 -- snowflake-check.ts will surface this as a connection error.
 
 USE ROLE ACCOUNTADMIN;
@@ -45,7 +45,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA AICC.RAW TO ROLE AI
 GRANT SELECT, INSERT, UPDATE, DELETE ON FUTURE TABLES IN SCHEMA AICC.RAW TO ROLE AICC_LOADER;
 
 -- ---------------------------------------------------------------------------
--- Service user — key-pair (JWT) auth only; TYPE=SERVICE exempts it from
+-- Service user --key-pair (JWT) auth only; TYPE=SERVICE exempts it from
 -- human MFA policies. Public key generated 2026-08-14 on Sean's machine;
 -- private half lives outside any repo (C:\Claude\snowflake-keys\).
 -- ---------------------------------------------------------------------------
@@ -62,7 +62,7 @@ ALTER USER AICC_SVC SET RSA_PUBLIC_KEY =
 GRANT ROLE AICC_LOADER TO USER AICC_SVC;
 
 -- ---------------------------------------------------------------------------
--- Target tables — mirror supabase/migrations/0001_init.sql column-for-column,
+-- Target tables --mirror supabase/migrations/0001_init.sql column-for-column,
 -- plus _SYNCED_AT. Types: uuid->VARCHAR, timestamptz->TIMESTAMP_TZ,
 -- jsonb->VARIANT. Primary keys are informational in Snowflake (unenforced);
 -- the sync's MERGE provides the real idempotency.
