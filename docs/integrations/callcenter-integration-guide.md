@@ -244,9 +244,13 @@ This contract closes most of T4 and the outbound half of T6, and specs the inbou
 that T3 gates (see `docs/open-questions.md` for the item-by-item status).
 
 **We must HOST five inbound endpoints** (FiveStrata calls us): ZCWL sync, lead ingestion,
-lead remove, DNC, unDNC — whitelisted to the 9 IPs in §2. Since schemas are call-center-
-defined, we define ours. Natural home: Supabase Edge Functions alongside `telnyx-webhook`
-/ `telnyx-agent`, or the Fastify service once it has a public face. ➤ The lead-ingestion
+lead remove, DNC, unDNC — whitelisted to the 9 IPs in §2. ✅ **BUILT + LIVE 2026-08-14**
+(same day as ingestion): Edge Function `supabase/functions/fivestrata-inbound` serving all
+five routes on the guide's own example schemas, migration 0004 (max_attempts, soft delete,
+`zcwl_zips` — V1 owns the name `zip_allowlist` — `dnc_numbers`, `inbound_events` audit,
+`zcwl_sync`/`dnc_set`/`phone_digits` functions), x-api-key auth + optional §2 IP
+enforcement, 28-check live battery green incl. 12k-ZIP bulk sync (~1.5s). Joseph handoff
+sheet: `aicc-inbound-onboarding.md`. ➤ The lead-ingestion
 push is presumably how LeadConduit recipient delivery manifests (our decided lead-in path);
 the guide doesn't name LeadConduit — confirm the delivery mechanism with Joseph.
 

@@ -13,7 +13,10 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "snowflake:check": "tsx scripts/snowflake-check.ts",
-    "snowflake:sync": "tsx scripts/snowflake-sync.ts"
+    "snowflake:sync": "tsx scripts/snowflake-sync.ts",
+    "inbound:seed": "tsx scripts/inbound-key-seed.ts",
+    "inbound:test": "tsx scripts/inbound-test.ts",
+    "inbound:deploy": "tsx scripts/deploy-webhook.ts fivestrata-inbound"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
