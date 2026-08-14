@@ -38,7 +38,25 @@ inference outage delayed its standalone score.)*
 - Interest prompt: hedging/deferring explicitly ≠ engagement (wishy-washy was 14/21
   over-credited).
 
+**Round 5 (8/13):** regreet built but fired 0× — identity asks land DURING clips (callers
+interrupt), not in listen windows → rebuilt as barge-in, all phases. Pending buffer was
+keeping only the last fragment (lone "Install." judged as interest while "I don't recall
+making an inquiry" was lost) → accumulates the whole turn now.
+
+**Round 6 (118 calls, 8/13–14):** the capability round.
+- **regreet_identity fired 31×** — "who is this again?" finally gets an answer; occurrences
+  in the question log dropped 34→25.
+- **Dana (wishy-washy): 20/20 correctly unclear** — accumulate-buffer + hedge prompt fully
+  fixed the over-crediting (was 14/21 wrong in round 3).
+- **Bill (talker): 20/20 contained. Frank: 19/20. Gerald: 19/19 — 98/99 lifetime.**
+- Doris: zero phantom-interested (was 9/20 in round 4); residual 5 "none" endings are her
+  hanging up mid-confusion — the remaining gap is repeat-discipline depth (Long/Short
+  repeat clips), not classification.
+- Maria: 9/19 interested — noisy across rounds (43–65%); the accumulated turn gives the LLM
+  hedge-context that dilutes clear detail-question signals. Candidate: "multiple detail
+  questions = strongly engaged" prompt line; measure next round.
+
 **Still queued:**
-- "Who is this again?" (three rounds' #1 utterance, 33× latest) wants an identity *re-greet*
-  clip, not an ack (P1).
 - Ack repetition within a call: no-repeat guard is per-category; consider per-call global.
+- Neutral residue: judged ceiling for regex-land reached (~57–71%); next gain is prosodic
+  (co-location/streaming), not patterns.
