@@ -98,6 +98,11 @@ const CLIPS: Record<string, string> = {
   // Interest-mode responses (vertical questions)
   resp_interested:
     "Great news — I can get that set up for you right away. Let me connect you with a specialist. One moment please.",
+  // Recovery turn (Sean 8/14: Maria at 98%+): when the judge is unsure about
+  // an engaged caller, CONFIRM instead of guessing — mirrors the production
+  // TCPA unclear-yes confirm discipline (Bathrooms workbook).
+  confirm_interest:
+    "Just to make sure I've got it right — would you like me to get that set up for you? A quick yes or no is perfect.",
   resp_not_interested:
     "No problem at all — I'll make a note of that, and we won't call you about this again. Thanks for your time!",
   goodbye_biz: 'Thanks so much for your time. Have a great day!',

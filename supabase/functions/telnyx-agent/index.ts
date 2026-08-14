@@ -42,7 +42,7 @@ const supabase = createClient(
 );
 
 interface CallState {
-  phase: 'dialing' | 'greeting' | 'consent_listen' | 'question' | 'rating_listen' | 'wrapup' | 'lineup' | 'done';
+  phase: 'dialing' | 'greeting' | 'consent_listen' | 'question' | 'rating_listen' | 'confirm_listen' | 'wrapup' | 'lineup' | 'done';
   ackFired?: boolean;
   lastAck?: string;
   greet?: string; // greeting media_name — set via the dial command's client_state (demo uses demo_greet)
@@ -53,6 +53,7 @@ interface CallState {
   // Persona mode (synthetic customers, Sean 8/11): inbound legs to our own
   // DID are answered by a persona — Claire trains against fake callers.
   regreets?: number; // identity re-greets used this call (cap 2)
+  confirmAsked?: boolean; // recovery confirm used (once per call)
   mode?: 'persona';
   persona?: string;
   history?: Array<{ role: 'claire' | 'me'; text: string }>;
@@ -374,6 +375,28 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
   }
 }
 
+// Respond — or, if the judge is unsure about an engaged caller, CONFIRM once
+// instead of guessing (Sean 8/14: Maria at 98%+ — structure beats classifier
+// tuning; mirrors the production TCPA unclear-yes confirm discipline).
+async function respondOrConfirm(ccid: string, next: CallState, said: string): Promise<void> {
+  const q = next.question ?? 'cv_q1';
+  const { clip, ms } = await chooseClip(said, q);
+  console.log(`LLM chose ${clip} in ${ms}ms for "${said.slice(0, 80)}"`);
+  if (q.startsWith('q_') && clip === 'cv_resp_unclear' && !next.confirmAsked) {
+    const c: CallState = { ...next, phase: 'confirm_listen', confirmAsked: true, ackFired: true };
+    await saveState(ccid, c);
+    await play(ccid, 'confirm_interest', c); // transcription stays ON — we're listening for the yes/no
+    armFallback(ccid, '"phase":"confirm_listen"', 15_000, { ...c, phase: 'wrapup' }, async () => {
+      await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
+      await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
+    });
+    return;
+  }
+  waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+  await play(ccid, clip, next);
+  await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+}
+
 // --- Fallback timers: CAS-guarded, so a stale timer in one isolate can't
 // double-fire a transition another isolate already made.
 function armFallback(ccid: string, expectMarker: string, ms: number, next: CallState, act: () => Promise<void>) {
@@ -503,7 +526,7 @@ async function handle(data: any): Promise<void> {
     et === 'call.transcription' &&
     p.transcription_data?.is_final !== false &&
     isCompliance((p.transcription_data?.transcript ?? '').trim()) &&
-    ['greeting', 'consent_listen', 'question', 'rating_listen'].includes(state.phase)
+    ['greeting', 'consent_listen', 'question', 'rating_listen', 'confirm_listen'].includes(state.phase)
   ) {
     const next: CallState = { ...state, phase: 'wrapup', ackFired: true };
     if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
@@ -614,11 +637,7 @@ async function handle(data: any): Promise<void> {
       const next: CallState = { ...state, phase: 'wrapup', ackFired: true, pending: undefined };
       if (await casTransition(ccid, '"phase":"question"', next)) {
         if (shouldAck(state.pending)) await play(ccid, pickAck(next, state.pending), next);
-        waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-        const { clip, ms } = await chooseClip(state.pending, next.question ?? 'cv_q1');
-        console.log(`LLM chose ${clip} in ${ms}ms for buffered "${state.pending}"`);
-        await play(ccid, clip, next);
-        await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+        await respondOrConfirm(ccid, next, state.pending);
       }
     } else {
       // CAS, not save: a duplicate/stale q-ended event must not clobber a
@@ -645,12 +664,26 @@ async function handle(data: any): Promise<void> {
     if (isFinal && transcript.length > 1) {
       const next: CallState = { ...state, phase: 'wrapup', ackFired: true };
       if (await casTransition(ccid, '"phase":"rating_listen"', next)) {
-        waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-        const { clip, ms } = await chooseClip(transcript, next.question ?? 'cv_q1');
-        console.log(`LLM chose ${clip} in ${ms}ms for "${transcript}"`);
-        await play(ccid, clip, next);
-        await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+        await respondOrConfirm(ccid, next, transcript);
       }
+    }
+  } else if (
+    et === 'call.transcription' &&
+    state.phase === 'confirm_listen' &&
+    p.transcription_data?.is_final !== false &&
+    p.transcription_data?.speech_final !== false &&
+    transcript.length > 2
+  ) {
+    // The confirm turn: a binary read. Yes-forms or buying language -> buyer;
+    // decline -> opt-out; anything else -> graceful unclear (one confirm max).
+    const s = normalizeUtterance(transcript);
+    const yes = isInterested(transcript) || /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/.test(s);
+    const no = isDecline(transcript);
+    const next: CallState = { ...state, phase: 'wrapup' };
+    if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
+      waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+      await play(ccid, yes ? 'resp_interested' : no ? 'resp_not_interested' : 'cv_resp_unclear', next);
+      await play(ccid, next.goodbye ?? 'cv_goodbye', next);
     }
   } else if (et === 'call.playback.ended' && p.media_name === (state.goodbye ?? 'cv_goodbye')) {
     await saveState(ccid, { ...state, phase: 'done' });
