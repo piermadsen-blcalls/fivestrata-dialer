@@ -2,12 +2,15 @@
 // persona-selector slot is single and the dev channel cap is 10), verticals
 // rotated, results appended to a local JSONL for analysis. Balance-guarded:
 // re-checks every 5 calls and stops cleanly below the floor.
-// Run: npx tsx scripts/persona-batch.ts [callsPerPersona=30]
+// Run: npx tsx scripts/persona-batch.ts [callsPerPersona=30] [personaFilter=all|comma,list]
 import 'dotenv/config';
 import { appendFileSync } from 'node:fs';
 
 const TELNYX = 'https://api.telnyx.com/v2';
-const PERSONAS = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal', 'hobby_litigator'];
+const ALL_PERSONAS = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal', 'hobby_litigator'];
+const PERSONAS = process.argv[3] && process.argv[3] !== 'all'
+  ? process.argv[3].split(',').filter((p) => ALL_PERSONAS.includes(p))
+  : ALL_PERSONAS;
 const VERTICALS = ['q_windows', 'q_bathroom', 'q_flooring', 'q_homewarranty', 'q_solar'];
 const BALANCE_FLOOR_USD = 2.0;
 const CALL_TIMEOUT_MS = 240_000;
