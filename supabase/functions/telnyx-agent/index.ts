@@ -382,7 +382,11 @@ async function respondOrConfirm(ccid: string, next: CallState, said: string): Pr
   const q = next.question ?? 'cv_q1';
   const { clip, ms } = await chooseClip(said, q);
   console.log(`LLM chose ${clip} in ${ms}ms for "${said.slice(0, 80)}"`);
-  if (q.startsWith('q_') && clip === 'cv_resp_unclear' && !next.confirmAsked) {
+  // Confirm on: unclear verdicts, AND LLM-inferred declines with no hard
+  // keyword evidence (8/14 proof-battery autopsy: persona role-drift produced
+  // sales-speak the judge read as decline — buyers must not be lost to a hunch).
+  const softDecline = clip === 'resp_not_interested' && !isDecline(said);
+  if (q.startsWith('q_') && (clip === 'cv_resp_unclear' || softDecline) && !next.confirmAsked) {
     const c: CallState = { ...next, phase: 'confirm_listen', confirmAsked: true, ackFired: true };
     await saveState(ccid, c);
     await play(ccid, 'confirm_interest', c); // transcription stays ON — we're listening for the yes/no
@@ -644,10 +648,23 @@ async function handle(data: any): Promise<void> {
       // later phase back to rating_listen (8/11 persona-call finding).
       const next: CallState = { ...state, phase: 'rating_listen', ackFired: false };
       if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
-        armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'wrapup' }, async () => {
-          await play(ccid, 'cv_resp_unclear', { ...next, phase: 'wrapup' });
-          await play(ccid, next.goodbye ?? 'cv_goodbye', { ...next, phase: 'wrapup' });
-        });
+        // Silence fallback: spend the confirm turn before giving up — "a quick
+        // yes or no is perfect" is exactly what you say to dead air (8/14).
+        if ((next.question ?? 'cv_q1').startsWith('q_') && !next.confirmAsked) {
+          armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'confirm_listen', confirmAsked: true }, async () => {
+            const c: CallState = { ...next, phase: 'confirm_listen', confirmAsked: true };
+            await play(ccid, 'confirm_interest', c);
+            armFallback(ccid, '"phase":"confirm_listen"', 15_000, { ...c, phase: 'wrapup' }, async () => {
+              await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
+              await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
+            });
+          });
+        } else {
+          armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'wrapup' }, async () => {
+            await play(ccid, 'cv_resp_unclear', { ...next, phase: 'wrapup' });
+            await play(ccid, next.goodbye ?? 'cv_goodbye', { ...next, phase: 'wrapup' });
+          });
+        }
       }
     }
   } else if (et === 'call.transcription' && state.phase === 'rating_listen' && transcript.length > 0) {
@@ -677,12 +694,16 @@ async function handle(data: any): Promise<void> {
     // The confirm turn: a binary read. Yes-forms or buying language -> buyer;
     // decline -> opt-out; anything else -> graceful unclear (one confirm max).
     const s = normalizeUtterance(transcript);
-    const yes = isInterested(transcript) || /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/.test(s);
+    // A substantive QUESTION after "do you want the consultation?" is
+    // engagement (8/14 autopsy: "can you tell me more about the price range?"
+    // post-confirm was wrongly scored unclear).
+    const engagedQuestion = /\?\s*$/.test(transcript.trim()) || /^(what|whats|how|when|can you|do you|is there|are there)\b/.test(s);
+    const yes = isInterested(transcript) || /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/.test(s) || engagedQuestion;
     const no = isDecline(transcript);
     const next: CallState = { ...state, phase: 'wrapup' };
     if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
       waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-      await play(ccid, yes ? 'resp_interested' : no ? 'resp_not_interested' : 'cv_resp_unclear', next);
+      await play(ccid, no ? 'resp_not_interested' : yes ? 'resp_interested' : 'cv_resp_unclear', next);
       await play(ccid, next.goodbye ?? 'cv_goodbye', next);
     }
   } else if (et === 'call.playback.ended' && p.media_name === (state.goodbye ?? 'cv_goodbye')) {

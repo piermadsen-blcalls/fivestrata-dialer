@@ -2,7 +2,8 @@
 // persona-selector slot is single and the dev channel cap is 10), verticals
 // rotated, results appended to a local JSONL for analysis. Balance-guarded:
 // re-checks every 5 calls and stops cleanly below the floor.
-// Run: npx tsx scripts/persona-batch.ts [callsPerPersona=30] [personaFilter=all|comma,list]
+// Run: npx tsx scripts/persona-batch.ts [callsPerPersona=30] [personaFilter=all|comma,list] [questionOverride]
+//   (questionOverride pins one vertical — e.g. Maria proof runs pitch q_bathroom, the product her persona wants)
 import 'dotenv/config';
 import { appendFileSync } from 'node:fs';
 
@@ -129,7 +130,7 @@ outer: for (let round = 0; round < perPersona; round++) {
       }
     }
     n++;
-    const question = VERTICALS[(n - 1) % VERTICALS.length];
+    const question = process.argv[4] ?? VERTICALS[(n - 1) % VERTICALS.length];
     await setPersona(persona);
     const started = new Date().toISOString();
     const call = await dial(question);
