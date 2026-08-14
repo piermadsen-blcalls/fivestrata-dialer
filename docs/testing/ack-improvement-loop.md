@@ -56,6 +56,19 @@ making an inquiry" was lost) → accumulates the whole turn now.
   hedge-context that dilutes clear detail-question signals. Candidate: "multiple detail
   questions = strongly engaged" prompt line; measure next round.
 
+**The Maria proof series (8/14 — Sean: "98%+ is what de-risks the demo"):**
+100-call single-persona batteries against the synthetic interested buyer, bathroom vertical.
+
+| Proof | Score | Misses → fixes distilled |
+|---|---|---|
+| 1 | 93/100 | 3 wrong-vertical rig artifacts; 2 LLM-inferred declines (no keywords) → confirm-first rule; 1 dead air → silence spends the confirm; 1 post-confirm question → engagement rule |
+| 2 | 97/100 | 2 trailing-fragment confirm reads ("That's", "Can you—") → confirm judges the accumulated turn; 1 dead air |
+| **3** | **99/100** | the 1 "miss": caller said "Hello?" and went mute — Claire's ask→confirm→graceful-exit was correct. **Vs. responsive buyers: 99/99.** |
+
+Maria arc across the week: 43% → 65% → 95% → 93 → 97 → **99**. Layered design that got there:
+deterministic buying-language floor → 70B judge with buyer-favoring tiebreak → confirm
+recovery turn (accumulated, fragment-proof, silence-spending, question-as-engagement).
+
 **Still queued:**
 - Ack repetition within a call: no-repeat guard is per-category; consider per-call global.
 - Neutral residue: judged ceiling for regex-land reached (~57–71%); next gain is prosodic
