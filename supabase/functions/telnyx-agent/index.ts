@@ -66,7 +66,7 @@ interface CallState {
 const PERSONA_VOICE = 'female'; // Telnyx basic tier — cheapest intelligible
 const PERSONA_MODEL = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
 const PERSONA_REPLY_DEBOUNCE_MS = 2000; // wait for Claire to finish talking
-const PERSONA_MAX_TURNS = 6; // batch economy (8/11): keeps soak-test calls ~90s
+const PERSONA_MAX_TURNS = 9; // raised 8/14: repeat/confirm turns ate Doris's budget mid-flow (test-rig artifact, not agent)
 const PERSONAS: Record<string, string> = {
   curmudgeon:
     "You are Frank, 61, answering a sales call. You are grumpy and suspicious: demand to know who's calling and how they got your number, complain about telemarketers, give short hostile answers. You do NOT want anything sold to you. After a few exchanges, demand to be removed from the list.",
