@@ -290,7 +290,11 @@ in.
 **Getting leads in**
 - **Lead intake.** Two ways in, both first-class: a partner sends people to us automatically as
   they come, or a team member uploads a file by hand. Either way they land in the right place and
-  are picked up by the matching Campaign.
+  are picked up by the matching Campaign. Both fresh and revived leads arrive through the same
+  door — which kind a batch is gets set when it's handed in, not baked into the file. (The exact
+  file layout used today, and how it lines up with the automatic feed, is recorded in
+  `integrations/lead-file-format.md`; the automatic feed is expected to take over from files
+  eventually, so the file layout is treated as one interchangeable way in, never the foundation.)
 
 **The learning loop**
 - **Overnight suggestions.** Each night the platform studies the day's calls and returns
