@@ -693,17 +693,23 @@ async function handle(data: any): Promise<void> {
   ) {
     // The confirm turn: a binary read. Yes-forms or buying language -> buyer;
     // decline -> opt-out; anything else -> graceful unclear (one confirm max).
-    const s = normalizeUtterance(transcript);
-    // A substantive QUESTION after "do you want the consultation?" is
-    // engagement (8/14 autopsy: "can you tell me more about the price range?"
-    // post-confirm was wrongly scored unclear).
-    const engagedQuestion = /\?\s*$/.test(transcript.trim()) || /^(what|whats|how|when|can you|do you|is there|are there)\b/.test(s);
-    const yes = isInterested(transcript) || /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/.test(s) || engagedQuestion;
-    const no = isDecline(transcript);
-    const next: CallState = { ...state, phase: 'wrapup' };
+    // Judge the WHOLE confirm-window turn, never a trailing fragment (proof-2
+    // autopsy: "That's" and "Can you" burned the read while the substance —
+    // "I'd like to know more about the price range" — sat one final earlier).
+    const joined = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-300);
+    const s = normalizeUtterance(joined);
+    const words = s.split(' ').filter(Boolean).length;
+    if (words < 3 && !/^(yes|yeah|yep|no|nope|sure|okay|ok)\b/.test(s)) {
+      await saveState(ccid, { ...state, pending: joined }); // fragment — keep listening
+      return;
+    }
+    const engagedQuestion = /\?/.test(joined) || /(what|whats|how much|how long|when|can you|do you|is there|are there|price|cost|included|financ)/.test(s);
+    const yes = isInterested(joined) || /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/.test(s) || engagedQuestion;
+    const no = isDecline(joined);
+    const next: CallState = { ...state, phase: 'wrapup', pending: undefined };
     if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
       waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-      await play(ccid, no ? 'resp_not_interested' : yes ? 'resp_interested' : 'cv_resp_unclear', next);
+      await play(ccid, no && !yes ? 'resp_not_interested' : yes ? 'resp_interested' : 'cv_resp_unclear', next);
       await play(ccid, next.goodbye ?? 'cv_goodbye', next);
     }
   } else if (et === 'call.playback.ended' && p.media_name === (state.goodbye ?? 'cv_goodbye')) {
