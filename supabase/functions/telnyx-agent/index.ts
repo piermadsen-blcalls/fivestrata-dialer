@@ -526,17 +526,21 @@ async function handle(data: any): Promise<void> {
     });
   } else if (
     et === 'call.transcription' &&
-    (state.phase === 'consent_listen' || state.phase === 'rating_listen') &&
+    ['greeting', 'consent_listen', 'question', 'rating_listen'].includes(state.phase) &&
     p.transcription_data?.is_final !== false &&
     transcript.length > 0 &&
     isIdentityAsk(transcript) &&
     (state.regreets ?? 0) < 2
   ) {
-    // Answer "who is this?" with the identity re-greet, then re-ask.
-    const next: CallState = { ...state, regreets: (state.regreets ?? 0) + 1, ackFired: false };
+    // Answer "who is this?" with the identity re-greet, then re-ask. Round-5
+    // trace: these asks land DURING clips (callers interrupt), so this is a
+    // barge-in — stop playback, answer, resume with the question (the regreet
+    // covers identity + recorded-line, the question ends with the consent ask).
+    const next: CallState = { ...state, phase: 'question', regreets: (state.regreets ?? 0) + 1, ackFired: false, pending: undefined };
     if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
+      await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
       await play(ccid, 'regreet_identity', next);
-      await play(ccid, state.phase === 'consent_listen' ? (next.greet ?? 'cv_greet') : (next.question ?? 'cv_q1'), next);
+      await play(ccid, next.question ?? 'cv_q1', next);
     }
   } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
     // A decline at consent is an opt-out, not a yes (8/10 rehearsal finding).
@@ -565,7 +569,11 @@ async function handle(data: any): Promise<void> {
         await play(ccid, next.goodbye ?? 'cv_goodbye', next);
       }
     } else {
-      await saveState(ccid, { ...state, pending: transcript });
+      // ACCUMULATE the turn (round-5 trace: overwrite kept only a trailing
+      // "Install." and lost "I don't recall making an inquiry" — the LLM then
+      // judged the fragment). Cap length to keep client_state small.
+      const joined = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-400);
+      await saveState(ccid, { ...state, pending: joined });
     }
   } else if (et === 'call.playback.ended' && p.media_name === (state.question ?? 'cv_q1') && (state.phase === 'question' || state.phase === 'consent_listen')) {
     if (state.pending) {
