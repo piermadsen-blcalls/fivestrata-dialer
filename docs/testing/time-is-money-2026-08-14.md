@@ -37,7 +37,7 @@ confused_elder×15 = time-wasters; wishy×15 + curmudgeon×10 = context.
   confirmed for the signal (wasters identifiable by tick 1, ~30s); the bottleneck was the
   judge's framing, not detection.
 
-## Regressions surfaced (uninvestigated — next session's first job)
+## Regressions surfaced (AUTOPSIED + FIXED 8/15 — see verdicts below)
 
 1. **Fake transfers to time-wasters:** talker 9/20, doris 6/15, wishy 5/15, even curmudgeon
    2/10 got `resp_interested`. The engagement lexicon (question marks, price-adjacent words
@@ -47,6 +47,41 @@ confused_elder×15 = time-wasters; wishy×15 + curmudgeon×10 = context.
    ~1 day apart). Beyond sample noise. Suspects: the 8/14 parallel-session agent changes
    (ack pools/no-repeat picker/tenant backbone) interacting, or list ordering effects.
    Autopsy the 10 unclear calls before any further tuning.
+
+## Autopsy verdicts (8/15)
+
+**Maria's dip was NOT noise and NOT the ack/tenant changes — it was the Butch price-ask
+interceptor (`149b6fe`/`9f5e36c`, landed 2h after proof-3) plus a mis-armed timer.** All 10
+failures share one signature (`resp_price` present in 10/10; the caller's last transcript a
+truncated fragment: "What's the", "I'd", "Sched"):
+
+1. Maria's price question — her *buying signal*, which proof-3 routed to the judge and
+   `resp_interested` — now triggers `resp_price`, which **barges in mid-turn**
+   (`playback_stop` while her interims were still flowing), truncating her and wiping the
+   accumulated `pending` engagement buffer.
+2. The 15s unclear-fallback was armed at clip **start**, but `resp_price` runs ~12s
+   ("Totally fair question… it depends on scope… specialist puts together an exact quote…
+   no obligation… want me to set that up? A quick yes or no is perfect."). The caller had
+   ~3s after the ask landed. The persona-leg trace proves the cruelty: **the rig began its
+   answer the moment the ask finished (45.6s) and the fallback fired at 45.9s** — the race
+   was unwinnable. The 20 passes were the race occasionally being won.
+3. Compounding: `speech_final=false` finals in `confirm_listen` were **dropped entirely**
+   (not buffered) — "Not at all. Go ahead." vanished; only fragments were held.
+
+**Fix (deployed 8/15):** confirm windows now measure from the ASK, not the clip — the 15s
+timer arms on `playback.ended` of `resp_price`/`resp_no_commit`/`resp_specialist`/
+`confirm_interest` (play-start arms demoted to 45s lost-webhook backstops); the interceptor
+requires `speech_final` (non-endpointed asks fall through to the pre-Butch buffer/judge
+path); confirm-window non-endpointed finals buffer into `pending`; "go ahead / sounds good /
+that works" join the confirm yes-forms.
+
+**Fake transfers, two cuts on top of the `2877992` product-anchored confirm read (which was
+deployed post-battery):** `isPriceAsk` now requires ask-shape (a rambler's "everything's so
+expensive these days" no longer burns the confirm slot); the 70B `chooseClip` prompt
+explicitly excludes rhetorical/storytelling questions from engagement (Bill's "can you
+believe it?" class). The engaged-question tiebreak itself is untouched — it's Maria-critical.
+
+**Verification battery (8/15, post-fix): see `time-is-money-verify-2026-08-15.md`.**
 
 ## Time economics (potential, once the sword swings)
 

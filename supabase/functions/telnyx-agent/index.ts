@@ -57,6 +57,7 @@ interface CallState {
   regreets?: number; // identity re-greets used this call (cap 2)
   inquiryAnswered?: boolean; // regreet_inquiry plays once per call (Butch r2: restatements re-matched and tripled the clip)
   confirmAsked?: boolean; // recovery confirm used (once per call)
+  confirmAskLanded?: boolean; // the answer/confirm clip finished playing — only then may the binary read judge (8/15 Butch: mid-clip reactions were judged before the ask landed)
   mode?: 'persona';
   persona?: string;
   history?: Array<{ role: 'claire' | 'me'; text: string }>;
@@ -357,13 +358,36 @@ function isCommitmentAsk(t: string): boolean {
 }
 function isPriceAsk(t: string): boolean {
   const s = normalizeUtterance(t);
-  return /(how much|price|pricing|ballpark|cost|costs|costing|expensive|cheap|afford)/.test(s);
+  const priceWord = /(how much|price|pricing|ballpark|cost|costs|costing|expensive|cheap|afford)/.test(s);
+  // Ask-shape required (8/15: ramblers mentioning "expensive these days" in a
+  // story burned the one confirm slot on a non-question; Butch's "what's this
+  // gonna cost me?" still fires).
+  const askShape = /\?/.test(s) || /\b(how much|whats the|what is the|what are|whatll|can you|could you|do you|tell me|give me|is it|is there|any idea|what kind)\b/.test(s);
+  return priceWord && askShape;
 }
 // Process / scope / who-will-I-talk-to asks (Butch battery round 2, 8/14:
 // with inquiry+price answered, these became the top unanswered class).
 function isProcessAsk(t: string): boolean {
   const s = normalizeUtterance(t);
   return /(whats the process|what is the process|process look like|how does (this|it|that|the process) work|how (this|it) works|scope of (the )?(project|work)|whats the scope|who (am i|will i|would i)( going)?( to)? (be )?(talking|speaking)|who would i (talk|speak)|whats (their|his|her) (experience|background|relationship)|who is (this person|the specialist))/.test(s);
+}
+
+// The confirm-window binary read, shared by the live read and the timeout
+// (8/15: the timeout must judge the BUFFERED turn before bailing unclear — a
+// caller whose whole answer landed mid-clip as non-endpointed finals used to
+// be declared unclear with a yes sitting in the buffer).
+// Product-ANCHORED engagement only (8/14 battery: Bill's rhetorical
+// "can you believe it?" questions earned 9 transfer promises).
+function judgeConfirm(joined: string): 'yes' | 'no' | 'unclear' {
+  const s = normalizeUtterance(joined);
+  // Anchored yes/no forms also read against the LAST buffered segment —
+  // accumulation can bury a sentence-initial "Yeah, alright" mid-string.
+  const last = normalizeUtterance(joined.split(' ... ').pop() ?? '');
+  const yesAnchor = /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/;
+  const engagedQuestion = /(price|cost|how much|quote|estimate|financ|schedule|consultation|appointment|included|install|warranty|remodel|project|process|next step)/.test(s) && (/\?/.test(joined) || /(what|whats|how|when|can you|do you|tell me)/.test(s));
+  const yes = isInterested(joined) || yesAnchor.test(s) || yesAnchor.test(last) || /(go ahead|sounds good|that works|lets do it|why not|set (it|that) up)/.test(s) || engagedQuestion;
+  const no = isDecline(joined) || /^(no|nope|nah)\b/.test(last);
+  return no && !yes ? 'no' : yes ? 'yes' : 'unclear';
 }
 
 // A-priori compliance care (Gerald the hobby litigator, Sean 8/11): legal /
@@ -387,7 +411,7 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
   // Deterministic floor: unmistakable buying language never reaches the LLM.
   if (interestMode && isInterested(transcript)) return { clip: 'resp_interested', ms: 0 };
   const system = interestMode
-    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (clear yes/positive — AND any question about price, cost, timeline, financing, licensing, or process: asking details means they are ENGAGED), resp_not_interested (no/decline/remove me/hostile), cv_resp_unclear (hedging or deferring — "maybe", "I'd have to ask my husband", "not sure" — is NOT engagement; confusion, mishearing, or thinking you called the wrong person is NOT engagement either: choose unclear; also anything unrelated or unintelligible). TIEBREAK: if torn between resp_interested and cv_resp_unclear for a caller engaging about the product itself, choose resp_interested — transferring a lukewarm caller is recoverable, dropping a real buyer is not.`
+    ? `You are a soundboard operator on an outbound home-improvement call (${question.slice(2)} vertical). The caller was just asked whether they're still interested and if a few quick questions are okay. Pick the response clip. Reply ONLY with JSON like {"clip":"resp_interested"}. Clips: resp_interested (clear yes/positive — AND any question genuinely seeking an answer about price, cost, timeline, financing, licensing, or process of THIS offer: asking for details means they are ENGAGED), resp_not_interested (no/decline/remove me/hostile), cv_resp_unclear (hedging or deferring — "maybe", "I'd have to ask my husband", "not sure" — is NOT engagement; confusion, mishearing, or thinking you called the wrong person is NOT engagement either: choose unclear; rhetorical or storytelling questions — "can you believe it?", questions inside a long personal anecdote that don't actually ask about the offer — are NOT engagement: choose unclear; also anything unrelated or unintelligible). TIEBREAK: if torn between resp_interested and cv_resp_unclear for a caller engaging about the product itself, choose resp_interested — transferring a lukewarm caller is recoverable, dropping a real buyer is not.`
     : 'You are a soundboard operator on a phone call. The caller was just asked: "On a scale of one to ten, how natural does this call feel so far?" Pick the response clip for what they said. Reply ONLY with JSON like {"clip":"cv_resp_positive"}. Clips: cv_resp_positive (rating 7+/enthusiastic), cv_resp_negative (rating 6 or below/critical), cv_resp_unclear (anything else/ambiguous).';
   const options = interestMode ? INTEREST_RESPONSES : RESPONSES;
   const fallback = 'cv_resp_unclear';
@@ -536,7 +560,8 @@ async function respondOrConfirm(ccid: string, next: CallState, said: string): Pr
     const c: CallState = { ...next, phase: 'confirm_listen', confirmAsked: true, ackFired: true };
     await saveState(ccid, c);
     await play(ccid, 'confirm_interest', c); // transcription stays ON — we're listening for the yes/no
-    armFallback(ccid, '"phase":"confirm_listen"', 15_000, { ...c, phase: 'wrapup' }, async () => {
+    // Backstop only — the real 15s window arms at clip end (8/15 autopsy).
+    armFallback(ccid, '"phase":"confirm_listen"', 45_000, { ...c, phase: 'wrapup' }, async () => {
       await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
       await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
     });
@@ -785,6 +810,7 @@ async function handle(data: any): Promise<void> {
     et === 'call.transcription' &&
     ['consent_listen', 'question', 'rating_listen'].includes(state.phase) &&
     isFinal &&
+    p.transcription_data?.speech_final !== false &&
     transcript.length > 2 &&
     (state.question ?? '').startsWith('q_') &&
     (isCommitmentAsk(transcript) || isPriceAsk(transcript) || isProcessAsk(transcript)) &&
@@ -792,17 +818,64 @@ async function handle(data: any): Promise<void> {
   ) {
     // Price/commitment/process ask -> deterministic answer clip ending in the
     // confirm ask; the confirm turn reads the yes/no. Spends the one confirm
-    // slot on a real answer instead of a generic re-ask.
+    // slot on a real answer instead of a generic re-ask. speech_final gate
+    // (8/15 Maria autopsy): firing on a mid-turn final stomped callers who
+    // were still talking; a non-endpointed ask falls through to the buffer /
+    // turn-end judge, which is where it went pre-Butch.
     const clip = isCommitmentAsk(transcript) ? 'resp_no_commit' : isPriceAsk(transcript) ? 'resp_price' : 'resp_specialist';
     const c: CallState = { ...state, phase: 'confirm_listen', confirmAsked: true, ackFired: true, pending: undefined };
     if (await casTransition(ccid, `"phase":"${state.phase}"`, c)) {
       await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
       await play(ccid, clip, c);
-      armFallback(ccid, '"phase":"confirm_listen"', 15_000, { ...c, phase: 'wrapup' }, async () => {
+      // The 15s answer window arms at CLIP END (playback.ended branch below).
+      // resp_price runs ~12s — arming here left ~3s after the ask landed and
+      // steamrolled callers mid-answer (8/15 autopsy: 10/10 Maria failures,
+      // rig's yes at ask+0s lost to the timer). This is only a lost-webhook
+      // backstop.
+      armFallback(ccid, '"phase":"confirm_listen"', 45_000, { ...c, phase: 'wrapup' }, async () => {
         await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
         await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
       });
     }
+  } else if (
+    et === 'call.playback.ended' &&
+    ['resp_price', 'resp_no_commit', 'resp_specialist', 'confirm_interest'].includes(p.media_name) &&
+    state.phase === 'confirm_listen'
+  ) {
+    // The confirm ask just LANDED. Everything said DURING the clip sat in the
+    // buffer (8/15 Butch trace: mid-clip reactions were judged and QUEUED a
+    // goodbye behind the still-playing clip — the caller never got to answer
+    // the ask). A decisively-buffered answer responds now; anything else keeps
+    // listening with the full 15s window.
+    const buffered = state.pending ? judgeConfirm(state.pending) : 'unclear';
+    if (buffered !== 'unclear') {
+      const next: CallState = { ...state, phase: 'wrapup', pending: undefined };
+      if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
+        waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+        await play(ccid, buffered === 'yes' ? 'resp_interested' : 'resp_not_interested', next);
+        await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+      }
+      return;
+    }
+    await saveState(ccid, { ...state, confirmAskLanded: true });
+    // Now the caller gets a full 15s measured from the ASK, not the clip.
+    // Inline (not armFallback): the timeout must judge the FRESHEST buffered
+    // turn before declaring unclear, and armFallback's CAS writes an arm-time
+    // snapshot that would drop post-arm buffers. CAS still guards the play.
+    waitUntil(
+      (async () => {
+        await new Promise((r) => setTimeout(r, 15_000));
+        const cur = await loadState(ccid);
+        if (cur.phase !== 'confirm_listen') return;
+        const v = cur.pending ? judgeConfirm(cur.pending) : 'unclear';
+        const next: CallState = { ...cur, phase: 'wrapup', pending: undefined };
+        if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
+          waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+          await play(ccid, v === 'yes' ? 'resp_interested' : v === 'no' ? 'resp_not_interested' : 'cv_resp_unclear', next);
+          await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+        }
+      })(),
+    );
   } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
     // A decline at consent is an opt-out, not a yes (8/10 rehearsal finding).
     if (isFinal && isDecline(transcript)) {
@@ -855,7 +928,9 @@ async function handle(data: any): Promise<void> {
           armFallback(ccid, '"phase":"rating_listen"', RATING_FALLBACK_MS, { ...next, phase: 'confirm_listen', confirmAsked: true }, async () => {
             const c: CallState = { ...next, phase: 'confirm_listen', confirmAsked: true };
             await play(ccid, 'confirm_interest', c);
-            armFallback(ccid, '"phase":"confirm_listen"', 15_000, { ...c, phase: 'wrapup' }, async () => {
+            // Real 15s window arms at clip end (playback.ended branch); this
+            // is the lost-webhook backstop (8/15: windows measure from the ASK, not the clip).
+            armFallback(ccid, '"phase":"confirm_listen"', 45_000, { ...c, phase: 'wrapup' }, async () => {
               await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
               await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
             });
@@ -889,14 +964,22 @@ async function handle(data: any): Promise<void> {
     et === 'call.transcription' &&
     state.phase === 'confirm_listen' &&
     p.transcription_data?.is_final !== false &&
-    p.transcription_data?.speech_final !== false &&
-    transcript.length > 2
+    transcript.length > 1
   ) {
     // The confirm turn: a binary read. Yes-forms or buying language -> buyer;
     // decline -> opt-out; anything else -> graceful unclear (one confirm max).
     // Judge the WHOLE confirm-window turn, never a trailing fragment (proof-2
     // autopsy: "That's" and "Can you" burned the read while the substance —
     // "I'd like to know more about the price range" — sat one final earlier).
+    // Non-endpointed finals BUFFER instead of vanishing (8/15 autopsy: "Not at
+    // all. Go ahead." was dropped by a speech_final gate and the turn was lost).
+    // And NOTHING is judged until the ask has landed — speech during the answer
+    // clip buffers too (8/15 Butch: pre-ask reactions burned the read).
+    if (!state.confirmAskLanded || p.transcription_data?.speech_final === false) {
+      const buffered = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-300);
+      await saveState(ccid, { ...state, pending: buffered });
+      return;
+    }
     const joined = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-300);
     const s = normalizeUtterance(joined);
     const words = s.split(' ').filter(Boolean).length;
@@ -904,15 +987,11 @@ async function handle(data: any): Promise<void> {
       await saveState(ccid, { ...state, pending: joined }); // fragment — keep listening
       return;
     }
-    // Product-ANCHORED engagement only (8/14 battery: Bill's rhetorical
-    // "can you believe it?" questions earned 9 transfer promises).
-    const engagedQuestion = /(price|cost|how much|quote|estimate|financ|schedule|consultation|appointment|included|install|warranty|remodel|project|process|next step)/.test(s) && (/\?/.test(joined) || /(what|whats|how|when|can you|do you|tell me)/.test(s));
-    const yes = isInterested(joined) || /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/.test(s) || engagedQuestion;
-    const no = isDecline(joined);
+    const verdict = judgeConfirm(joined);
     const next: CallState = { ...state, phase: 'wrapup', pending: undefined };
     if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
       waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-      await play(ccid, no && !yes ? 'resp_not_interested' : yes ? 'resp_interested' : 'cv_resp_unclear', next);
+      await play(ccid, verdict === 'no' ? 'resp_not_interested' : verdict === 'yes' ? 'resp_interested' : 'cv_resp_unclear', next);
       await play(ccid, next.goodbye ?? 'cv_goodbye', next);
     }
   } else if (et === 'call.playback.ended' && p.media_name === (state.goodbye ?? 'cv_goodbye')) {
