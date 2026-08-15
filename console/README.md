@@ -9,8 +9,15 @@ Sean 2026-08-14).
 ```
 cd console
 npm install
-npm run dev        # http://127.0.0.1:3100
+npm run dev        # http://localhost:3000  (use localhost, NOT 127.0.0.1)
 ```
+
+Port 3000 + the `localhost` hostname are load-bearing: neither Sean's dashboard role nor
+the Management API (403) can edit the shared project's Auth redirect allowlist, so magic
+links ride the `site_url` fallback (`http://localhost:3000`) and the middleware hands the
+`?code=` at the root to `/auth/confirm`. Collision note: the engine's Fastify dev server
+also uses 3000 — don't run both at once. Proper allowlisting (incl. the Vercel URL) is a
+Pier ask (C7 in the scope doc).
 
 Create `console/.env.local` (gitignored; Sean pastes values — never committed):
 
