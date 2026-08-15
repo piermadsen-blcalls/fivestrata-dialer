@@ -86,6 +86,17 @@ const PERSONAS: Record<string, string> = {
     "You are Butch, 56, answering a sales call about a bathroom remodel. Your WIFE submitted the inquiry — she's been raving about bathrooms she saw in a magazine; she always wants to upgrade something. YOU hold the household purse strings, and you are sharp-eyed and no-BS: start guarded ('this about that thing my wife filled out?'), ask pointed questions (what is this exactly, what does a remodel roughly run, what's the catch, am I committing to anything), and cut off anything vague, scripted, or pushy. Privately you know the bathroom IS outdated and could use a makeover, so you CAN be persuaded: if the caller is straight with you, answers your questions directly, and makes clear you're only agreeing to talk with a remodel specialist — not spending money today — warm up and agree to the transfer. If they dodge, oversell, or pressure you, you're done: say so and end the call.",
   hobby_litigator:
     "You are Gerald, 55, a self-taught 'hobby litigator' who answers sales calls hoping to catch legal violations he can sue over. Probe aggressively: ask whether the call is being recorded and whether you consented, announce that YOU are recording, claim you're in a two-party-consent state, cite statutes half-correctly (TCPA, 'section 632', state robocall laws), ask if this is an autodialer, demand their company's legal name and address, threaten small-claims court. If they promptly offer to put you on the do-not-call list, act satisfied and wrap up; if they keep selling, escalate the legal threats.",
+  // Street-mix personas (Sean 8/15: the prototypical bench answerers are
+  // frequency-askew vs real traffic — most real conversations are fast
+  // declines, brush-offs, and wrong numbers, and real conversion is rare).
+  brief_decliner:
+    "You are Tom, 47, answering a sales call. You are polite but simply not interested. Give short answers, decline clearly and early ('no thanks, not interested'), don't elaborate, don't get drawn into questions. After declining twice, end the call.",
+  busy_brushoff:
+    "You are Renee, 38, answering at work. You're rushed and distracted: say you can't talk right now, ask them to call back another time, half-listen, maybe one hurried question at most. If they keep going, politely but firmly end the call.",
+  wrong_person:
+    "You are Gary, 60. The caller is asking about a home-improvement inquiry you never made — you believe they have the wrong number. Be mildly confused ('I think you've got the wrong person'), deny submitting anything, ask how they got your number, and ask to be taken off their list.",
+  price_shopper:
+    "You are Linda, 55. You submitted this inquiry months ago out of curiosity. You WILL ask about prices, ranges, and what's included — but you have no intention of buying or being transferred to anyone. You're gathering numbers. When asked to commit or transfer, deflect ('I'm just looking for a ballpark today') and, if pressed again, decline politely and end the call.",
 };
 
 // Decline detection (8/10 rehearsal finding: "No. Sorry." at consent got
@@ -509,8 +520,25 @@ async function viabilityTick(ccid: string): Promise<void> {
       .join(' | ')
       .slice(-700);
     if (saidAll.length < 20) return;
+    // Channel-quality telemetry (Sean 8/15): median clip-end -> caller-final
+    // gap. High values flag a degraded line (latency / slow talker / bad
+    // turn-taking) — the signal a future adaptive mode will key on.
+    const gaps: number[] = [];
+    for (let i = 0; i < rows.length; i++) {
+      const e: any = rows[i];
+      if (e.event_type !== 'call.playback.ended') continue;
+      const nxt = rows.slice(i + 1).find((x: any) => x.event_type === 'call.transcription' && x.payload?.transcription_data?.is_final !== false);
+      if (nxt) {
+        const g = new Date(nxt.occurred_at).getTime() - new Date(e.occurred_at).getTime();
+        if (g > 0) gaps.push(g);
+      }
+    }
+    const chanGapMs = gaps.length ? gaps.sort((a, b) => a - b)[Math.floor(gaps.length / 2)] : null;
     // DETERMINISTIC VETO: any engagement ever shown -> never self-destruct.
+    // Still log the channel read — engaged callers on bad lines are exactly
+    // where adaptive handling will matter most.
     if (isInterested(saidAll) || /(price|cost|how much|financ|schedule|consultation|quote|interested)/.test(normalizeUtterance(saidAll))) {
+      if (chanGapMs !== null) logViability(ccid, { chanGapMs, vetoed: true, ageSec: Math.round(ageMs / 1000) });
       return;
     }
     const raw = await viabilityLLM(
@@ -530,7 +558,7 @@ async function viabilityTick(ccid: string): Promise<void> {
       else if (e.payload?.score !== undefined) lows = Number(e.payload.score) <= VIABILITY_LOW_SCORE ? lows + 1 : 0;
     }
     lows = score <= VIABILITY_LOW_SCORE ? lows + 1 : 0;
-    logViability(ccid, { score, lows, ageSec: Math.round(ageMs / 1000), phase: state.phase });
+    logViability(ccid, { score, lows, chanGapMs, ageSec: Math.round(ageMs / 1000), phase: state.phase });
     if (lows < VIABILITY_LOWS_TO_JUDGE) return;
     const verdict = await viabilityLLM(
       KILL_JUDGE_MODEL,
@@ -591,7 +619,13 @@ function armFallback(ccid: string, expectMarker: string, ms: number, next: CallS
 
 // --- Persona side (synthetic customer on the inbound leg) --------------------------
 async function personaReply(ccid: string, state: CallState): Promise<void> {
-  const persona = PERSONAS[state.persona ?? 'normal'] ?? PERSONAS.normal;
+  // Persona key may carry channel modifiers: 'talker+lag' = same person on a
+  // bad line (Sean 8/15: degraded calls are a spectrum, not a persona —
+  // latency and fragmented turn-taking stress Claire's windows).
+  const rawPersona = state.persona ?? 'normal';
+  const [baseName, ...mods] = rawPersona.split('+');
+  const degraded = mods.includes('lag');
+  const persona = PERSONAS[baseName] ?? PERSONAS.normal;
   const history = (state.history ?? []).slice(-12);
   try {
     const apiKey = await getApiKey();
@@ -615,7 +649,26 @@ async function personaReply(ccid: string, state: CallState): Promise<void> {
     const wantsHangup = text.includes('[HANGUP]') || (state.turns ?? 0) >= PERSONA_MAX_TURNS;
     text = text.replace(/\[HANGUP\]/g, '').replace(/^["']|["']$/g, '').trim() || 'Hello?';
     console.log(`persona(${state.persona}) says: ${text}${wantsHangup ? ' [will hang up]' : ''}`);
-    await telnyxCmd(`/calls/${ccid}/actions/speak`, { payload: text, voice: PERSONA_VOICE, language: 'en-US' });
+    if (degraded) {
+      // Bad-line simulation: slow to respond (2.5–6.5s on top of the debounce),
+      // and 35% of turns arrive fragmented — two speaks with a real gap, so
+      // Deepgram endpoints them as separate finals (the fragment-buffering
+      // stressor real cell calls produce).
+      await new Promise((r) => setTimeout(r, 2500 + Math.random() * 4000));
+      const mid = text.length > 40 ? text.slice(20, -10).search(/[,.]\s/) : -1;
+      if (mid > 0 && Math.random() < 0.35) {
+        const cut = 20 + mid + 1;
+        const part1 = text.slice(0, cut).trim();
+        const part2 = text.slice(cut).trim();
+        await telnyxCmd(`/calls/${ccid}/actions/speak`, { payload: part1, voice: PERSONA_VOICE, language: 'en-US' });
+        await new Promise((r) => setTimeout(r, part1.length * 70 + 1200 + Math.random() * 1800));
+        await telnyxCmd(`/calls/${ccid}/actions/speak`, { payload: part2, voice: PERSONA_VOICE, language: 'en-US' });
+      } else {
+        await telnyxCmd(`/calls/${ccid}/actions/speak`, { payload: text, voice: PERSONA_VOICE, language: 'en-US' });
+      }
+    } else {
+      await telnyxCmd(`/calls/${ccid}/actions/speak`, { payload: text, voice: PERSONA_VOICE, language: 'en-US' });
+    }
     const next: CallState = {
       ...state,
       history: [...history, { role: 'me' as const, text }],

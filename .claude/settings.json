@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(source *)",
+      "Bash(git commit *)",
+      "Bash(git add *)",
+      "Bash(git push)",
+      "Bash(git log *)",
+      "Bash(mv /c/Claude/scratch/* *)",
+      "Bash(cp env.template .env)",
+      "Bash(node --import tsx scripts/persona-batch.ts *)",
+      "Bash(node --import tsx scripts/persona-mix.ts *)",
+      "Bash(node --import tsx scripts/persona-analyze.ts *)",
+      "Bash(node --import tsx scripts/time-audit.ts *)",
+      "Bash(node --import tsx scripts/ack-audit.ts *)",
+      "Bash(node --import tsx scripts/call-trace.ts *)",
+      "Bash(node --import tsx scripts/deploy-webhook.ts *)",
+      "Bash(node --import tsx scripts/verify-setup.ts)",
+      "Bash(node scripts/db-apply.ts *)",
+      "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\\Claude\\scratch\\ps-nodes.ps1)",
+      "Bash(tasklist *)",
+      "mcp__3f27ed06-19b8-4594-b9f3-6443331190f0__outlook_email_search",
+      "mcp__3f27ed06-19b8-4594-b9f3-6443331190f0__chat_message_search",
+      "mcp__3f27ed06-19b8-4594-b9f3-6443331190f0__sharepoint_search",
+      "mcp__3f27ed06-19b8-4594-b9f3-6443331190f0__sharepoint_folder_search",
+      "mcp__75d60e80-e444-48d2-bb98-d784d878c6f9__search_files",
+      "mcp__75d60e80-e444-48d2-bb98-d784d878c6f9__list_recent_files",
+      "mcp__ccd_session_mgmt__search_session_transcripts"
+    ]
+  }
+}

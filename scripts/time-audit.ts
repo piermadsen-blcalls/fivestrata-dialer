@@ -11,7 +11,8 @@ const supabaseUrl = process.env.SUPABASE_URL ?? '';
 const supabaseKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
 const sb = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` };
 const LOG = process.argv[2] ?? 'C:/Claude/scratch/persona-timeismoney.jsonl';
-const CONVERTIBLE = new Set(['normal', 'butch']);
+// Base persona is ground truth even under channel modifiers ('normal+lag').
+const CONVERTIBLE = new Set(['normal', 'butch', 'normal+lag', 'butch+lag']);
 
 const calls = readFileSync(LOG, 'utf8').trim().split('\n').map((l) => JSON.parse(l)).filter((c: any) => c.ccid);
 console.log(`Auditing ${calls.length} calls ...`);
@@ -71,7 +72,7 @@ for (const r of rows.filter((x) => CONVERTIBLE.has(x.persona) && x.killed)) {
 }
 
 console.log('\n=== TIME ECONOMICS ===');
-const wasters = rows.filter((r) => ['talker', 'confused_elder'].includes(r.persona));
+const wasters = rows.filter((r) => ['talker', 'confused_elder', 'talker+lag', 'confused_elder+lag'].includes(r.persona));
 const wKilled = wasters.filter((r) => r.killed);
 const wKept = wasters.filter((r) => !r.killed);
 const avgN = (a: number[]) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
