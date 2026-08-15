@@ -432,8 +432,11 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
 const VIABILITY_MODEL = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
 const KILL_JUDGE_MODEL = 'meta-llama/Llama-3.3-70B-Instruct';
 const VIABILITY_MIN_AGE_MS = 25_000;
-const VIABILITY_LOW_SCORE = 20;
-const VIABILITY_LOWS_TO_JUDGE = 2;
+// Retuned from the 8/14 100-call battery: waster curves never exceed 13,
+// convertibles never drop below 16 (Butch flat at 20). ≤10 with 3 consecutive
+// = 10-point margin under the trap persona.
+const VIABILITY_LOW_SCORE = 10;
+const VIABILITY_LOWS_TO_JUDGE = 3;
 const lowStreak = new Map<string, number>();
 
 function logViability(ccid: string, payload: Record<string, unknown>): void {
@@ -498,7 +501,7 @@ async function viabilityTick(ccid: string): Promise<void> {
     if (lows < VIABILITY_LOWS_TO_JUDGE) return;
     const verdict = await viabilityLLM(
       KILL_JUDGE_MODEL,
-      'You are a seasoned call-center floor manager. An agent is on an outbound home-improvement call. Based on everything the caller has said, decide whether to pull the agent off the call. Reply KILL only if there is VIRTUALLY NO CHANCE this caller converts; when in any doubt, reply CONTINUE. Reply exactly one word: KILL or CONTINUE.',
+      'You are a pragmatic call-center floor manager optimizing agent time. An agent is on an outbound home-improvement call. Based on everything the caller has said, decide whether to pull the agent off. KILL if the caller is very unlikely to convert and is consuming time — a caller who rambles, stays confused, or never engages with the offer after several chances is a KILL. CONTINUE only if there is a realistic path to a transfer. Reply exactly one word: KILL or CONTINUE.',
       `Caller so far: "${saidAll}"`,
       4,
     );
@@ -901,7 +904,9 @@ async function handle(data: any): Promise<void> {
       await saveState(ccid, { ...state, pending: joined }); // fragment — keep listening
       return;
     }
-    const engagedQuestion = /\?/.test(joined) || /(what|whats|how much|how long|when|can you|do you|is there|are there|price|cost|included|financ)/.test(s);
+    // Product-ANCHORED engagement only (8/14 battery: Bill's rhetorical
+    // "can you believe it?" questions earned 9 transfer promises).
+    const engagedQuestion = /(price|cost|how much|quote|estimate|financ|schedule|consultation|appointment|included|install|warranty|remodel|project|process|next step)/.test(s) && (/\?/.test(joined) || /(what|whats|how|when|can you|do you|tell me)/.test(s));
     const yes = isInterested(joined) || /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/.test(s) || engagedQuestion;
     const no = isDecline(joined);
     const next: CallState = { ...state, phase: 'wrapup', pending: undefined };
