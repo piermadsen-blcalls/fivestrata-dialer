@@ -70,6 +70,11 @@ deterministic buying-language floor → 70B judge with buyer-favoring tiebreak �
 recovery turn (accumulated, fragment-proof, silence-spending, question-as-engagement).
 
 **Still queued:**
+- **Within-call clip repetition → variant recordings (Sean, 8/14, priority #1 after the Butch
+  batteries):** analyze which clips play 2+ times in the same call across the Butch dataset;
+  any repeat-prone clip gets secondary/tertiary renders (slightly varied wording/prosody) behind
+  a no-repeat picker — an identical replay is instantly read as robotic. Subsumes the older
+  per-category ack no-repeat item below.
 - Ack repetition within a call: no-repeat guard is per-category; consider per-call global.
 - Neutral residue: judged ceiling for regex-land reached (~57–71%); next gain is prosodic
   (co-location/streaming), not patterns.
