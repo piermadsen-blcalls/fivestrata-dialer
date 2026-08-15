@@ -32,7 +32,9 @@ column. The 7/23 design in `tenant-program-onboarding.md` (tenants / programs / 
 canonical disposition dictionary + per-program mappings) was ➤ proposed and never applied.
 The console build is the forcing function to land it:
 
-- **Migration 0005** (additive only — shared V1 project rules apply): `tenants`, `programs`,
+- **Migration 0005** — ✅ **APPLIED 2026-08-14** (Sean-authorized, via `db-apply.ts`; verified:
+  2 tenants, 4 programs, dispo dictionary seeded, 40 demo leads+calls backfilled onto
+  `fs-windows-fresh`). Contents (additive only — shared V1 project rules apply): `tenants`, `programs`,
   `program_field_defs`, `program_dispositions`, membership table (`console_users` ↔ tenant,
   role), `tenant_id`/`program_id` columns on our tables (nullable, backfilled for CV),
   RLS policies keyed on membership.
