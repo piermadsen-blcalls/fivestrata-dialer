@@ -173,7 +173,7 @@ exist earlier, and much already does.
 | Stop switches (whole platform / one Campaign / one buyer), buyer priority order, volume limits | **Step 3** | a stop switch demonstrably halts dialing mid-run |
 | Recording capture and storage | **Step 3** (capture) → step 4 (catalogued) | recordings land in our own storage from the first real call |
 | Split testing | **Step 3** | two batches run two versions at once, attribution lands in the record |
-| Control panel: live board, call history, recordings library, reports, funnel, diagnostics, alerts, builders, cost tracking | **Step 3** (look-only screens can start during step 2 — ✅ pulled forward, Sean 8/14: Vercel build starting now, AutoWeb demand; scope in `architecture/control-panel-scope.md`) | every §6 feature reachable and correct |
+| Control panel: live board, call history, recordings library, reports, funnel, diagnostics, alerts, builders, cost tracking | **Step 3** (✅ pulled forward, Sean 8/14: Vercel build starting now, AutoWeb demand; **no look-only tier** — screens ship with writes plumbed to live capabilities; scope in `architecture/control-panel-scope.md`) | every §6 feature reachable and correct |
 | Roles and access: named login, Admin / Operator / Viewer, no erasing anything used live | **Step 3** | permission rules enforced, not just documented |
 | Long-term memory: every dial and every line, 5-yr, results sent back to the partner system | **Step 4** | nightly copy lands both grains; a result survives the round trip |
 | Overnight suggestions applied going forward | **Step 4** | a suggestion changes tomorrow's behavior without anyone re-entering it |

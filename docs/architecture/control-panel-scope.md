@@ -51,32 +51,41 @@ applied via `db-apply.ts` + seeds; tenant switcher skeleton.
 **Gate:** Sean and Pier can log in at a real URL and see the CV tenant's (empty) shell;
 AutoWeb tenant visible but empty.
 
-### Phase 1 — Look-only console (~2–3 days) → retires the PoC `dashboard.ts`
-Read-only screens, all scoped by tenant/program via RLS:
-1. **Overview / live board** — tiles (dials, contacts, qualified, transfers, canned-vs-TTS %),
-   recent per-turn feed (ports the PoC page's queries: `v_rdaily`, `v_daily_results`,
-   `call_turns`, `dids`)
-2. **Daily results** — the Ashley-dashboard emulation (`v_rdaily`), filterable
-3. **Transfer funnel** — interested → announced → accepted, per day/program
-4. **Call history** — searchable, outcome + cost + recording link, per-turn drill-down.
+### Phase 1 — Working console: plumb everything that has live plumbing (~1 week)
+**✅ Revised (Sean, 2026-08-14): no look-only tier.** Supersedes the PRD/roadmap
+"look-only screens first" sequencing. Every screen ships with its write path wired to a
+backend capability that exists today; reads are just the live state those writes act on.
+Writes only through RPCs/Edge Functions, every mutation audit-logged (`inbound_events`
+pattern), all scoped by tenant/program via RLS. Ship order = what's plumbable now:
+1. **Ops overview** — tiles + per-turn feed + daily results + funnel (ports the PoC page's
+   queries: `v_rdaily`, `v_daily_results`, `call_turns`, `dids`); retires
+   `src/routes/dashboard.ts`
+2. **Controls / kill switches** — edits non-secret `dialer_config` keys the agent already
+   reads live (pause dialing, persona/test toggles, inbound IP enforcement) — real effect on
+   the running system from day one
+3. **DNC console** — lookup/add/remove fronting the live `fivestrata-inbound` `dnc`/`undnc`
+   endpoints (server-side, same key auth)
+4. **Lead intake** — manual file upload → `fivestrata-inbound /leads` (the "by-hand" door
+   from PRD §6), plus undo-by-OLeadID via `leads/remove`
+5. **Clip/script manager** — list, play back, upload → Telnyx media storage (the
+   `clips-upload.ts` path, server-side), version tags; the ack-improvement loop's clip edits
+   move here from laptop scripts
+6. **Buyers & priorities editor** — `transfer_priorities` CRUD
+7. **DID pool** — burn bars + status (reads), guarded purchase/retire via the Telnyx API
+   (`did-purchase.ts` guards: caps, no-op rules), CNAM status
+8. **Call history** — searchable, outcome + cost + recording link, per-turn drill-down.
    Phone numbers **masked to last-4 by default** (unmask = explicit role, logged)
-5. **DID pool** — burn bars, status, retirement history
-6. **Config viewer** — non-secret `dialer_config` keys, read-only
-**Gate:** shareable URL replaces "Sean runs `npm run dev`"; Pier/Brodie/Ashley can open it
-cold. PoC dashboard route deleted.
+**Gate:** a real operating action (pause, DNC add, lead load, clip swap) happens from the
+console with no laptop scripts; PoC dashboard route deleted.
 
-### Phase 2 — Screens that change things (~1–2 weeks, incremental ship per screen)
-Writes only through RPCs/Edge Functions; every mutation audit-logged (`inbound_events`
-pattern). Priority order per Ashley's likely needs:
-1. Stop switches + pacing/caps (per program)
-2. Campaign builder (label → program campaign, cadence, hours, max_attempts)
-3. Clip/script manager — list, play back, upload → Telnyx media storage (server-side),
-   version tags; the ack-improvement loop's clip edits move here from scripts
-4. Buyers & priorities editor (`transfer_priorities`)
-5. DNC lookup/add (fronts the live `fivestrata-inbound` dnc endpoints)
-6. Manual lead file upload (fronts `fivestrata-inbound /leads`)
-7. Split-test config (A/B assignment on clip/script versions)
-**Gate:** a full operating day requires no laptop scripts.
+### Phase 2 — Engine-coupled controls (lands WITH the queue-engine work)
+Screens whose backend doesn't exist yet — the console builds the config surface first and
+the engine is written to read it (config-first, so nothing here is throwaway):
+1. Campaign builder (label → program campaign, cadence, hours, `max_attempts`)
+2. Pacing/caps + per-campaign stop switches (beyond the global `dialer_config` switches)
+3. Split-test config (A/B assignment on clip/script versions)
+**Gate:** the dial queue engine reads its entire runtime config from tables the console
+writes; a full operating day requires no laptop scripts.
 
 ### Phase 3 — Tenant onboarding + learning loop (timed to the AutoWeb engagement)
 Onboarding wizard that writes playbook rows (field defs, dispo mappings, calling hours,

@@ -644,7 +644,7 @@ yet. That's the distinction worth holding.
 | W5 | Cost approval | Running-cost outline approved | Sam / Tatevik (Pier drives) |
 | W6 | Voice pack pipeline | First pack (lines + variations) generated for the pilot script | Sean + Ashley |
 | W7 | Reporting sign-off | Ops confirms the views match the workbook they run today | Sean → Ashley |
-| W8 | Control panel | Look-only screens live, then the screens that change things (scope + phases: `architecture/control-panel-scope.md` — initial layer pulled forward, Sean 8/14) | Pier (design ref = his prototype) + Sean (initial build) |
+| W8 | Control panel | Working screens with writes plumbed to live capabilities from the start — no look-only tier (✅ Sean 8/14, supersedes the look-only-first sequencing; scope + phases: `architecture/control-panel-scope.md`) | Pier (design ref = his prototype) + Sean (initial build) |
 
 ## 14. Dependencies and stakeholders
 
