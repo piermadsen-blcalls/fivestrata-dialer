@@ -2,7 +2,7 @@
 
 2026-07-22, 39m. Attendees: Sean Stott, Pier Madsen, Kinsey Jackson, Ashley Smith, Brandon Titensor, Alex Lin. (Joseph not on this one.)
 
-Follow-up to 7/17. This session walked the scope-doc sections that were **not reached** last time — call-flow/ops mechanics, DID strategy, recordings, KPIs, economics, milestones — and crystallized the platform **must-have list**. Raw transcript: `docs/transcripts/2026-07-22-platform-scope.txt`.
+Follow-up to 7/17. This session walked the scope-doc sections that were **not reached** last time — call-flow/ops mechanics, DID strategy, recordings, KPIs, economics, milestones — and crystallized the platform **must-have list**. Raw transcript: `2026-07-22-platform-scope.txt`, kept locally outside the repo (`C:\Claude\transcripts`).
 
 ---
 

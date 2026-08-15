@@ -102,7 +102,6 @@ These come free from the ledger + queue tables — no extra instrumentation.
 - ❓ T2: read our actual Telnyx default channel + CPS limits and the price schedule for raising
   them (feeds W5 cost outline).
 - ❓ Average slot time S by vertical/list-age — **replica data can't answer this**
-  (`vicidial_log.length_in_sec` excludes ring time; see `../reporting/td-windows-did-study.md`
-  §6.5) → measure S in the Telnyx PoC (T2). Replica gives shape only: 7:00–16:00 MST dialing,
+  (`vicidial_log.length_in_sec` excludes ring time; see `td-windows-did-study.md` §6.5 in the fivestrata workspace repo, `docs/reporting/`) → measure S in the Telnyx PoC (T2). Replica gives shape only: 7:00–16:00 MST dialing,
   2× front-load at open, ~8–9s answered talk time on TD's soundboard floor.
 - ❓ Whether Telnyx enforces per-DID origination limits separate from account CPS.

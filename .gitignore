@@ -10,3 +10,7 @@ dist/
 
 # local env template with project-specific (non-secret) values
 env.template
+
+# Skills live in the fivestrata workspace repo (junctioned into .claude/skills locally)
+.claude/skills/
+.claude/worktrees/

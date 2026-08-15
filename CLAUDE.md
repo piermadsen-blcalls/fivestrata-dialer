@@ -32,7 +32,6 @@ Project context for Claude Code. Read this first, then the files in "Repo map" b
 | `docs/architecture/snowflake-value.md` | Snowflake justification for Pier: the 9 actionable outputs/KPIs, `analytics_directives` return-path contract into Supabase ("summon when available"), recordings-to-S3 catalog, benefits vs plain Supabase (7/31) |
 | `docs/architecture/concurrency-queueing.md` | Telnyx concurrency/CPS caps as config, slot-ledger pacer (event-driven, no polling), backpressure queue + cap-visibility KPIs, sizing math to 2M dials/day (7/31, fills Pier's 7/29 gap) |
 | `docs/reporting/kb-wi-dashboard-spec.md` | Ashley's daily dashboard dissected (T9): fact grains, KPI dictionary, KB cost model, schema mapping |
-| `docs/transcripts/` | Raw meeting transcripts |
 | `docs/call-scripts/` | Call-center script workbooks per vertical |
 | `scripts/` | verify-setup, e2e-test, rest-introspect, v1-deepdive, v1-archive (Node/tsx) |
 | `src/` | TypeScript/Fastify scaffold: VICIdial API wrappers (**vestigial** — no ViciDial per the PRD decision; see README caveats, incl. the still-required `VICIDIAL_*` env vars in `src/config.ts`), Telnyx client + webhooks, Supabase client, LeadConduit intake, lead router with two-phase client-selection stub |
@@ -45,7 +44,7 @@ FiveStrata (lead-revival/distribution business; AutoWeb enterprise) is building 
 
 ## Business ecosystem
 
-Full internal skills are available in this repo's `.claude/skills/` — **fivestratadb** (prod techss_ MySQL structure), **callcenterdb** (KB/TD VICIdial replica catalogs, query cookbook, cross-DB joins), **fivestrataops** (MDB, dashboards, owners, cadences). Consult them for anything DB- or ops-shaped. Compressed essentials:
+Full internal skills load from `.claude/skills/` — a local junction into the fivestrata workspace repo (`C:\Claude\fivestrata\.claude\skills`, the single maintained copy; gitignored here) — **fivestratadb** (prod techss_ MySQL structure), **callcenterdb** (KB/TD VICIdial replica catalogs, query cookbook, cross-DB joins), **fivestrataops** (MDB, dashboards, owners, cadences), **fivestratadialer** (this project's build skill). Consult them for anything DB- or ops-shaped. Compressed essentials:
 
 - **FiveStrata prod DB**: MySQL 8.4, schemas prefixed `techss_`. Center of gravity `techss_all_leads` (~1.9B rows: leads, validation, DNC `dncDate`, LeadConduit/TrustedForm data). `techss_dl` = distribution/routing brain (clients, ZIP coverage, bids, transfer priorities, `client_market_caps`). `techss_dwh` = warehouse (Meridius daily lead-cap SPROC, fully automated). `techss_reporting` = dashboards + `CC_BehindMaster` + TD_* mirror tables (dormant as of 2026-07). `techss_log.call_center_import_logs` = audit of call-center imports. **`OLeadID` is the cross-system lead key** (maps to `vicidial_list.vendor_lead_code` on dialer side). Disposition decode: `techss_dl.callcenter_dispos`, `techss_reporting.CC_dispos`.
 - **Call centers**: BareTel/Kombea "KB" (5 VICIdial replica servers: fsbr, fsbrv, fshw, fswn, fswr — EST), TopDial "TD" (2 replicas: bathroom, windows — MST), CanadaDirect "CD" (no replica). Replicas refresh ~daily (T-1 analytics only). All VICIdial/MariaDB, ~293 common tables. KB uses Kombea soundboard software + a closer on its AI product.

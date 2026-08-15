@@ -665,8 +665,8 @@ accommodates but which is not in this scope and would be its own scoped addition
 - The exact fields saved for each call, and the reporting views on top: `supabase/migrations/`
 - The soundboard-style AI design: `architecture/soundboard-llm-interface.md`
 - Handling many calls at once: `architecture/concurrency-queueing.md`
-- The phone-number studies behind automatic retirement: `reporting/td-windows-did-study.md`,
-  `reporting/kb-did-study.md`
+- The phone-number studies behind automatic retirement: `td-windows-did-study.md` and
+  `kb-did-study.md` in the fivestrata workspace repo (`docs/reporting/`)
 - Phone-provider capabilities and pricing: `architecture/telnyx-capability-review.md`
 - The overnight-suggestions design: `architecture/snowflake-value.md`
 - The multi-business-unit setup: `architecture/tenant-program-onboarding.md`,
@@ -674,4 +674,4 @@ accommodates but which is not in this scope and would be its own scoped addition
 - The version-one post-mortem (where the cost lesson comes from): `architecture/v1-build.md`
 - The reporting spec we sign off against: `reporting/kb-wi-dashboard-spec.md`
 - Platform evaluation and the options fork that closed: `architecture/platform-foundations.md`
-- Scoping sessions and meeting notes these decisions came from: `meetings/`, `transcripts/`
+- Scoping sessions and meeting notes these decisions came from: `meetings/` (raw transcripts kept locally outside the repo, `C:\Claude\transcripts`)

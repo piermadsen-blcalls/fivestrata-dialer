@@ -1,6 +1,6 @@
-# AICC — AI Call Center Platform (ccai)
+# AICC — AI Call Center Platform
 
-Living context doc. Keep this current — this repo's markdown IS the project memory. **This repo, piermadsen-blcalls/fivestrata-dialer, is the one and only repo** (the ccai sandbox is retired — everything merged here as of 2026-07-28).
+Living context doc. Keep this current — this repo's markdown IS the project memory. **This repo, piermadsen-blcalls/fivestrata-dialer, is the one and only AICC repo.** Sean's cross-project FiveStrata material (DB/ops skills, DID and vendor analyses, raw meeting transcripts) lives in the separate fivestrata workspace (sostott/fivestrata, locally `C:\Claude\fivestrata`; repo cleanup 2026-08-14).
 Last updated: 2026-07-28 (dialer-core decision recorded: **no ViciDial instance** — Supabase operational brain + Telnyx call path, per `docs/PRD.md` Draft v1, Sean 2026-07-27; VICIdial wrappers in `src/` now vestigial, see Caveats).
 
 ## What this is
@@ -89,7 +89,6 @@ docs/
   meetings/2026-07-17-scoping-call.md    distilled founding meeting
   meetings/2026-07-22-scoping-call-2.md  distilled follow-up (must-haves, DID/recordings/cadence, IVAs)
   call-scripts/                 call-center script workbooks per vertical
-  transcripts/                  raw meeting transcripts
 ```
 
 **Caveats:**

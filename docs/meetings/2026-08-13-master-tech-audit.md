@@ -2,7 +2,7 @@
 
 **Duration:** 2h13m transcribed (billed as ~2.5h). **Led by:** Brodie Brown (VP), working right-to-left through the whole FiveStrata stack on a shared Excalidraw board.
 **Attendees:** Brodie Brown, Joseph Yordan, Sean Stott, Alex Lin, Brandon Titensor, Cromwel Castaneda, Taylor Andrew (partial — new, first exposure to the stack).
-**Artifacts:** raw transcript `docs/transcripts/2026-08-13-master-tech-audit.txt` (scraped from Teams recap; stitched, some duplicate echo lines); whiteboard export `docs/architecture/2026-08-13-master-tech-audit-whiteboard.excalidraw`.
+**Artifacts:** raw transcript `2026-08-13-master-tech-audit.txt`, kept locally outside the repo, `C:\Claude\transcripts` (scraped from Teams recap; stitched, some duplicate echo lines); whiteboard export `docs/architecture/2026-08-13-master-tech-audit-whiteboard.excalidraw`.
 **Purpose (Brodie):** map the entire business/tech stack end-to-end so the team — and the AI ("ultimate goal... bug AI and have it explain") — has shared architecture context.
 
 Provenance legend: ✅ stated as fact by the owner · ➤ stated belief / "my understanding" · ❓ explicitly unresolved in the meeting.
