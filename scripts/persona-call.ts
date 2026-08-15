@@ -1,6 +1,6 @@
 // Synthetic-customer test call (Sean 8/11): Claire dials OUR OWN DID; the
-// inbound leg is answered by the edge agent in persona mode (curmudgeon /
-// wishy_washy / talker / confused_elder / normal). Two AIs, one phone call,
+// inbound leg is answered by the edge agent in persona mode (roster = PERSONAS
+// in supabase/functions/telnyx-agent). Two AIs, one phone call,
 // zero humans — full transcripts of both sides land in call_events and the
 // recording captures the whole conversation.
 // Run: npx tsx scripts/persona-call.ts <persona> [question=q_bathroom] [greet=demo_greet]
@@ -19,7 +19,7 @@ const persona = process.argv[2] ?? '';
 const question = process.argv[3] ?? 'q_bathroom';
 const greet = process.argv[4] ?? 'demo_greet';
 
-const VALID = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal', 'hobby_litigator'];
+const VALID = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal', 'hobby_litigator', 'butch'];
 if (!VALID.includes(persona) || !apiKey || !connectionId || !from || !supabaseUrl || !supabaseKey) {
   console.error(`Usage: npx tsx scripts/persona-call.ts <${VALID.join('|')}> [question] [greet]`);
   process.exit(1);

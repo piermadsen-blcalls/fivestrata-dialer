@@ -8,7 +8,7 @@ import 'dotenv/config';
 import { appendFileSync } from 'node:fs';
 
 const TELNYX = 'https://api.telnyx.com/v2';
-const ALL_PERSONAS = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal', 'hobby_litigator'];
+const ALL_PERSONAS = ['curmudgeon', 'wishy_washy', 'talker', 'confused_elder', 'normal', 'hobby_litigator', 'butch'];
 const PERSONAS = process.argv[3] && process.argv[3] !== 'all'
   ? process.argv[3].split(',').filter((p) => ALL_PERSONAS.includes(p))
   : ALL_PERSONAS;

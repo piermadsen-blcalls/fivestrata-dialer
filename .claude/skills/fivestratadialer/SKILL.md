@@ -108,7 +108,7 @@ v_daily_call_summary. Our schema coexists (no name collisions). V1 docs:
   evaded "no thank you"). Demo brief: docs/demo/2026-08-11-demo-brief.md. Rehearsals
   8/10: windows yes-path + HW decline paths clean; recordings in Sean's Downloads.
   **Synthetic-customer test bench live 8/11** (persona mode in telnyx-agent: Claire dials
-  own DID, 6 personas incl. hobby_litigator w/ deterministic compliance guard;
+  own DID, 7 personas incl. hobby_litigator w/ deterministic compliance guard and butch (8/14: persuadable no-BS purse-holder, wife submitted the bathroom lead — tests hook-to-transfer persuasion; agreeing = transfer, not purchase);
   persona-batch/persona-analyze/ack-audit scripts; soak results in
   docs/testing/persona-soak-2026-08-11.md). **STANDING POLICY (Sean 8/11): run the
   ack-improvement loop after every battery** — docs/testing/ack-improvement-loop.md
