@@ -53,6 +53,7 @@ interface CallState {
   // Persona mode (synthetic customers, Sean 8/11): inbound legs to our own
   // DID are answered by a persona — Claire trains against fake callers.
   regreets?: number; // identity re-greets used this call (cap 2)
+  inquiryAnswered?: boolean; // regreet_inquiry plays once per call (Butch r2: restatements re-matched and tripled the clip)
   confirmAsked?: boolean; // recovery confirm used (once per call)
   mode?: 'persona';
   persona?: string;
@@ -350,6 +351,12 @@ function isPriceAsk(t: string): boolean {
   const s = normalizeUtterance(t);
   return /(how much|price|pricing|ballpark|cost|costs|costing|expensive|cheap|afford)/.test(s);
 }
+// Process / scope / who-will-I-talk-to asks (Butch battery round 2, 8/14:
+// with inquiry+price answered, these became the top unanswered class).
+function isProcessAsk(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return /(whats the process|what is the process|process look like|how does (this|it|that|the process) work|how (this|it) works|scope of (the )?(project|work)|whats the scope|who (am i|will i|would i)( going)?( to)? (be )?(talking|speaking)|who would i (talk|speak)|whats (their|his|her) (experience|background|relationship)|who is (this person|the specialist))/.test(s);
+}
 
 // A-priori compliance care (Gerald the hobby litigator, Sean 8/11): legal /
 // recording / consent probes route DETERMINISTICALLY to a careful DNC
@@ -633,12 +640,15 @@ async function handle(data: any): Promise<void> {
     transcript.length > 0 &&
     (state.question ?? '').startsWith('q_') &&
     isInquirySourceAsk(transcript) &&
+    !state.inquiryAnswered &&
     (state.regreets ?? 0) < 3
   ) {
     // "This about that thing my wife filled out?" -> answer the inquiry
-    // source, then the SHORT re-ask (shares the regreet cap; barge-in like
-    // the identity regreet — these land DURING clips).
-    const next: CallState = { ...state, phase: 'question', regreets: (state.regreets ?? 0) + 1, ackFired: false, pending: undefined };
+    // source ONCE, then the SHORT re-ask (barge-in like the identity regreet).
+    // Round-2 finding: restatements ("you're calling about the remodel my
+    // wife submitted") re-matched every final and tripled the clip — hence
+    // once per call; later matches fall through to normal handling.
+    const next: CallState = { ...state, phase: 'question', regreets: (state.regreets ?? 0) + 1, inquiryAnswered: true, ackFired: false, pending: undefined };
     if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
       await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
       await play(ccid, 'regreet_inquiry', next);
@@ -650,13 +660,13 @@ async function handle(data: any): Promise<void> {
     isFinal &&
     transcript.length > 2 &&
     (state.question ?? '').startsWith('q_') &&
-    (isCommitmentAsk(transcript) || isPriceAsk(transcript)) &&
+    (isCommitmentAsk(transcript) || isPriceAsk(transcript) || isProcessAsk(transcript)) &&
     !state.confirmAsked
   ) {
-    // Price/commitment ask -> deterministic answer clip ending in the confirm
-    // ask; the confirm turn reads the yes/no. Spends the one confirm slot on
-    // a real answer instead of a generic re-ask.
-    const clip = isCommitmentAsk(transcript) ? 'resp_no_commit' : 'resp_price';
+    // Price/commitment/process ask -> deterministic answer clip ending in the
+    // confirm ask; the confirm turn reads the yes/no. Spends the one confirm
+    // slot on a real answer instead of a generic re-ask.
+    const clip = isCommitmentAsk(transcript) ? 'resp_no_commit' : isPriceAsk(transcript) ? 'resp_price' : 'resp_specialist';
     const c: CallState = { ...state, phase: 'confirm_listen', confirmAsked: true, ackFired: true, pending: undefined };
     if (await casTransition(ccid, `"phase":"${state.phase}"`, c)) {
       await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });

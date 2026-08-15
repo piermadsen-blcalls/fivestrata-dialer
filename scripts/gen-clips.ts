@@ -76,6 +76,10 @@ const CLIPS: Record<string, string> = {
     "Totally fair question. The honest answer is, it depends on the size and scope of the project, so I can't quote it myself — the specialist puts together an exact quote for you, for free. There's no cost for that, and no obligation. Want me to set that up? A quick yes or no is perfect.",
   resp_no_commit:
     "Nothing at all — saying yes here just means I connect you with a specialist for a free quote. It's not a purchase. There's no cost, and no obligation. Want me to set that up? A quick yes or no is perfect.",
+  // Butch round-2 distillation (8/14): with inquiry + price answered, the top
+  // unanswered class became process / scope / who-will-I-talk-to.
+  resp_specialist:
+    "Sure — you'd be talking with a licensed remodeling specialist for your area. They go over what you have in mind, walk you through the options and scope, and put together an exact quote for you, for free. No cost, no obligation. Want me to set that up? A quick yes or no is perfect.",
   // A-priori compliance response (legal/recording/consent probes — the hobby
   // litigator path): confirm DNC plainly, no selling past it, no legal claims.
   resp_compliance:
