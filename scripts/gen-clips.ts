@@ -41,6 +41,11 @@ const CLIPS: Record<string, string> = {
   cv_ack_1: 'Okay, got it.',
   cv_ack_2: 'Alright, thanks.',
   cv_ack_3: 'Okay, noted.',
+  // Variant expansion (corpus sweep 8/14, 1,387 calls: neutral acks repeated
+  // within-call in ~10% of their calls, question acks ~6% — an identical
+  // render replayed in one call reads robotic; Sean: variants, not replays).
+  cv_ack_4: 'Sure — understood.',
+  cv_ack_5: 'Right, okay then.',
   ack_pos_1: 'Great, thanks!',
   ack_pos_2: 'Perfect, thank you.',
   ack_soft_1: 'Okay, fair enough.',
@@ -49,6 +54,7 @@ const CLIPS: Record<string, string> = {
   // doesn't explain is incongruous — the "one second" lesson again)
   ack_question_1: "That's a good question.",
   ack_question_2: 'Ah — good question.',
+  ack_question_3: "That's a fair question.",
   ack_sorry_1: 'I understand — sorry about that.',
   ack_sorry_2: 'I hear you, apologies.',
   ack_pleasantry_1: 'Doing great, thanks for asking!',
@@ -66,6 +72,11 @@ const CLIPS: Record<string, string> = {
   // Intro-Repeat discipline). Played, then the question replays.
   regreet_identity:
     "Of course — my name is Claire, and I'm calling from Five Strata on a recorded line. Happy to repeat that any time. So —",
+  // Second-ask variant (corpus sweep 8/14: regreet_identity was the worst
+  // within-call repeater at 35% — Doris asks twice, and the identical render
+  // is a tell).
+  regreet_identity_2:
+    "Sure — once more, it's Claire, with Five Strata, on a recorded line. No trouble at all. So —",
   // Butch round-1 distillations (8/14): the household-inquiry ask fired in
   // 10/10 calls, price in most — answered questions, not acks. resp_price /
   // resp_no_commit end in the confirm ask so the confirm turn reads the yes/no;

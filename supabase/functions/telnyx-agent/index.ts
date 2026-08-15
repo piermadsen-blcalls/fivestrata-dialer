@@ -31,7 +31,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const TELNYX = 'https://api.telnyx.com/v2';
 const REPLAY_TOLERANCE_SECONDS = 300;
 const LLM_MODEL = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
-const ACKS = ['cv_ack_1', 'cv_ack_2', 'cv_ack_3'];
+const ACKS = ['cv_ack_1', 'cv_ack_2', 'cv_ack_3', 'cv_ack_4', 'cv_ack_5'];
 const RESPONSES = ['cv_resp_positive', 'cv_resp_negative', 'cv_resp_unclear'];
 const CONSENT_FALLBACK_MS = 6_000;
 const RATING_FALLBACK_MS = 20_000;
@@ -45,6 +45,8 @@ interface CallState {
   phase: 'dialing' | 'greeting' | 'consent_listen' | 'question' | 'rating_listen' | 'confirm_listen' | 'wrapup' | 'lineup' | 'done';
   ackFired?: boolean;
   lastAck?: string;
+  acksUsed?: string[]; // acks heard this call (corpus sweep 8/14: identical replay reads robotic)
+  idAsks?: number; // identity asks answered — 2nd+ gets the variant render
   greet?: string; // greeting media_name — set via the dial command's client_state (demo uses demo_greet)
   question?: string; // question media_name — vertical slots q_windows/q_flooring/q_bathroom/q_solar; default cv_q1 (rating)
   goodbye?: string; // goodbye media_name — default cv_goodbye (meta); verticals use goodbye_biz
@@ -257,7 +259,7 @@ const play = (ccid: string, media: string, state: CallState) =>
 const ACK_SETS: Record<string, string[]> = {
   positive: ['ack_pos_1', 'ack_pos_2'],
   soft: ['ack_soft_1', 'ack_soft_2'],
-  question: ['ack_question_1', 'ack_question_2'],
+  question: ['ack_question_1', 'ack_question_2', 'ack_question_3'],
   sorry: ['ack_sorry_1', 'ack_sorry_2'],
   pleasantry: ['ack_pleasantry_1', 'ack_pleasantry_2'],
   neutral: ACKS, // cv_ack_1..3
@@ -301,9 +303,15 @@ function ackCategory(t: string): string {
 
 function pickAck(state: CallState, transcript = ''): string {
   const set = ACK_SETS[ackCategory(transcript)] ?? ACKS;
-  const pool = set.filter((a) => a !== state.lastAck);
+  // Corpus sweep (8/14, 1,387 calls): the same render twice in one call is
+  // instantly read as robotic — prefer variants unheard THIS CALL, then fall
+  // back to non-consecutive.
+  const used = state.acksUsed ?? [];
+  const fresh = set.filter((a) => !used.includes(a));
+  const pool = fresh.length ? fresh : set.filter((a) => a !== state.lastAck);
   const ack = pool[Math.floor(Math.random() * pool.length)] ?? set[0];
   state.lastAck = ack;
+  state.acksUsed = [...used, ack].slice(-12);
   return ack;
 }
 
@@ -613,10 +621,12 @@ async function handle(data: any): Promise<void> {
     // trace: these asks land DURING clips (callers interrupt), so this is a
     // barge-in — stop playback, answer, resume with the question (the regreet
     // covers identity + recorded-line, the question ends with the consent ask).
-    const next: CallState = { ...state, phase: 'question', regreets: (state.regreets ?? 0) + 1, ackFired: false, pending: undefined };
+    // 2nd ask gets the variant render (corpus sweep 8/14: regreet_identity
+    // repeated within-call in 35% of its calls — the worst repeat offender).
+    const next: CallState = { ...state, phase: 'question', regreets: (state.regreets ?? 0) + 1, idAsks: (state.idAsks ?? 0) + 1, ackFired: false, pending: undefined };
     if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
       await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
-      await play(ccid, 'regreet_identity', next);
+      await play(ccid, (state.idAsks ?? 0) === 0 ? 'regreet_identity' : 'regreet_identity_2', next);
       await play(ccid, next.question ?? 'cv_q1', next);
     }
   } else if (

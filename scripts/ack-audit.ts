@@ -20,8 +20,12 @@ const ACK_TEXT: Record<string, { cat: string; text: string }> = {
   ack_pos_2: { cat: 'positive', text: 'Perfect, thank you.' },
   ack_soft_1: { cat: 'soft', text: 'Okay, fair enough.' },
   ack_soft_2: { cat: 'soft', text: 'Alright, I hear you.' },
+  // NB: keep these in sync with gen-clips.ts — ack_question_2 carried the
+  // stale pre-v3 promissory text until 8/14, so the judge graded wording the
+  // caller never heard (question-ack scores before then are slightly off).
   ack_question_1: { cat: 'question', text: "That's a good question." },
-  ack_question_2: { cat: 'question', text: 'Sure, happy to explain.' },
+  ack_question_2: { cat: 'question', text: 'Ah — good question.' },
+  ack_question_3: { cat: 'question', text: "That's a fair question." },
   ack_sorry_1: { cat: 'sorry', text: 'I understand — sorry about that.' },
   ack_sorry_2: { cat: 'sorry', text: 'I hear you, apologies.' },
   ack_pleasantry_1: { cat: 'pleasantry', text: 'Doing great, thanks for asking!' },
@@ -29,6 +33,8 @@ const ACK_TEXT: Record<string, { cat: string; text: string }> = {
   cv_ack_1: { cat: 'neutral', text: 'Okay, got it.' },
   cv_ack_2: { cat: 'neutral', text: 'Alright, thanks.' },
   cv_ack_3: { cat: 'neutral', text: 'Okay, noted.' },
+  cv_ack_4: { cat: 'neutral', text: 'Sure — understood.' },
+  cv_ack_5: { cat: 'neutral', text: 'Right, okay then.' },
 };
 const IDEALS = ['positive', 'soft', 'question', 'sorry', 'neutral', 'pleasantry', 'none_appropriate'];
 

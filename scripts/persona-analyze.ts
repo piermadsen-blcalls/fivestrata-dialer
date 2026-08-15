@@ -15,10 +15,10 @@ const RESPONSES = ['resp_compliance', 'resp_interested', 'resp_not_interested', 
 const ACK_CATS: Record<string, string> = {
   ack_pos_1: 'positive', ack_pos_2: 'positive',
   ack_soft_1: 'soft', ack_soft_2: 'soft',
-  ack_question_1: 'question', ack_question_2: 'question',
+  ack_question_1: 'question', ack_question_2: 'question', ack_question_3: 'question',
   ack_sorry_1: 'sorry', ack_sorry_2: 'sorry',
   ack_pleasantry_1: 'pleasantry', ack_pleasantry_2: 'pleasantry',
-  cv_ack_1: 'neutral', cv_ack_2: 'neutral', cv_ack_3: 'neutral',
+  cv_ack_1: 'neutral', cv_ack_2: 'neutral', cv_ack_3: 'neutral', cv_ack_4: 'neutral', cv_ack_5: 'neutral',
 };
 
 const calls = readFileSync(LOG, 'utf8').trim().split('\n').map((l) => JSON.parse(l)).filter((c) => c.ccid);
