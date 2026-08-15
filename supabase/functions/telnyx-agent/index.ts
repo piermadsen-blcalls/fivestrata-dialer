@@ -417,6 +417,110 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
 // Respond — or, if the judge is unsure about an engaged caller, CONFIRM once
 // instead of guessing (Sean 8/14: Maria at 98%+ — structure beats classifier
 // tuning; mirrors the production TCPA unclear-yes confirm discipline).
+// --- "Time is money" viability monitor (Sean 8/14): periodically estimate
+// P(convert) and END calls that obviously won't — every minute on a doomed
+// call is a minute not dialing the next lead, plus carrier spend. ASYMMETRY
+// MANDATE: killing a convertible call is the cardinal sin; letting a rambler
+// run is merely a tax. Layered safeguards before firing:
+//   deterministic vetoes (engagement ever shown / call < 25s / confirm phase)
+//   -> 2 consecutive low scores from the cheap model
+//   -> 70B floor-manager final judgment
+//   -> CAS kill with graceful exit clip.
+// Stateless by construction: conversation + call age derive from call_events;
+// only MEM holds the low-score streak (an isolate miss resets it — which
+// biases AGAINST killing, the safe direction).
+const VIABILITY_MODEL = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
+const KILL_JUDGE_MODEL = 'meta-llama/Llama-3.3-70B-Instruct';
+const VIABILITY_MIN_AGE_MS = 25_000;
+const VIABILITY_LOW_SCORE = 20;
+const VIABILITY_LOWS_TO_JUDGE = 2;
+const lowStreak = new Map<string, number>();
+
+function logViability(ccid: string, payload: Record<string, unknown>): void {
+  waitUntil(
+    supabase
+      .from('call_events')
+      .insert({ event_type: 'aicc.viability', call_control_id: ccid, occurred_at: new Date().toISOString(), payload })
+      .then(({ error }) => {
+        if (error) console.error('viability log failed:', error.message);
+      }),
+  );
+}
+
+async function viabilityLLM(model: string, system: string, user: string, maxTokens: number): Promise<string> {
+  const apiKey = await getApiKey();
+  const res = await fetch(`${TELNYX}/ai/chat/completions`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, max_tokens: maxTokens, messages: [{ role: 'system', content: system }, { role: 'user', content: user }] }),
+  });
+  const body: any = await res.json().catch(() => ({}));
+  return (body?.choices?.[0]?.message?.content ?? '').trim();
+}
+
+async function viabilityTick(ccid: string): Promise<void> {
+  try {
+    const state = await loadState(ccid);
+    if (['confirm_listen', 'wrapup', 'done', 'lineup'].includes(state.phase) || state.mode === 'persona') return;
+    // Derive everything from the fact stream — no state-machine coupling.
+    const { data: rows } = await supabase
+      .from('call_events')
+      .select('event_type,occurred_at,payload')
+      .eq('call_control_id', ccid)
+      .order('id', { ascending: true });
+    if (!rows?.length) return;
+    const t0 = rows.find((e: any) => e.event_type === 'call.initiated')?.occurred_at;
+    const ageMs = t0 ? Date.now() - new Date(t0).getTime() : 0;
+    if (ageMs < VIABILITY_MIN_AGE_MS) return;
+    const saidAll = rows
+      .filter((e: any) => e.event_type === 'call.transcription' && e.payload?.transcription_data?.is_final !== false)
+      .map((e: any) => (e.payload?.transcription_data?.transcript ?? '').trim())
+      .filter((t: string) => t.length > 1)
+      .join(' | ')
+      .slice(-700);
+    if (saidAll.length < 20) return;
+    // DETERMINISTIC VETO: any engagement ever shown -> never self-destruct.
+    if (isInterested(saidAll) || /(price|cost|how much|financ|schedule|consultation|quote|interested)/.test(normalizeUtterance(saidAll))) {
+      lowStreak.delete(ccid);
+      return;
+    }
+    const raw = await viabilityLLM(
+      VIABILITY_MODEL,
+      'You monitor a live outbound home-improvement sales call. Given everything the CALLER has said so far, estimate the probability (0-100) that this caller will ultimately agree to the offer or transfer. Reply ONLY an integer 0-100.',
+      `Caller so far: "${saidAll}"`,
+      6,
+    );
+    const score = parseInt(raw.match(/\d+/)?.[0] ?? 'NaN', 10);
+    if (!Number.isFinite(score)) return;
+    const lows = score <= VIABILITY_LOW_SCORE ? (lowStreak.get(ccid) ?? 0) + 1 : 0;
+    lowStreak.set(ccid, lows);
+    logViability(ccid, { score, lows, ageSec: Math.round(ageMs / 1000), phase: state.phase });
+    if (lows < VIABILITY_LOWS_TO_JUDGE) return;
+    const verdict = await viabilityLLM(
+      KILL_JUDGE_MODEL,
+      'You are a seasoned call-center floor manager. An agent is on an outbound home-improvement call. Based on everything the caller has said, decide whether to pull the agent off the call. Reply KILL only if there is VIRTUALLY NO CHANCE this caller converts; when in any doubt, reply CONTINUE. Reply exactly one word: KILL or CONTINUE.',
+      `Caller so far: "${saidAll}"`,
+      4,
+    );
+    logViability(ccid, { judge: verdict.slice(0, 12), ageSec: Math.round(ageMs / 1000) });
+    if (!/^KILL/i.test(verdict)) {
+      lowStreak.set(ccid, 0);
+      return;
+    }
+    const cur = await loadState(ccid);
+    if (['confirm_listen', 'wrapup', 'done'].includes(cur.phase)) return;
+    const next: CallState = { ...cur, phase: 'wrapup', ackFired: true };
+    if (await casTransition(ccid, `"phase":"${cur.phase}"`, next)) {
+      logViability(ccid, { action: 'self_destruct', ageSec: Math.round(ageMs / 1000) });
+      await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+      waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+      await play(ccid, 'exit_disengage', next);
+    }
+  } catch (e) {
+    console.error('viabilityTick failed:', e);
+  }
+}
+
 async function respondOrConfirm(ccid: string, next: CallState, said: string): Promise<void> {
   const q = next.question ?? 'cv_q1';
   const { clip, ms } = await chooseClip(said, q);
@@ -561,6 +665,16 @@ async function handle(data: any): Promise<void> {
   const state = await loadState(ccid, p.client_state);
   if (state.mode === 'persona') {
     await handlePersona(ccid, et, p, state);
+    return;
+  }
+
+  // Time-is-money monitor: fire-and-forget on every caller final; never
+  // touches the turn flow.
+  if (et === 'call.transcription' && p.transcription_data?.is_final !== false) {
+    waitUntil(viabilityTick(ccid));
+  }
+  if (et === 'call.playback.ended' && p.media_name === 'exit_disengage') {
+    await telnyxCmd(`/calls/${ccid}/actions/hangup`, {});
     return;
   }
 

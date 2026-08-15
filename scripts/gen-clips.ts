@@ -131,6 +131,9 @@ const CLIPS: Record<string, string> = {
   resp_not_interested:
     "No problem at all — I'll make a note of that, and we won't call you about this again. Thanks for your time!",
   goodbye_biz: 'Thanks so much for your time. Have a great day!',
+  // Time-is-money graceful early exit (self-destruct path — brand-safe, warm)
+  exit_disengage:
+    "You know what — it sounds like now might not be the best time, so I'll let you go. Thanks so much for chatting with me, and have a wonderful day!",
   // Warm-transfer leg (W2 / P0 #8)
   xfer_announce:
     "Great news — I'm connecting you to a specialist right now. One moment please.",
