@@ -71,7 +71,8 @@ recovery turn (accumulated, fragment-proof, silence-spending, question-as-engage
 
 **Still queued:**
 - **Within-call clip repetition → variant recordings (Sean, 8/14, priority #1 after the Butch
-  batteries):** analyze which clips play 2+ times in the same call across the Butch dataset;
+  batteries):** analyze which clips play 2+ times in the same call across EVERY recorded call
+  in call_events (all personas, proofs, rehearsals — not just Butch);
   any repeat-prone clip gets secondary/tertiary renders (slightly varied wording/prosody) behind
   a no-repeat picker — an identical replay is instantly read as robotic. Subsumes the older
   per-category ack no-repeat item below.
