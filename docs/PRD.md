@@ -326,7 +326,9 @@ Keeps every call for five years, stores all recordings, and runs the heavy overn
 produces the suggestions in §6. It never touches a live call. If it went down for a week, calling
 would carry on normally and nobody on a call would notice.
 
-**4. The control panel** (a website built with Next.js, hosted on Netlify)
+**4. The control panel** (a website built with Next.js, hosted on Vercel — ✅ Sean 8/14,
+matching Pier's prototype deploy path; draft said Netlify. Build scope:
+`architecture/control-panel-scope.md`)
 What the team logs into, and where every feature in §6 lives. It reads live information from the
 brain and reports from the long-term memory.
 
@@ -357,7 +359,7 @@ flowchart LR
     SUG["Overnight suggestions"]
   end
 
-  UI["4 · Control panel<br/>(Next.js / Netlify)"]
+  UI["4 · Control panel<br/>(Next.js / Vercel)"]
 
   LC --> API
   UP --> API
@@ -642,7 +644,7 @@ yet. That's the distinction worth holding.
 | W5 | Cost approval | Running-cost outline approved | Sam / Tatevik (Pier drives) |
 | W6 | Voice pack pipeline | First pack (lines + variations) generated for the pilot script | Sean + Ashley |
 | W7 | Reporting sign-off | Ops confirms the views match the workbook they run today | Sean → Ashley |
-| W8 | Control panel | Look-only screens live, then the screens that change things | Pier |
+| W8 | Control panel | Look-only screens live, then the screens that change things (scope + phases: `architecture/control-panel-scope.md` — initial layer pulled forward, Sean 8/14) | Pier (design ref = his prototype) + Sean (initial build) |
 
 ## 14. Dependencies and stakeholders
 
