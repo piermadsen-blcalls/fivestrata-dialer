@@ -15,9 +15,14 @@ if (!apiKey) {
 const packDir = resolve(process.argv[2] ?? 'C:/Claude/fivestrata-dialer/voice-packs/dev-pack-0');
 const auth = { Authorization: `Bearer ${apiKey}` };
 
-const files = readdirSync(packDir).filter((f) => /\.(wav|mp3)$/i.test(f));
+// Optional name filter (argv[3+]): upload only these clip names — patch
+// uploads must not touch the rest of the pack.
+const ONLY = process.argv.slice(3);
+const files = readdirSync(packDir)
+  .filter((f) => /\.(wav|mp3)$/i.test(f))
+  .filter((f) => !ONLY.length || ONLY.includes(basename(f).replace(/\.(wav|mp3)$/i, '')));
 if (files.length === 0) {
-  console.error(`No .wav/.mp3 files in ${packDir}`);
+  console.error(`No .wav/.mp3 files in ${packDir}${ONLY.length ? ` matching [${ONLY.join(', ')}]` : ''}`);
   process.exit(1);
 }
 

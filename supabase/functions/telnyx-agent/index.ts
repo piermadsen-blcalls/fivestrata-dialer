@@ -329,6 +329,28 @@ function isIdentityAsk(t: string): boolean {
   return /(who is this|whos this|who s this|who are you|whos calling|who is calling|who am i (talking|speaking) (to|with)|say that again|repeat that|didnt catch (that|your name)|what was your name|what company (is this|are you))/.test(s);
 }
 
+// Inquiry-source ask (Butch battery round 1, 8/14: "this about that thing my
+// wife filled out?" fired in 10/10 calls — a household member submitting the
+// lead is the NORMAL case for shared households, and it deserves an ANSWER).
+function isInquirySourceAsk(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return /((wife|husband|spouse|somebody|someone).{0,30}(fill|submit|request|sign)|(fill|filled|submit|submitted|request|requested|sign|signed).{0,30}(wife|husband|spouse)|what( is|s) this (about|regarding|for|exactly)|what is this exactly|what( is|s) (this|the) call about|what exactly is this (call )?about|purpose of (this|the) call|why are you calling|what( is|s) the reason (for|of) (this|the|your) call|didnt (submit|request|sign up|fill))/.test(s);
+}
+
+// Price / commitment asks (Butch battery round 1, 8/14: price asked in most
+// calls, never answered — the engaged-question tiebreak transferred him with
+// the question hanging, which a no-BS caller reads as a steamroll). These are
+// engagement, but they get an ANSWER first; the answer clip ends in the
+// confirm ask, so the confirm machinery reads the yes/no.
+function isCommitmentAsk(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return /(committ|obligat|do i have to (buy|pay|sign)|have to (buy|sign)|locked in|lock me in|signing (a )?contract|sign anything|whats the catch|what is the catch)/.test(s);
+}
+function isPriceAsk(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return /(how much|price|pricing|ballpark|cost|costs|costing|expensive|cheap|afford)/.test(s);
+}
+
 // A-priori compliance care (Gerald the hobby litigator, Sean 8/11): legal /
 // recording / consent probes route DETERMINISTICALLY to a careful DNC
 // confirmation — no LLM discretion, no selling past it, checked before
@@ -603,6 +625,46 @@ async function handle(data: any): Promise<void> {
     if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
       await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
       await play(ccid, `${next.question ?? 'cv_q1'}_short`, next);
+    }
+  } else if (
+    et === 'call.transcription' &&
+    ['greeting', 'consent_listen', 'question', 'rating_listen'].includes(state.phase) &&
+    isFinal &&
+    transcript.length > 0 &&
+    (state.question ?? '').startsWith('q_') &&
+    isInquirySourceAsk(transcript) &&
+    (state.regreets ?? 0) < 3
+  ) {
+    // "This about that thing my wife filled out?" -> answer the inquiry
+    // source, then the SHORT re-ask (shares the regreet cap; barge-in like
+    // the identity regreet — these land DURING clips).
+    const next: CallState = { ...state, phase: 'question', regreets: (state.regreets ?? 0) + 1, ackFired: false, pending: undefined };
+    if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
+      await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+      await play(ccid, 'regreet_inquiry', next);
+      await play(ccid, `${next.question ?? 'cv_q1'}_short`, next);
+    }
+  } else if (
+    et === 'call.transcription' &&
+    ['consent_listen', 'question', 'rating_listen'].includes(state.phase) &&
+    isFinal &&
+    transcript.length > 2 &&
+    (state.question ?? '').startsWith('q_') &&
+    (isCommitmentAsk(transcript) || isPriceAsk(transcript)) &&
+    !state.confirmAsked
+  ) {
+    // Price/commitment ask -> deterministic answer clip ending in the confirm
+    // ask; the confirm turn reads the yes/no. Spends the one confirm slot on
+    // a real answer instead of a generic re-ask.
+    const clip = isCommitmentAsk(transcript) ? 'resp_no_commit' : 'resp_price';
+    const c: CallState = { ...state, phase: 'confirm_listen', confirmAsked: true, ackFired: true, pending: undefined };
+    if (await casTransition(ccid, `"phase":"${state.phase}"`, c)) {
+      await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+      await play(ccid, clip, c);
+      armFallback(ccid, '"phase":"confirm_listen"', 15_000, { ...c, phase: 'wrapup' }, async () => {
+        await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
+        await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
+      });
     }
   } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
     // A decline at consent is an opt-out, not a yes (8/10 rehearsal finding).

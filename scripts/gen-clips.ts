@@ -66,6 +66,16 @@ const CLIPS: Record<string, string> = {
   // Intro-Repeat discipline). Played, then the question replays.
   regreet_identity:
     "Of course — my name is Claire, and I'm calling from Five Strata on a recorded line. Happy to repeat that any time. So —",
+  // Butch round-1 distillations (8/14): the household-inquiry ask fired in
+  // 10/10 calls, price in most — answered questions, not acks. resp_price /
+  // resp_no_commit end in the confirm ask so the confirm turn reads the yes/no;
+  // both land the transfer-not-purchase hook.
+  regreet_inquiry:
+    "Yes, exactly — someone in your household recently asked for information about this, and I'm just following up on that request. So —",
+  resp_price:
+    "Totally fair question. The honest answer is, it depends on the size and scope of the project, so I can't quote it myself — the specialist puts together an exact quote for you, for free. There's no cost for that, and no obligation. Want me to set that up? A quick yes or no is perfect.",
+  resp_no_commit:
+    "Nothing at all — saying yes here just means I connect you with a specialist for a free quote. It's not a purchase. There's no cost, and no obligation. Want me to set that up? A quick yes or no is perfect.",
   // A-priori compliance response (legal/recording/consent probes — the hobby
   // litigator path): confirm DNC plainly, no selling past it, no legal claims.
   resp_compliance:
@@ -115,8 +125,12 @@ const CLIPS: Record<string, string> = {
     "It looks like our specialist isn't available right now. We'll follow up shortly. Goodbye!",
 };
 
+// Optional name filter: `gen-clips.ts regreet_inquiry resp_price` regenerates
+// only those clips — mid-experiment patches must not re-render known-good audio.
+const ONLY = process.argv.slice(2);
 mkdirSync(OUT_DIR, { recursive: true });
 for (const [name, text] of Object.entries(CLIPS)) {
+  if (ONLY.length && !ONLY.includes(name)) continue;
   const res = await fetch(`${API}/text-to-speech/speech`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
