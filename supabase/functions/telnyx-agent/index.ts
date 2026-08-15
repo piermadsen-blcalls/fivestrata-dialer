@@ -450,9 +450,13 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
 //   -> 2 consecutive low scores from the cheap model
 //   -> 70B floor-manager final judgment
 //   -> CAS kill with graceful exit clip.
-// Stateless by construction: conversation + call age derive from call_events;
-// only MEM holds the low-score streak (an isolate miss resets it — which
-// biases AGAINST killing, the safe direction).
+// Stateless by construction: conversation, call age AND the low-score streak
+// all derive from call_events. (v1 held the streak in per-isolate MEM; the
+// 8/15 verify battery proved isolate churn resets it every webhook — 70 low
+// ticks, streak never passed 2, the judge was NEVER invoked. The self-destruct
+// was structurally disarmed. Ticks are already logged, so the streak reads
+// its own trail; concurrent-tick races undercount, which biases AGAINST
+// killing — the safe direction.)
 const VIABILITY_MODEL = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
 const KILL_JUDGE_MODEL = 'meta-llama/Llama-3.3-70B-Instruct';
 const VIABILITY_MIN_AGE_MS = 25_000;
@@ -461,7 +465,6 @@ const VIABILITY_MIN_AGE_MS = 25_000;
 // = 10-point margin under the trap persona.
 const VIABILITY_LOW_SCORE = 10;
 const VIABILITY_LOWS_TO_JUDGE = 3;
-const lowStreak = new Map<string, number>();
 
 function logViability(ccid: string, payload: Record<string, unknown>): void {
   waitUntil(
@@ -508,7 +511,6 @@ async function viabilityTick(ccid: string): Promise<void> {
     if (saidAll.length < 20) return;
     // DETERMINISTIC VETO: any engagement ever shown -> never self-destruct.
     if (isInterested(saidAll) || /(price|cost|how much|financ|schedule|consultation|quote|interested)/.test(normalizeUtterance(saidAll))) {
-      lowStreak.delete(ccid);
       return;
     }
     const raw = await viabilityLLM(
@@ -519,8 +521,15 @@ async function viabilityTick(ccid: string): Promise<void> {
     );
     const score = parseInt(raw.match(/\d+/)?.[0] ?? 'NaN', 10);
     if (!Number.isFinite(score)) return;
-    const lows = score <= VIABILITY_LOW_SCORE ? (lowStreak.get(ccid) ?? 0) + 1 : 0;
-    lowStreak.set(ccid, lows);
+    // Streak from the trail: prior logged ticks carry it across isolates. A
+    // logged judge event resets it (a KILL verdict would have ended the call,
+    // so any judge in the trail was a CONTINUE — don't re-summon it per tick).
+    let lows = 0;
+    for (const e of rows.filter((ev: any) => ev.event_type === 'aicc.viability')) {
+      if (e.payload?.judge !== undefined) lows = 0;
+      else if (e.payload?.score !== undefined) lows = Number(e.payload.score) <= VIABILITY_LOW_SCORE ? lows + 1 : 0;
+    }
+    lows = score <= VIABILITY_LOW_SCORE ? lows + 1 : 0;
     logViability(ccid, { score, lows, ageSec: Math.round(ageMs / 1000), phase: state.phase });
     if (lows < VIABILITY_LOWS_TO_JUDGE) return;
     const verdict = await viabilityLLM(
@@ -530,10 +539,7 @@ async function viabilityTick(ccid: string): Promise<void> {
       4,
     );
     logViability(ccid, { judge: verdict.slice(0, 12), ageSec: Math.round(ageMs / 1000) });
-    if (!/^KILL/i.test(verdict)) {
-      lowStreak.set(ccid, 0);
-      return;
-    }
+    if (!/^KILL/i.test(verdict)) return; // the logged judge event resets the trail streak
     const cur = await loadState(ccid);
     if (['confirm_listen', 'wrapup', 'done'].includes(cur.phase)) return;
     const next: CallState = { ...cur, phase: 'wrapup', ackFired: true };

@@ -49,6 +49,23 @@ the ask he hadn't heard yet.
 | Butch (must-transfer) | 8/10 | **10/10** (after wave 2; wave 1 alone: 5/10) |
 | talker (fake transfers) | 9/20 interested | **1/15** |
 
+## Fix wave 3 — the sword actually swings (stateless streak)
+
+The wave-1 battery revealed the retuned kill path had **never fired**: 70 low ticks on
+talker, streak never passed 2, the 70B judge invoked ZERO times. Cause: `lowStreak` lived
+in per-isolate MEM and edge isolate churn reset it between webhooks — the v1 comment
+("an isolate miss resets it — biases against killing") was true and fatal. Fix: the
+streak now derives from the call's own `aicc.viability` trail in `call_events` (the log
+IS the state); a logged judge event resets it (any judge in the trail was a CONTINUE).
+Concurrent-tick races undercount → still biased against killing.
+
+**Sword battery (20 calls): 8/15 wasters killed** (talker 5/8, confused_elder 3/7) at
+avg kill age 33–36s — ~21s saved per killed call vs the kept-waster baseline, plus
+carrier minutes. **0 false positives: Butch (the flat-20 trap) 0/5 killed, 4/5
+transferred.** First live `exit_disengage` fires ever. Residual fake transfers 2/15
+(one talker, one elder) — consistent with the ~7% floor, watch not chase.
+Log: `scratch/persona-sword-8-15.jsonl`.
+
 ## Battery-hygiene finding (process, not agent)
 
 The first battery's Maria n=1–6 were **discarded as contaminated**: a leftover
