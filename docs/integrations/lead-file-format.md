@@ -22,6 +22,11 @@ transports of a `lead_intake` connection.
    *adapter*, never the internal model. Both transports normalize into one canonical inbound
    lead record whose field set is the **union** of this file and the API §3.2 payload; adding
    or swapping a transport must not touch the queue/router/engine.
+3. **Fresh vs revive is an AI-tuning benchmark, not just a routing flag** (noted same day):
+   does Claire need different strategies per dataset, and can that be learned and forked?
+   `lead_type` must therefore flow through to the per-dial/per-turn fact rows so every
+   downstream analysis can segment on it. Experiment design in `../open-questions.md`
+   (design section, "Fresh-vs-revive as an AI-tuning benchmark").
 
 ## Column dictionary (18 columns, as delivered)
 
