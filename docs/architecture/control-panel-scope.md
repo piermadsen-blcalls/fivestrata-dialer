@@ -67,8 +67,9 @@ pattern), all scoped by tenant/program via RLS. Ship order = what's plumbable no
    the running system from day one
 3. **DNC console** — lookup/add/remove fronting the live `fivestrata-inbound` `dnc`/`undnc`
    endpoints (server-side, same key auth)
-4. **Lead intake** — manual file upload → `fivestrata-inbound /leads` (the "by-hand" door
-   from PRD §6), plus undo-by-OLeadID via `leads/remove`
+4. **Lead intake** — CSV mapping wizard (program-scoped: header auto-map onto canonical
+   core + `program_field_defs`, validation report, batch commit + batch undo — full design
+   in `tenant-lead-sourcing.md` §1), fronting `fivestrata-inbound /leads` semantics
 5. **Clip/script manager** — list, play back, upload → Telnyx media storage (the
    `clips-upload.ts` path, server-side), version tags; the ack-improvement loop's clip edits
    move here from laptop scripts
@@ -83,11 +84,21 @@ console with no laptop scripts; PoC dashboard route deleted.
 ### Phase 2 — Engine-coupled controls (lands WITH the queue-engine work)
 Screens whose backend doesn't exist yet — the console builds the config surface first and
 the engine is written to read it (config-first, so nothing here is throwaway):
-1. Campaign builder (label → program campaign, cadence, hours, `max_attempts`)
+1. Campaign builder (label → program campaign; cadence config per
+   `tenant-lead-sourcing.md` §5: `max_dials_per_lead`, `min_rest_hours`, daily dial
+   budget, calling hours)
 2. Pacing/caps + per-campaign stop switches (beyond the global `dialer_config` switches)
 3. Split-test config (A/B assignment on clip/script versions)
+4. Buyer-pool CSV wizard + per-program transfer strategy (internal pool for non-Command-
+   Center tenants — `tenant-lead-sourcing.md` §2)
+5. Script builder: ingest script → tagged `script_lines`, **must-hit lines compliance-
+   locked** and enforced as state-machine gates, clips generated per voice pack
+   (`tenant-lead-sourcing.md` §3)
+6. Sourcing panel: source picker + price band + combine toggle per program
+   (`tenant-lead-sourcing.md` §4; consent-scope gate mandatory)
 **Gate:** the dial queue engine reads its entire runtime config from tables the console
-writes; a full operating day requires no laptop scripts.
+writes; a full operating day requires no laptop scripts. Schema for all of the above =
+migration 0007 draft (see `tenant-lead-sourcing.md`).
 
 ### Phase 3 — Tenant onboarding + learning loop (timed to the AutoWeb engagement)
 Onboarding wizard that writes playbook rows (field defs, dispo mappings, calling hours,

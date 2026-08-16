@@ -31,6 +31,8 @@ Project context for Claude Code. Read this first, then the files in "Repo map" b
 | `docs/architecture/multi-tenant-topology.md` | One-page multi-tenant explainer + block diagram (the anti-confusion doc): many front doors, one DB, one engine; Pier↔Sean vocabulary crosswalk (7/31) |
 | `docs/architecture/snowflake-value.md` | Snowflake justification for Pier: the 9 actionable outputs/KPIs, `analytics_directives` return-path contract into Supabase ("summon when available"), recordings-to-S3 catalog, benefits vs plain Supabase (7/31) |
 | `docs/architecture/concurrency-queueing.md` | Telnyx concurrency/CPS caps as config, slot-ledger pacer (event-driven, no polling), backpressure queue + cap-visibility KPIs, sizing math to 2M dials/day (7/31, fills Pier's 7/29 gap) |
+| `docs/architecture/control-panel-scope.md` | W8 console build scope (✅ Sean 8/14: Vercel, no look-only tier, pulled forward on AutoWeb demand): stack, tenant backbone (migration 0005 APPLIED 8/14), phases + gates, C1–C7 unblockers |
+| `docs/architecture/tenant-lead-sourcing.md` | Tenant intake & coordination design (Sean 8/15): CSV dial-pool + buyer-pool wizards, script/must-hit ingestion + deterministic enforcement, source picker/price tiers + consent-scope gate, per-program cadence (max dials, rest hours), AICC carve-out + Meridius/Transfer-Client cap coordination vs KB/TD/CD; migration 0007 draft |
 | `docs/reporting/kb-wi-dashboard-spec.md` | Ashley's daily dashboard dissected (T9): fact grains, KPI dictionary, KB cost model, schema mapping |
 | `docs/call-scripts/` | Call-center script workbooks per vertical |
 | `scripts/` | verify-setup, e2e-test, rest-introspect, v1-deepdive, v1-archive (Node/tsx) |
