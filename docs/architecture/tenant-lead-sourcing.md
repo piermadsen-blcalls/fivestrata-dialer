@@ -154,7 +154,7 @@ Grounded in the fivestratadb/fivestrataops/meridius picture:
   pool (§2), own sources (§4), own cadence (§5). If a tenant later wants FiveStrata
   distribution, that's a `program_connections` transport, not a rebuild.
 
-## Schema delta (migration 0007 — DRAFT, not applied)
+## Schema delta (migration 0007 — ✅ APPLIED 2026-08-15, Sean-authorized; verified: 3 seed sources, cadence + buyer columns, must-hit trigger)
 
 `lead_batches` · `lead_sources` + `leads.source_id`/`acquisition_cost`/`batch_id` ·
 `script_lines` + `voice_clips.script_line_id` · `clients` buyer columns
