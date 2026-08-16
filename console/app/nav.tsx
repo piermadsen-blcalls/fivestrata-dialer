@@ -9,6 +9,9 @@ export function Nav({ email }: { email: string }) {
       <div className="flex items-center gap-5">
         <span className="font-semibold">AICC</span>
         <Link href="/">Overview</Link>
+        <Link href="/programs">Programs</Link>
+        <Link href="/intake">Intake</Link>
+        <Link href="/buyers">Buyers</Link>
         <Link href="/controls">Controls</Link>
       </div>
       <form action="/auth/signout" method="post" className="flex items-center gap-3">
