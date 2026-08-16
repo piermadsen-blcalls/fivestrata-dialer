@@ -1,4 +1,6 @@
-// chanGapMs distributions: clean vs +lag arms
+// Channel-detector audit: chanGapMs distributions per battery arm (clean vs +lag).
+// Validates the degraded-line flag before adaptive logic keys on it.
+// Run: node --import tsx scripts/chan-gap-audit.ts  (edit LOG path inside for other batteries)
 import 'dotenv/config';
 import { readFileSync } from 'node:fs';
 const supabaseUrl = process.env.SUPABASE_URL ?? '';
