@@ -13,8 +13,10 @@ the Teams export repeats the same call ~5×, content dedupes cleanly).
 
 - **✅ Phase 1 greenlit (Ammie, ~10:54): "let's get phase one going first"** — post-submission
   lead-quality validation dialing. Sean's stated build estimate: **"this week"** (~7:03).
-- AutoWeb's entry program is therefore **lead-quality validation**, not the trade-in
-  acquisition candidate the roadmap had penciled in (roadmap §6 open item updated).
+- AutoWeb's entry program is therefore **lead-quality validation**. (The roadmap's
+  "trade-in acquisition" default was Sean's own placeholder — deliberately something
+  fundamentally different, to keep the platform from being built for only one use case;
+  never an AutoWeb-sourced candidate. Roadmap §6 open item updated.)
 - Ammie's overall shape is **four stages**: (1) post-submission quality validation,
   (2) real-time validation injected into lead submission, (3) live warm handoff to dealer,
   (4) SMS follow-up validation (floated on the call).

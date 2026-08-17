@@ -247,7 +247,7 @@ date passes.)
 | How the nightly copy runs | Sean, Shelly | Step 4 | nightly incremental sync (per `architecture/snowflake-value.md`, 8/3) |
 | How many phone numbers to start with | Sean, Ashley | Step 3 | 50–100, dropping bad ones from day one, always with a backup group |
 | Where recordings are stored | Sean, Shelly | Step 3 capture / step 4 catalogue | cheap object storage, catalogued in long-term memory |
-| AutoWeb program pick and playbook owner | Jina, Ammie (via Pier) | Start of step 5 | ✅ ANSWERED 8/17 (Ammie, direct call w/ Sean): entry program = **post-submission lead-quality validation** (dial scrubbed retail leads, structured survey, results back to AutoWeb) — phase 1 of her 4-stage spec, greenlit; trade-in acquisition remains a later candidate. See `meetings/2026-08-17-autoweb-lead-quality-call.md` |
+| AutoWeb program pick and playbook owner | Jina, Ammie (via Pier) | Start of step 5 | ✅ ANSWERED 8/17 (Ammie, direct call w/ Sean): entry program = **post-submission lead-quality validation** (dial scrubbed retail leads, structured survey, results back to AutoWeb) — phase 1 of her 4-stage spec, greenlit. (The prior "trade-in acquisition" default was Sean's own placeholder — deliberately picked as something fundamentally different so the platform wouldn't be built for only one use case; never an AutoWeb-sourced pick.) See `meetings/2026-08-17-autoweb-lead-quality-call.md` |
 
 ---
 
