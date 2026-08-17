@@ -50,8 +50,9 @@ flowchart LR
 recycled numbers were flagged the same day they were added; the never-dialed stratum opened
 at 16.4% refused). Buy → same-day Telnyx **Number Reputation API** query → any number that
 arrives labeled is retired before its first dial (a $1 write-off, vs poisoning a campaign —
-our own test DID is the cautionary tale). ❓ Verify whether the reputation API can query
-candidates *pre-purchase*; if yes, screen moves before the buy.
+our own test DID was spam-labeled from its first dial, matching the recycled-number
+pattern). ❓ Verify whether the reputation API can query candidates *pre-purchase*; if yes,
+screen moves before the buy.
 
 ## 2. Registration (all before first dial, during warm-up)
 
@@ -83,7 +84,7 @@ unlike the human floors, whose replicas are T-1. Per-DID rolling views (Brandon'
 | Answer rate vs pool cohort (same vertical, same daypart) | < half of cohort median = quarantine | TD decay curve; cohort-relative avoids blaming the DID for a bad list |
 | Dials/day | hard budget ~20–25 | the decay knee (7/31 §3) |
 | Lifetime dials | **1,500 auto-retire** — already `dids.max_dials` in schema | July-16 DID Health Review action 1; no vendor ever implemented it (8/5 §1 correction) — our native differentiator |
-| Carrier voicemail-diversion pattern | consecutive instant-voicemail on a carrier | observed on the test DID after ~4 dials |
+| Carrier voicemail-diversion pattern | consecutive instant-voicemail on a carrier | hypothesized only — an earlier "observed on the test DID" readout was a misread (the callee simply wasn't answering; corrected by Sean 8/17). Validate before wiring as a trigger |
 
 **External (scheduled, billable):** weekly reputation-API sample of the active pool;
 full sweep on any program-level contact-rate drop. Labels diverge by carrier (CIDR: Verizon
