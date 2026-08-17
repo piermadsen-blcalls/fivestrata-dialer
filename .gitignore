@@ -14,3 +14,6 @@ env.template
 # Skills live in the fivestrata workspace repo (junctioned into .claude/skills locally)
 .claude/skills/
 .claude/worktrees/
+
+# Vercel CLI project link (root-level after the repo-root relink 8/17)
+.vercel/
