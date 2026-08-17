@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { requireUser } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { visiblePrograms } from '@/lib/programs';
@@ -72,7 +73,11 @@ export default async function ScriptsPage() {
               return (
                 <tr key={s.id} className="border-t" style={{ borderColor: 'var(--line)' }}>
                   <td className="p-2 font-mono text-xs">{programName(s.program_id)}</td>
-                  <td className="p-2">{s.name}</td>
+                  <td className="p-2">
+                    <Link href={`/scripts/${s.id}`} className="underline" style={{ color: 'var(--accent)' }}>
+                      {s.name}
+                    </Link>
+                  </td>
                   <td className="p-2 text-right">v{s.version}</td>
                   <td className="p-2 text-right">{c.total}</td>
                   <td className="p-2 text-right" style={{ color: c.mustHits ? 'var(--warn)' : 'var(--muted)' }}>

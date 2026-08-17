@@ -13,6 +13,7 @@ export function Nav({ email }: { email: string }) {
         <Link href="/intake">Intake</Link>
         <Link href="/buyers">Buyers</Link>
         <Link href="/scripts">Scripts</Link>
+        <Link href="/calls">Calls</Link>
         <Link href="/controls">Controls</Link>
       </div>
       <form action="/auth/signout" method="post" className="flex items-center gap-3">
