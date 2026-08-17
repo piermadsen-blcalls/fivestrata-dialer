@@ -120,7 +120,7 @@ taxonomy only) · mobile app · replacing MDB reporting (we feed it, not replace
 | C4 | PII display policy: last-4 masking default + role-gated unmask — confirm with Brodie | Sean → Brodie | ➤ proposed |
 | C5 | AutoWeb: who is the demand owner, what product/program (trade-in acquisition per 7/23 doc?), target date | Sean | ❓ |
 | C6 | Pier sync: Vercel-over-Netlify + Sean building W8's initial layer (PRD assigns W8 to Pier; prototype = his design reference, so this should be a welcome pull-forward — confirm) | Sean → Pier | ❓ |
-| C7 | Auth redirect allowlist: Sean's dashboard role AND Mgmt-API token both lack Auth-config write (403, 8/15). Dev rides the site_url fallback (console on localhost:3000, middleware hands root `?code=` to /auth/confirm). Pier must allowlist the Vercel URL before deploy | Sean → Pier | ❓ blocking Vercel auth |
+| C7 | ~~Auth redirect allowlist~~ ✅ CLOSED 8/17: Pier allowlisted the Vercel URL + localhost:3000 — **prod-URL magic-link sign-in verified working**. (History: Sean's dashboard role and Mgmt-API token both lack Auth-config write, 403 8/15; dev rode the site_url fallback meanwhile.) Remaining Pier item: the GitHub repo-connect click for auto-deploy (he accepted the team invite 8/17) | Sean → Pier | ✅ |
 
 ## Provenance
 Pier's PRD draft 8/6 (control panel = component 4, feature list §6) · Pier's Vercel prototype
