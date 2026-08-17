@@ -114,8 +114,8 @@ taxonomy only) · mobile app · replacing MDB reporting (we feed it, not replace
 ## Unblockers / open questions
 | # | Item | Owner | Status |
 |---|---|---|---|
-| C1 | Vercel account: new org account vs formalizing Pier's; Pro plan approval (~$20/seat/mo) | Sean → Pier, Sam/Tatevik | ❓ |
-| C2 | Is vercel.com reachable from Sean's tooling (org browser policy)? CLI-token deploys are the fallback; Git-integration auto-deploy needs no local access at all | Sean | ❓ test |
+| C1 | ~~Vercel account~~ ✅ 8/17: team `five-strata-dialer` created by Sean (trial; Pier = developer, Brodie = billing); **DEPLOYED** via CLI as project `dialer-console` → https://dialer-console-five-strata-dialer.vercel.app. Personal card until ~9/14 — reminder set 9/8 to move billing (Sam/Tatevik) | Sean | ✅ deployed |
+| C2 | ~~Vercel reachability~~ — vercel.com blocked for Claude's tooling (like Supabase); Sean drives dashboard + `vercel.cmd` CLI deploys. GitHub auto-deploy integration deferred (repo under Pier's account — his one-click approval when wanted) | Sean | ✅ workflow set |
 | C3 | Auth: Entra/Azure SSO app registration (needs IT?) vs magic-link start | Sean | ❓ (start magic-link, swap later) |
 | C4 | PII display policy: last-4 masking default + role-gated unmask — confirm with Brodie | Sean → Brodie | ➤ proposed |
 | C5 | AutoWeb: who is the demand owner, what product/program (trade-in acquisition per 7/23 doc?), target date | Sean | ❓ |
