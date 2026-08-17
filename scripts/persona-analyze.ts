@@ -11,7 +11,9 @@ const supabaseKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERV
 const sb = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` };
 const LOG = process.argv[2] ?? 'C:/Claude/scratch/persona-batch.jsonl';
 
-const RESPONSES = ['resp_compliance', 'resp_interested', 'resp_not_interested', 'cv_resp_unclear', 'cv_resp_positive', 'cv_resp_negative'];
+const RESPONSES = ['resp_compliance', 'resp_interested', 'resp_interested_win', 'resp_not_interested', 'cv_resp_unclear', 'cv_resp_positive', 'cv_resp_negative', 'exit_disengage', 'exit_callback'];
+// Vertical clip renders collapse to their canonical name for the matrix.
+const canon = (m: string) => m.replace(/_win$/, '');
 const ACK_CATS: Record<string, string> = {
   ack_pos_1: 'positive', ack_pos_2: 'positive',
   ack_soft_1: 'soft', ack_soft_2: 'soft',
@@ -30,6 +32,8 @@ const unclearUtterances: Array<{ persona: string; question: string; said: string
 const callerQuestions: Record<string, number> = {};
 const durations: number[] = [];
 let bargeIns = 0;
+const rebuttal = { fired: 0, flipped: 0, heldNo: 0, unclear: 0 };
+const rebuttalCalls: Array<{ persona: string; outcome: string }> = [];
 
 for (const c of calls) {
   const rows: any[] = await fetch(
@@ -43,9 +47,19 @@ for (const c of calls) {
     .map((e) => (e.payload?.transcription_data?.transcript ?? '').trim())
     .filter((t) => t.length > 1);
 
-  const outcome = clips.find((m: string) => RESPONSES.includes(m)) ?? (clips.includes('goodbye_biz') || clips.includes('cv_goodbye') ? 'goodbye_only' : 'none');
+  const outcome = canon(clips.find((m: string) => RESPONSES.includes(m)) ?? (clips.includes('goodbye_biz') || clips.includes('cv_goodbye') ? 'goodbye_only' : 'none'));
   outcomeMatrix[c.persona] ??= {};
   outcomeMatrix[c.persona][outcome] = (outcomeMatrix[c.persona][outcome] ?? 0) + 1;
+
+  // One-shot rebuttal telemetry (windows bench 8/17): fired count + what the
+  // caller did with it (the persuasion conversion read).
+  if (clips.includes('rebuttal_win')) {
+    rebuttal.fired++;
+    if (outcome === 'resp_interested') rebuttal.flipped++;
+    else if (outcome === 'resp_not_interested' || outcome === 'none') rebuttal.heldNo++; // 'none' = caller hung up on the rebuttal — that's a no
+    else rebuttal.unclear++;
+    rebuttalCalls.push({ persona: c.persona, outcome });
+  }
 
   for (const m of clips) if (ACK_CATS[m]) ackUsage[ACK_CATS[m]] = (ackUsage[ACK_CATS[m]] ?? 0) + 1;
 
@@ -78,6 +92,13 @@ for (const [p, m] of Object.entries(outcomeMatrix)) {
 console.log('\n=== ACK CATEGORY USAGE ===');
 console.log(Object.entries(ackUsage).map(([k, v]) => `${k}:${v}`).join('  '));
 console.log(`\n=== BARGE-INS (cancelled playback): ${bargeIns} ===`);
+if (rebuttal.fired) {
+  console.log(`\n=== ONE-SHOT REBUTTAL (rebuttal_win) ===`);
+  console.log(`fired ${rebuttal.fired}x — flipped to interested: ${rebuttal.flipped}, held no: ${rebuttal.heldNo}, unclear: ${rebuttal.unclear}`);
+  const byPersona: Record<string, string[]> = {};
+  for (const r of rebuttalCalls) (byPersona[r.persona] ??= []).push(r.outcome);
+  for (const [p, outs] of Object.entries(byPersona)) console.log(`  ${p}: ${outs.join(', ')}`);
+}
 console.log(`\n=== DURATIONS: avg ${(durations.reduce((a, b) => a + b, 0) / durations.length).toFixed(0)}s  min ${Math.min(...durations).toFixed(0)}s  max ${Math.max(...durations).toFixed(0)}s ===`);
 console.log('\n=== TOP CALLER QUESTIONS (the rebuttal backlog) ===');
 for (const [q, n] of Object.entries(callerQuestions).sort((a, b) => b[1] - a[1]).slice(0, 15)) {

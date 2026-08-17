@@ -38,7 +38,7 @@ for (const c of calls) {
   const clips = evs.filter((e) => e.event_type === 'call.playback.started').map((e) => e.payload?.media_name);
   const kill = evs.find((e) => e.event_type === 'aicc.viability' && e.payload?.action === 'self_destruct');
   const outcome =
-    clips.find((m: string) => ['resp_compliance', 'resp_interested', 'resp_not_interested', 'cv_resp_unclear', 'exit_disengage'].includes(m)) ?? 'none';
+    clips.find((m: string) => ['resp_compliance', 'resp_interested', 'resp_interested_win', 'resp_not_interested', 'cv_resp_unclear', 'exit_disengage', 'exit_callback'].includes(m)) ?? 'none';
   rows.push({
     persona: c.persona,
     killed: clips.includes('exit_disengage'),

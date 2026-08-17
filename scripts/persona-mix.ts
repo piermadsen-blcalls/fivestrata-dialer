@@ -8,7 +8,7 @@
 // Run: node --import tsx scripts/persona-mix.ts [seed=815]
 // Spot-check one call: node --import tsx scripts/persona-mix.ts 0 <personaKey> [question]
 import 'dotenv/config';
-import { appendFileSync } from 'node:fs';
+import { appendFileSync, readdirSync } from 'node:fs';
 
 const TELNYX = 'https://api.telnyx.com/v2';
 const BALANCE_FLOOR_USD = 2.0;
@@ -31,7 +31,46 @@ const DECK_SPEC: Array<[string, number, string?]> = [
   ['normal+lag', 7, 'q_bathroom'], ['butch+lag', 5, 'q_bathroom'],
 ];
 
-const seed = Number(process.argv[2] ?? 815);
+// Windows benchmark deck (8/17, Sean: 3rd-party soundboard bench decided on
+// Windows — everything pinned q_windows, production-style greet). Convertibles
+// slightly oversampled for diagnostic teeth; reflexive_decliner tests the
+// one-shot rebuttal (flippable), price_shopper tests the Linda knob (not).
+const WINDOWS_DECK_SPEC: Array<[string, number, string?]> = [
+  // clean arm (100)
+  ['brief_decliner', 16, 'q_windows'], ['busy_brushoff', 14, 'q_windows'],
+  ['wrong_person', 8, 'q_windows'], ['curmudgeon', 8, 'q_windows'],
+  ['talker', 12, 'q_windows'], ['confused_elder', 8, 'q_windows'],
+  ['wishy_washy', 8, 'q_windows'], ['price_shopper', 10, 'q_windows'],
+  ['hobby_litigator', 2, 'q_windows'], ['normal_win', 6, 'q_windows'],
+  ['butch_win', 4, 'q_windows'], ['reflexive_decliner', 4, 'q_windows'],
+  // degraded-line arm (50)
+  ['brief_decliner+lag', 6, 'q_windows'], ['busy_brushoff+lag', 6, 'q_windows'],
+  ['talker+lag', 8, 'q_windows'], ['confused_elder+lag', 6, 'q_windows'],
+  ['wishy_washy+lag', 5, 'q_windows'], ['price_shopper+lag', 6, 'q_windows'],
+  ['normal_win+lag', 5, 'q_windows'], ['butch_win+lag', 4, 'q_windows'],
+  ['reflexive_decliner+lag', 4, 'q_windows'],
+];
+
+// Pre-battery smoke deck: one pass over the new/changed paths (windows
+// convertibles, rebuttal, Linda knob, callback exit) before spending hours.
+const WINDOWS_SMOKE_SPEC: Array<[string, number, string?]> = [
+  ['normal_win', 2, 'q_windows'], ['butch_win', 2, 'q_windows'],
+  ['reflexive_decliner', 2, 'q_windows'], ['price_shopper', 2, 'q_windows'],
+  ['busy_brushoff', 2, 'q_windows'], ['brief_decliner', 1, 'q_windows'],
+  ['talker', 1, 'q_windows'],
+];
+
+// Deck selection: `persona-mix.ts windows [seed]` / `windows-smoke [seed]`
+// run the windows decks (greet_windows); a numeric argv[2] stays the
+// original street deck seed. Spot-check (unchanged, street greet):
+// `persona-mix.ts 0 <personaKey> [question]`.
+const DECKS: Record<string, { spec: Array<[string, number, string?]>; greet: string }> = {
+  street: { spec: DECK_SPEC, greet: 'demo_greet' },
+  windows: { spec: WINDOWS_DECK_SPEC, greet: 'greet_windows' },
+  'windows-smoke': { spec: WINDOWS_SMOKE_SPEC, greet: 'greet_windows' },
+};
+const deckName = DECKS[process.argv[2] ?? ''] ? (process.argv[2] as string) : 'street';
+const seed = Number((deckName !== 'street' ? process.argv[3] : process.argv[2]) ?? 815);
 function mulberry32(a: number) {
   return () => {
     a |= 0; a = (a + 0x6d2b79f5) | 0;
@@ -43,11 +82,11 @@ function mulberry32(a: number) {
 const rand = mulberry32(seed);
 
 const deck: Array<{ persona: string; question: string }> = [];
-if (process.argv[3]) {
+if (deckName === 'street' && process.argv[3]) {
   deck.push({ persona: process.argv[3], question: process.argv[4] ?? 'q_bathroom' });
 } else {
   let vi = 0;
-  for (const [persona, count, pinned] of DECK_SPEC) {
+  for (const [persona, count, pinned] of DECKS[deckName].spec) {
     for (let i = 0; i < count; i++) deck.push({ persona, question: pinned ?? VERTICALS[vi++ % VERTICALS.length] });
   }
   for (let i = deck.length - 1; i > 0; i--) {
@@ -108,7 +147,7 @@ async function dial(question: string): Promise<{ ccid: string; session: string }
       from,
       timeout_secs: 30,
       client_state: Buffer.from(
-        JSON.stringify({ phase: 'dialing', greet: 'demo_greet', question, goodbye: 'goodbye_biz' }),
+        JSON.stringify({ phase: 'dialing', greet: DECKS[deckName].greet, question, goodbye: 'goodbye_biz' }),
       ).toString('base64'),
     }),
   });
@@ -141,7 +180,31 @@ async function waitForEnd(ccid: string): Promise<{ ended: boolean; events: numbe
   return { ended: false, events, lastClip };
 }
 
-console.log(`Street-mix battery: ${deck.length} calls, seed ${seed}, floor $${BALANCE_FLOOR_USD}`);
+// Media preflight (8/17 smoke-battery lesson: Telnyx media storage EXPIRES
+// ~48h after upload — the 8/15 pack silently vanished and Claire played
+// greetings into calls she could never finish). Every clip in the local pack
+// must exist in media storage before a single dial goes out.
+{
+  const packDir = 'C:/Claude/fivestrata-dialer/voice-packs/dev-pack-1';
+  const needed = readdirSync(packDir).filter((f) => /\.(mp3|wav)$/i.test(f)).map((f) => f.replace(/\.(mp3|wav)$/i, ''));
+  const have = new Set<string>();
+  let url = `${TELNYX}/media?page[size]=100`;
+  while (url) {
+    const r = await safeFetch(url, { headers: tx });
+    const b: any = r ? await r.json().catch(() => ({})) : {};
+    for (const m of b.data ?? []) have.add(m.media_name);
+    url = b.meta?.next_page_url ? `https://api.telnyx.com${b.meta.next_page_url}` : '';
+  }
+  const missing = needed.filter((n) => !have.has(n));
+  if (missing.length) {
+    console.error(`MEDIA PREFLIGHT FAILED — ${missing.length} clip(s) missing from Telnyx media (uploads expire ~48h): ${missing.slice(0, 8).join(', ')}${missing.length > 8 ? ' …' : ''}`);
+    console.error('Fix: node --import tsx scripts/clips-upload.ts voice-packs/dev-pack-1');
+    process.exit(1);
+  }
+  console.log(`Media preflight: ${needed.length}/${needed.length} pack clips present in Telnyx media storage.`);
+}
+
+console.log(`${deckName} battery: ${deck.length} calls, seed ${seed}, greet ${DECKS[deckName].greet}, floor $${BALANCE_FLOOR_USD}`);
 let n = 0;
 for (const { persona, question } of deck) {
   if (n % 5 === 0) {

@@ -134,6 +134,33 @@ const CLIPS: Record<string, string> = {
   // Time-is-money graceful early exit (self-destruct path — brand-safe, warm)
   exit_disengage:
     "You know what — it sounds like now might not be the best time, so I'll let you go. Thanks so much for chatting with me, and have a wonderful day!",
+  // --- Windows benchmark pack (8/17, Sean: 3rd-party soundboard bench is on
+  // Windows — make Claire a natural, persuasive-if-needed windows seller).
+  // Language distilled from the production workbook "Windows -CD 7.7.26.xlsx"
+  // (R2.0/R10/R33/R35, Hot Keys "How much"/"Consultation", benefits block).
+  // q_windows routes to these via the agent's vertical clip map.
+  greet_windows:
+    "Hi! This is Claire, calling on behalf of Five Strata on a recorded line. How are you doing today?",
+  regreet_inquiry_win:
+    "Yes, exactly — someone in your household recently asked for information about replacement windows, and I'm just following up on that request. So —",
+  resp_price_win:
+    "Totally fair question. The honest answer is, it depends on the frame material, the glass type, and how many windows you're doing — so I can't quote it myself. What I can say is window pricing is a lot better today than it used to be, and the specialist puts together an exact quote for you, completely free, with no obligation. Want me to set that up? A quick yes or no is perfect.",
+  resp_no_commit_win:
+    "Nothing at all — saying yes here just means I connect you with a window specialist for a free quote. It's not a purchase, there's no cost, and no commitment; once you have the details, you can make an informed decision. Want me to set that up? A quick yes or no is perfect.",
+  resp_specialist_win:
+    "Sure — you'd be talking with a licensed window specialist for your area. They go over what you have in mind, walk you through frame and glass options, and put together an exact quote for you, for free. And installs are surprisingly fast — usually two to seven days once the details are set. No cost, no obligation. Want me to set that up? A quick yes or no is perfect.",
+  resp_interested_win:
+    "Great news — I can get that free window quote set up for you right away. Let me connect you with a specialist. One moment please.",
+  // One-shot soft-decline rebuttal (production R2.0 + R33 + R35: free, no
+  // commitment, nothing to lose, energy/noise benefits). Ends in the house
+  // yes/no ask so the confirm machinery reads the answer. Fires ONCE per
+  // call, never on DNC/hard opt-out language.
+  rebuttal_win:
+    "Totally understand — and no pressure at all. Just keep in mind, the quote is completely free and there's no commitment, and folks are usually surprised how much new windows cut their energy bills and outside noise. You've really got nothing to lose. Worth a quick look? A quick yes or no is perfect.",
+  // Callback-request graceful exit (8/15 ack-loop queued item: "can I call
+  // you back?" is not a "good question" — it deserves a warm goodbye).
+  exit_callback:
+    "Of course — sorry to catch you at a busy time! I'll let you go, and we'll try you again another day. Thanks so much, and have a great one!",
   // Warm-transfer leg (W2 / P0 #8)
   xfer_announce:
     "Great news — I'm connecting you to a specialist right now. One moment please.",

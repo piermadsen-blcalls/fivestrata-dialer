@@ -57,6 +57,8 @@ interface CallState {
   regreets?: number; // identity re-greets used this call (cap 2)
   inquiryAnswered?: boolean; // regreet_inquiry plays once per call (Butch r2: restatements re-matched and tripled the clip)
   confirmAsked?: boolean; // recovery confirm used (once per call)
+  rebutted?: boolean; // one-shot soft-decline rebuttal used (8/17 windows bench: persuasive-if-needed, exactly once, never on hard opt-out language)
+  deflected?: boolean; // caller has deflected commitment at least once (Linda knob 8/17) — set at BUFFER time on the uncapped final, because the pending cap can slice the tell out of the accumulated turn
   confirmAskLanded?: boolean; // the answer/confirm clip finished playing — only then may the binary read judge (8/15 Butch: mid-clip reactions were judged before the ask landed)
   mode?: 'persona';
   persona?: string;
@@ -97,6 +99,17 @@ const PERSONAS: Record<string, string> = {
     "You are Gary, 60. The caller is asking about a home-improvement inquiry you never made — you believe they have the wrong number. Be mildly confused ('I think you've got the wrong person'), deny submitting anything, ask how they got your number, and ask to be taken off their list.",
   price_shopper:
     "You are Linda, 55. You submitted this inquiry months ago out of curiosity. You WILL ask about prices, ranges, and what's included — but you have no intention of buying or being transferred to anyone. You're gathering numbers. When asked to commit or transfer, deflect ('I'm just looking for a ballpark today') and, if pressed again, decline politely and end the call.",
+  // Windows-vertical convertibles (8/17 benchmark prep — the bathroom
+  // backstories don't fit a windows pitch; same behavioral contracts).
+  normal_win:
+    'You are Maria, 52, answering a sales call about replacement windows. You GENUINELY need new windows (drafty single-pane originals, high energy bills, street noise) and are interested — but you are detail-oriented: ask about price ranges, timeline, licensing/insurance, and what happens next. Cooperative but thorough.',
+  butch_win:
+    "You are Butch, 56, answering a sales call about replacement windows. Your WIFE submitted the inquiry — she's been complaining about the drafts all winter. YOU hold the household purse strings, and you are sharp-eyed and no-BS: start guarded ('this about that thing my wife filled out?'), ask pointed questions (what is this exactly, what do new windows roughly run, what's the catch, am I committing to anything), and cut off anything vague, scripted, or pushy. Privately you know the windows ARE shot and the heating bills prove it, so you CAN be persuaded: if the caller is straight with you, answers your questions directly, and makes clear you're only agreeing to talk with a window specialist — not spending money today — warm up and agree to the transfer. If they dodge, oversell, or pressure you, you're done: say so and end the call.",
+  // Persuasion stressor (8/17): tests the one-shot rebuttal. A reflexive "not
+  // interested" that a single polite, substantive rebuttal CAN flip — and a
+  // second push must not.
+  reflexive_decliner:
+    "You are Pam, 50, answering a sales call. Your instinct with telemarketers is to brush them off: your FIRST response to any pitch is a quick 'no thanks, not interested.' But you DO have twenty-year-old drafty windows and last winter's heating bills were brutal. If the caller politely gives you ONE good reason to reconsider — a free no-obligation quote, energy savings — you get curious: ask a question or two, and if it stays low-pressure, agree to talk to the specialist. If the caller pushes past a second no, or gets pushy or scripted, decline firmly and end the call.",
 };
 
 // Decline detection (8/10 rehearsal finding: "No. Sorry." at consent got
@@ -109,6 +122,27 @@ function isDecline(t: string): boolean {
   if (/^(no|nope|no thanks|no thank you|nah)$/.test(s)) return true;
   return /(not interested|no thanks|no thank you|dont call|do not call|stop calling|remove me|take me off|dont want)/.test(s);
 }
+// Hard opt-out (DNC-adjacent language): NEVER rebutted, straight to the
+// opt-out promise. A soft "not interested" without these forms may get the
+// one-shot rebuttal (windows bench, 8/17).
+function isHardOptOut(t: string): boolean {
+  const s = t.toLowerCase().replace(/['’‛`]/g, '').replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
+  return /(dont call|do not call|stop calling|remove me|take me off|never call|dont contact|do not contact|not to call|off (your|the) list)/.test(s);
+}
+
+// Windows-vertical clip routing (8/17 3rd-party soundboard benchmark is on
+// Windows): q_windows plays the windows-flavored renders; every other
+// vertical keeps the generic pack. Extend per vertical as packs are authored.
+const WIN_CLIPS: Record<string, string> = {
+  resp_price: 'resp_price_win',
+  resp_no_commit: 'resp_no_commit_win',
+  resp_specialist: 'resp_specialist_win',
+  regreet_inquiry: 'regreet_inquiry_win',
+  resp_interested: 'resp_interested_win',
+};
+const vclip = (state: CallState, clip: string): string =>
+  (state.question === 'q_windows' && WIN_CLIPS[clip]) || clip;
+
 const MEM = new Map<string, CallState>();
 
 const waitUntil = (p: Promise<unknown>) => {
@@ -350,6 +384,15 @@ function isIdentityAsk(t: string): boolean {
   return /(who is this|whos this|who s this|who are you|whos calling|who is calling|who am i (talking|speaking) (to|with)|say that again|repeat that|didnt catch (that|your name)|what was your name|what company (is this|are you))/.test(s);
 }
 
+// Callback request (queued from the 8/15 street-mix ack loop: "can I call
+// you back?" drew "That's a good question" — tone-deaf; it's the biggest UX
+// gap for the busiest real-traffic class). Routes to a warm exit_callback +
+// hangup. Decline/opt-out language wins over callback phrasing.
+function isCallbackAsk(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return /(call (me )?(back|again) (later|tomorrow|another|next|some ?other|when)|(can|could|would) you call (me )?(back|later|again|tomorrow|another)|try (me |us )?(again|back) (later|another|tomorrow)|not a (good|great) time|(really )?bad time( right now)?|busy right now|cant talk (right now|now|at the moment)|in the middle of something|at work right now|call (me )?(at )?another (time|day)|some other time|later this week|catch me (later|another))/.test(s);
+}
+
 // Inquiry-source ask (Butch battery round 1, 8/14: "this about that thing my
 // wife filled out?" fired in 10/10 calls — a household member submitting the
 // lead is the NORMAL case for shared households, and it deserves an ANSWER).
@@ -389,15 +432,35 @@ function isProcessAsk(t: string): boolean {
 // be declared unclear with a yes sitting in the buffer).
 // Product-ANCHORED engagement only (8/14 battery: Bill's rhetorical
 // "can you believe it?" questions earned 9 transfer promises).
-function judgeConfirm(joined: string): 'yes' | 'no' | 'unclear' {
+// THE LINDA KNOB (8/17, from street-mix Decisions #1): commitment-deflection
+// language ("just looking for a ballpark today") — the price_shopper's 20/20
+// exploit of the questions-are-engagement rule. Kept NARROW on purpose
+// (asymmetry mandate): "just wondering/checking about the price" is a
+// Maria-shaped engaged hedge, NOT a deflection — only number-collection and
+// commitment-refusal forms count. Revertible.
+function isDeflection(t: string): boolean {
+  const s = normalizeUtterance(t);
+  return !isInterested(t) &&
+    /(just (looking|shopping|comparing|browsing|gathering)|ballpark today|shopping around|no intention|not (ready|planning|looking) to (commit|schedule|sign|buy|set)|not (buying|committing)|gathering (numbers|information|info|quotes)|only (want|need) (a |the )?(ballpark|number)|just (want|wanted|need)(ed)? (a |the )?ballpark)/.test(s);
+}
+
+// priorDeflect = the caller deflected in an EARLIER turn (sticky state flag —
+// the pending cap can slice the tell out of the accumulated string, smoke
+// call #3 8/17). Same-turn deflection cancels everything except explicit
+// buying language; a prior deflection only cancels engaged-question credit —
+// an explicit "yes"/"go ahead" at the confirm still transfers (a deflector
+// who warms up must actually say yes, and that counts).
+function judgeConfirm(joined: string, priorDeflect = false): 'yes' | 'no' | 'unclear' {
   const s = normalizeUtterance(joined);
   // Anchored yes/no forms also read against the LAST buffered segment —
   // accumulation can bury a sentence-initial "Yeah, alright" mid-string.
   const last = normalizeUtterance(joined.split(' ... ').pop() ?? '');
   const yesAnchor = /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/;
-  const engagedQuestion = /(price|cost|how much|quote|estimate|financ|schedule|consultation|appointment|included|install|warranty|remodel|project|process|next step)/.test(s) && (/\?/.test(joined) || /(what|whats|how|when|can you|do you|tell me)/.test(s));
-  const yes = isInterested(joined) || yesAnchor.test(s) || yesAnchor.test(last) || /(go ahead|sounds good|that works|lets do it|why not|set (it|that) up)/.test(s) || engagedQuestion;
-  const no = isDecline(joined) || /^(no|nope|nah)\b/.test(last);
+  const engagedQuestion = /(price|cost|how much|quote|estimate|financ|schedule|consultation|appointment|included|install|warranty|remodel|project|process|next step|window|glass|frame|energy|draft)/.test(s) && (/\?/.test(joined) || /(what|whats|how|when|can you|do you|tell me)/.test(s));
+  const deflects = isDeflection(joined);
+  const yes = isInterested(joined) ||
+    (!deflects && (yesAnchor.test(s) || yesAnchor.test(last) || /(go ahead|sounds good|that works|lets do it|why not|set (it|that) up)/.test(s) || (!priorDeflect && engagedQuestion)));
+  const no = isDecline(joined) || /^(no|nope|nah)\b/.test(last) || deflects;
   return no && !yes ? 'no' : yes ? 'yes' : 'unclear';
 }
 
@@ -584,14 +647,36 @@ async function viabilityTick(ccid: string): Promise<void> {
 
 async function respondOrConfirm(ccid: string, next: CallState, said: string): Promise<void> {
   const q = next.question ?? 'cv_q1';
+  // One-shot rebuttal (windows bench 8/17, production R2 discipline): an
+  // EXPLICIT keyword decline gets exactly one substantive rebuttal, then the
+  // answer is accepted. Deterministic and checked BEFORE the LLM — a clear
+  // "no thanks" must not depend on a judge hunch; buying language still wins.
+  // Ambiguous LLM-inferred declines keep the clarifying confirm below —
+  // persuade the clear no, clarify the unclear one.
+  if (q === 'q_windows' && !isInterested(said) && isDecline(said) && !isHardOptOut(said) && !next.rebutted) {
+    const c: CallState = { ...next, phase: 'confirm_listen', rebutted: true, ackFired: true, pending: undefined, confirmAskLanded: false };
+    await saveState(ccid, c);
+    await play(ccid, 'rebuttal_win', c); // transcription stays ON — listening for the yes/no
+    armFallback(ccid, '"phase":"confirm_listen"', 45_000, { ...c, phase: 'wrapup' }, async () => {
+      await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
+      await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
+    });
+    return;
+  }
   const { clip, ms } = await chooseClip(said, q);
   console.log(`LLM chose ${clip} in ${ms}ms for "${said.slice(0, 80)}"`);
   // Confirm on: unclear verdicts, AND LLM-inferred declines with no hard
   // keyword evidence (8/14 proof-battery autopsy: persona role-drift produced
   // sales-speak the judge read as decline — buyers must not be lost to a hunch).
   const softDecline = clip === 'resp_not_interested' && !isDecline(said);
-  if (q.startsWith('q_') && (clip === 'cv_resp_unclear' || softDecline) && !next.confirmAsked) {
-    const c: CallState = { ...next, phase: 'confirm_listen', confirmAsked: true, ackFired: true };
+  // Linda knob, LLM-direct path (smoke call #1, 8/17): a deflecting caller's
+  // price STATEMENTS ride the questions-are-engagement tiebreak straight to
+  // transfer. A deflected "interested" verdict without explicit buying
+  // language spends the confirm instead — the binary ask forces the shopper
+  // to deflect again (-> no) and lets a warmed-up buyer actually say yes.
+  const deflectedInterest = clip === 'resp_interested' && (next.deflected || isDeflection(said)) && !isInterested(said);
+  if (q.startsWith('q_') && (clip === 'cv_resp_unclear' || softDecline || deflectedInterest) && !next.confirmAsked) {
+    const c: CallState = { ...next, phase: 'confirm_listen', confirmAsked: true, ackFired: true, deflected: next.deflected || isDeflection(said) };
     await saveState(ccid, c);
     await play(ccid, 'confirm_interest', c); // transcription stays ON — we're listening for the yes/no
     // Backstop only — the real 15s window arms at clip end (8/15 autopsy).
@@ -602,7 +687,7 @@ async function respondOrConfirm(ccid: string, next: CallState, said: string): Pr
     return;
   }
   waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-  await play(ccid, clip, next);
+  await play(ccid, vclip(next, clip), next);
   await play(ccid, next.goodbye ?? 'cv_goodbye', next);
 }
 
@@ -760,7 +845,7 @@ async function handle(data: any): Promise<void> {
   if (et === 'call.transcription' && p.transcription_data?.is_final !== false) {
     waitUntil(viabilityTick(ccid));
   }
-  if (et === 'call.playback.ended' && p.media_name === 'exit_disengage') {
+  if (et === 'call.playback.ended' && ['exit_disengage', 'exit_callback'].includes(p.media_name)) {
     await telnyxCmd(`/calls/${ccid}/actions/hangup`, {});
     return;
   }
@@ -813,6 +898,24 @@ async function handle(data: any): Promise<void> {
   } else if (
     et === 'call.transcription' &&
     ['greeting', 'consent_listen', 'question', 'rating_listen'].includes(state.phase) &&
+    isFinal &&
+    transcript.length > 0 &&
+    isCallbackAsk(transcript) &&
+    !isDecline(transcript) &&
+    !isHardOptOut(transcript)
+  ) {
+    // Callback request -> warm exit + hangup (8/15 ack-loop queued item).
+    // Barge-in: callers say "can you call me back?" over clips too.
+    const next: CallState = { ...state, phase: 'wrapup', ackFired: true, pending: undefined };
+    if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
+      console.log(`callback ask: "${transcript.slice(0, 80)}"`);
+      await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+      waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+      await play(ccid, 'exit_callback', next);
+    }
+  } else if (
+    et === 'call.transcription' &&
+    ['greeting', 'consent_listen', 'question', 'rating_listen'].includes(state.phase) &&
     p.transcription_data?.is_final !== false &&
     transcript.length > 0 &&
     isIdentityAsk(transcript) &&
@@ -862,7 +965,7 @@ async function handle(data: any): Promise<void> {
     const next: CallState = { ...state, phase: 'question', regreets: (state.regreets ?? 0) + 1, inquiryAnswered: true, ackFired: false, pending: undefined };
     if (await casTransition(ccid, `"phase":"${state.phase}"`, next)) {
       await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
-      await play(ccid, 'regreet_inquiry', next);
+      await play(ccid, vclip(next, 'regreet_inquiry'), next);
       await play(ccid, `${next.question ?? 'cv_q1'}_short`, next);
     }
   } else if (
@@ -885,7 +988,7 @@ async function handle(data: any): Promise<void> {
     const c: CallState = { ...state, phase: 'confirm_listen', confirmAsked: true, ackFired: true, pending: undefined };
     if (await casTransition(ccid, `"phase":"${state.phase}"`, c)) {
       await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
-      await play(ccid, clip, c);
+      await play(ccid, vclip(c, clip), c);
       // The 15s answer window arms at CLIP END (playback.ended branch below).
       // resp_price runs ~12s — arming here left ~3s after the ask landed and
       // steamrolled callers mid-answer (8/15 autopsy: 10/10 Maria failures,
@@ -898,7 +1001,7 @@ async function handle(data: any): Promise<void> {
     }
   } else if (
     et === 'call.playback.ended' &&
-    ['resp_price', 'resp_no_commit', 'resp_specialist', 'confirm_interest'].includes(p.media_name) &&
+    ['resp_price', 'resp_no_commit', 'resp_specialist', 'confirm_interest', 'resp_price_win', 'resp_no_commit_win', 'resp_specialist_win', 'rebuttal_win'].includes(p.media_name) &&
     state.phase === 'confirm_listen'
   ) {
     // The confirm ask just LANDED. Everything said DURING the clip sat in the
@@ -906,12 +1009,12 @@ async function handle(data: any): Promise<void> {
     // goodbye behind the still-playing clip — the caller never got to answer
     // the ask). A decisively-buffered answer responds now; anything else keeps
     // listening with the full 15s window.
-    const buffered = state.pending ? judgeConfirm(state.pending) : 'unclear';
+    const buffered = state.pending ? judgeConfirm(state.pending, state.deflected) : 'unclear';
     if (buffered !== 'unclear') {
       const next: CallState = { ...state, phase: 'wrapup', pending: undefined };
       if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
         waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-        await play(ccid, buffered === 'yes' ? 'resp_interested' : 'resp_not_interested', next);
+        await play(ccid, vclip(next, buffered === 'yes' ? 'resp_interested' : 'resp_not_interested'), next);
         await play(ccid, next.goodbye ?? 'cv_goodbye', next);
       }
       return;
@@ -926,25 +1029,39 @@ async function handle(data: any): Promise<void> {
         await new Promise((r) => setTimeout(r, 15_000));
         const cur = await loadState(ccid);
         if (cur.phase !== 'confirm_listen') return;
-        const v = cur.pending ? judgeConfirm(cur.pending) : 'unclear';
+        const v = cur.pending ? judgeConfirm(cur.pending, cur.deflected) : 'unclear';
         const next: CallState = { ...cur, phase: 'wrapup', pending: undefined };
         if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
           waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-          await play(ccid, v === 'yes' ? 'resp_interested' : v === 'no' ? 'resp_not_interested' : 'cv_resp_unclear', next);
+          await play(ccid, vclip(next, v === 'yes' ? 'resp_interested' : v === 'no' ? 'resp_not_interested' : 'cv_resp_unclear'), next);
           await play(ccid, next.goodbye ?? 'cv_goodbye', next);
         }
       })(),
     );
   } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
     // A decline at consent is an opt-out, not a yes (8/10 rehearsal finding).
+    // Windows bench (8/17): a SOFT decline gets the one-shot rebuttal first —
+    // hard opt-out language never does.
     if (isFinal && isDecline(transcript)) {
+      if ((state.question ?? '') === 'q_windows' && !state.rebutted && !isHardOptOut(transcript)) {
+        const c: CallState = { ...state, phase: 'confirm_listen', rebutted: true, ackFired: true, pending: undefined, confirmAskLanded: false };
+        if (await casTransition(ccid, '"phase":"consent_listen"', c)) {
+          await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+          await play(ccid, 'rebuttal_win', c);
+          armFallback(ccid, '"phase":"confirm_listen"', 45_000, { ...c, phase: 'wrapup' }, async () => {
+            await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
+            await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
+          });
+        }
+        return;
+      }
       const next: CallState = { ...state, phase: 'wrapup' };
       if (await casTransition(ccid, '"phase":"consent_listen"', next)) {
         await play(ccid, 'resp_not_interested', next);
         await play(ccid, next.goodbye ?? 'cv_goodbye', next);
       }
     } else if (!isDecline(transcript)) {
-      const next: CallState = { ...state, phase: 'question' };
+      const next: CallState = { ...state, phase: 'question', deflected: state.deflected || isDeflection(transcript) };
       if (await casTransition(ccid, '"phase":"consent_listen"', next)) {
         if (shouldAck(transcript)) await play(ccid, pickAck(next, transcript), next);
         await play(ccid, next.question ?? 'cv_q1', next); // within-turn sequence: safe to queue
@@ -953,8 +1070,21 @@ async function handle(data: any): Promise<void> {
   } else if (et === 'call.transcription' && state.phase === 'question' && transcript.length > 0 && isFinal) {
     // Caller spoke WHILE the question clip was playing (real callers do —
     // 8/10 rehearsal). Declines barge in and stop the clip; anything else is
-    // buffered and processed the moment the clip ends.
+    // buffered and processed the moment the clip ends. Windows bench (8/17):
+    // a soft decline barge-in gets the one-shot rebuttal instead.
     if (isDecline(transcript)) {
+      if ((state.question ?? '') === 'q_windows' && !state.rebutted && !isHardOptOut(transcript)) {
+        const c: CallState = { ...state, phase: 'confirm_listen', rebutted: true, ackFired: true, pending: undefined, confirmAskLanded: false };
+        if (await casTransition(ccid, '"phase":"question"', c)) {
+          await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+          await play(ccid, 'rebuttal_win', c);
+          armFallback(ccid, '"phase":"confirm_listen"', 45_000, { ...c, phase: 'wrapup' }, async () => {
+            await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
+            await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
+          });
+        }
+        return;
+      }
       const next: CallState = { ...state, phase: 'wrapup' };
       if (await casTransition(ccid, '"phase":"question"', next)) {
         await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
@@ -964,9 +1094,10 @@ async function handle(data: any): Promise<void> {
     } else {
       // ACCUMULATE the turn (round-5 trace: overwrite kept only a trailing
       // "Install." and lost "I don't recall making an inquiry" — the LLM then
-      // judged the fragment). Cap length to keep client_state small.
+      // judged the fragment). Cap length to keep client_state small; the
+      // deflection flag reads the UNCAPPED final for exactly that reason.
       const joined = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-400);
-      await saveState(ccid, { ...state, pending: joined });
+      await saveState(ccid, { ...state, pending: joined, deflected: state.deflected || isDeflection(transcript) });
     }
   } else if (et === 'call.playback.ended' && [state.question ?? 'cv_q1', `${state.question ?? 'cv_q1'}_short`].includes(p.media_name) && (state.phase === 'question' || state.phase === 'consent_listen')) {
     if (state.pending) {
@@ -1036,21 +1167,21 @@ async function handle(data: any): Promise<void> {
     // clip buffers too (8/15 Butch: pre-ask reactions burned the read).
     if (!state.confirmAskLanded || p.transcription_data?.speech_final === false) {
       const buffered = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-300);
-      await saveState(ccid, { ...state, pending: buffered });
+      await saveState(ccid, { ...state, pending: buffered, deflected: state.deflected || isDeflection(transcript) });
       return;
     }
     const joined = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-300);
     const s = normalizeUtterance(joined);
     const words = s.split(' ').filter(Boolean).length;
     if (words < 3 && !/^(yes|yeah|yep|no|nope|sure|okay|ok)\b/.test(s)) {
-      await saveState(ccid, { ...state, pending: joined }); // fragment — keep listening
+      await saveState(ccid, { ...state, pending: joined, deflected: state.deflected || isDeflection(transcript) }); // fragment — keep listening
       return;
     }
-    const verdict = judgeConfirm(joined);
+    const verdict = judgeConfirm(joined, state.deflected);
     const next: CallState = { ...state, phase: 'wrapup', pending: undefined };
     if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
       waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
-      await play(ccid, verdict === 'no' ? 'resp_not_interested' : verdict === 'yes' ? 'resp_interested' : 'cv_resp_unclear', next);
+      await play(ccid, vclip(next, verdict === 'no' ? 'resp_not_interested' : verdict === 'yes' ? 'resp_interested' : 'cv_resp_unclear'), next);
       await play(ccid, next.goodbye ?? 'cv_goodbye', next);
     }
   } else if (et === 'call.playback.ended' && p.media_name === (state.goodbye ?? 'cv_goodbye')) {
