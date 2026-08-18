@@ -99,13 +99,22 @@ the scale where each has power:
    per dial: decline adds log(p₁/p₀) ≈ +1.90, clean adds log((1−p₁)/(1−p₀)) ≈ −0.09
    (p₀=1.5% TD-healthy, p₁=10% burned), floor 0, fire at h≈3. Two declines ≤~21 clean
    dials apart trip it — detection within tens of dials, one accumulator per DID.
+   **✅ LIVE 8/17 (migration 0009, Sean: "sooner than later"):** a Postgres trigger on
+   `call_events` hangup inserts maintains `dids.cusum_score` and auto-quarantines at h
+   (stamps `cusum_fired_at`; retired DIDs exempt; bad-number causes decay, per the D2
+   bucket). Parameters tunable in `dialer_config` (`did_cusum_up/down/h`). DB-side by
+   design: zero changes to telnyx-agent/webhook (parallel TTS work owns the agent), and
+   the statistic runs regardless of which code path dials. Self-test verified:
+   0 → 1.90 → 1.81 → 3.70 → quarantined. Exposed in `did_health`.
 2. **Per-DID slow burn: trailing-300 level** (>5% warn / >10% quarantine; SE ≈1.7% at
    p=10%, n=300).
 3. **Pool/cohort drift: the derivative lives HERE, well-powered** — at 500 dials/day
    pool-wide, daily-rate SE ≈1%, 7-day slope SE ≈0.2%/day → +0.5%/day systemic drift
    detectable inside a week. Response is investigate/slow-down (list quality, campaign,
    carrier policy), not retirement. Same cohort machinery powers D15's wear-curve
-   re-derivation d(answer)/d(lifetime dials).
+   re-derivation d(answer)/d(lifetime dials). **➤ TABLED (Sean 8/17): build as a
+   Snowflake reporting/optimization item, not an operational trigger** — joins D15 in
+   Gate 3 / the snowflake-value.md output list.
 
 p₀/p₁/h calibrate on real off-net traffic (with D2's bucket) before D10 wires them.
 
@@ -177,7 +186,7 @@ optimization experiments live. Ordered by dependency within each gate.
 | # | Item | What / acceptance | Owner | Cost |
 |---|---|---|---|---|
 | D9 | **Dial-path budget enforcement** | Queue engine DID selection reads status/`daily_budget`/`warmup_until`/`dial_count`: round-robin across eligible pool, area-code match with **pool** fallback (the TD default-CID lesson), hard stop at lifetime cap. Acceptance: a battery shows even spread + no DID over budget | Claude | $0 |
-| D10 | **Retirement sweep** | Cron: evaluate the §3 three-tier triggers (per-DID CUSUM fast-burn + trailing-300 level + pool-slope drift; cohort answer-rate < half median) → state transitions + guarded replacement buy (at quarantine, not retirement — the pool never shrinks) → re-enters D4 pipeline; quarantined DIDs rest to their renewal boundary, cached re-screen, recover-or-release (§3 rest policy). Alert on every transition with reason | Claude | replacement ~$1/DID |
+| D10 | **Retirement sweep** | CUSUM fast-burn tier ✅ LIVE via migration 0009 (DB trigger auto-quarantines, no cron needed). Remaining sweep cron: trailing-300 level + cohort answer-rate < half median (pool-slope tier tabled → Snowflake, Sean 8/17) → state transitions + guarded replacement buy (at quarantine, not retirement — the pool never shrinks) → re-enters D4 pipeline; quarantined DIDs rest to their renewal boundary, cached re-screen, recover-or-release (§3 rest policy). Alert on every transition with reason | Claude | replacement ~$1/DID |
 | D11 | **Scheduled reputation sweep** | Weekly sample of active pool (size vs D1 price), census on program-level contact-rate drop; per-source flags into `reputation_flags` | Claude | D1 price × sample |
 | D12 | **Console DID screen** | Buy/retire (guarded) + the health view; already in W8 scope — wire to D5's view, phones masked last-4 | Claude | $0 |
 
