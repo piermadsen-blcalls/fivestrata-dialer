@@ -51,8 +51,8 @@ recycled numbers were flagged the same day they were added; the never-dialed str
 at 16.4% refused). Buy → same-day Telnyx **Number Reputation API** query → any number that
 arrives labeled is retired before its first dial (a $1 write-off, vs poisoning a campaign —
 our own test DID was spam-labeled from its first dial, matching the recycled-number
-pattern). ❓ Verify whether the reputation API can query candidates *pre-purchase*; if yes,
-screen moves before the buy.
+pattern). ✅ RESOLVED (D1 probe, 8/17): the API only accepts numbers **on-account and
+in-service** — pre-purchase screening is impossible; buy→screen→retire IS the design.
 
 ## 2. Registration (all before first dial, during warm-up)
 
@@ -144,14 +144,14 @@ optimization experiments live. Ordered by dependency within each gate.
 
 | # | Item | What / acceptance | Owner | Cost |
 |---|---|---|---|---|
-| D1 | **Reputation-API recon** | Answer: can Telnyx Number Reputation query numbers we don't own (screen-before-buy vs buy-screen-retire)? Per-query price? Which sources reported (First Orion/TNS/Hiya)? Latency? This shapes D3 and prices D11 — the *only* materially unknown cost in the whole design | Claude (docs + a live probe on the test DID) | ~pennies |
-| D2 | **Decline-signal mapping** | Map Telnyx hangup causes in our live `call_events` to the "carrier decline" bucket (SIP 603/403-equivalent) so thresholds measure what the KB/TD studies measured. Acceptance: a query over existing battery calls producing a per-DID decline rate we believe | Claude | $0 |
+| D1 | **Reputation-API recon** | ✅ DONE 8/17 (`scripts/did-reputation-probe.ts`, read-only). Findings: (a) numbers must be **on-account + in-service** → no pre-purchase screening, buy→screen→retire confirmed; (b) enablement is one-time: ToS agree → create enterprise → **signed LOA** → Hiya vetting ~minutes (Sean's clicks — added to D8d); (c) pricing: **cached queries free, `fresh=true` billed**, rate not published — Sean reads it off the portal (telnyx.com policy-blocked for Claude); (d) vetting + risk scores are **Hiya-centric** (`spam_risk`/`spam_category` + maturity/connection/engagement/sentiment 0–100) — verify multi-source coverage once live; (e) side-probe: `/number_lookup` returns 403 on our key — separate product, could be a cheap pre-buy carrier/line-type layer if enabled (❓ optional) | Claude ✅ | pennies |
+| D2 | **Decline-signal mapping** | ✅ MACHINERY DONE 8/17 (`scripts/did-decline-audit.ts`): pages all `call.hangup` events, tallies hangup_cause × SIP × source, per-DID decline rate (masked last-4). Bucket: `call_rejected` + `unspecified` = DECLINE; `not_found`/`unallocated_number`/`invalid_number_format` count against the **list**, not the DID. Current data (4,107 hangups) is all `normal_clearing` — the persona rig stays on-net at Telnyx and never crosses a carrier analytics gate, so **0 declines observed is expected, not evidence**. Calibration (incl. whether `unspecified` belongs in the bucket) waits for real off-net outbound | Claude ✅ (calibration pending real traffic) | $0 |
 | D3 | **Pool-purchase script** | Extend `did-purchase.ts`: N scattered singles (enforce ≤1 per NPA-NXX per batch), area-code plan as input, per-order $ cap + per-week count cap, writes `dids` rows with `acquisition_batch`. Same guardrail style as the 8/7 approval | Claude builds; **Sean approves spend** | ~$1/DID upfront |
 | D4 | **Screening step** | Same-day reputation check on every new number BEFORE first dial; flagged → auto-retire (write-off). Pre-purchase if D1 allows | Claude | D1's per-query price × pool |
 | D5 | **Migration 0008** | Apply the draft (six lifecycle states, `daily_budget`, `warmup_until`, `npa_nxx`, `reputation_flags` jsonb, batch id, tenant affinity) + per-DID health view over `calls` | Claude (`db-apply.ts`) | $0 |
 | D6 | **Registration batch** | CNAM per batch (extend `did-cnam.ts`); FCR — investigate bulk path, else generate a paste-ready batch file for Sean's web-form session; record `registered_*` flags | Claude + Sean (FCR form) | $0 (FCR free; ❓ CNAM storage fee — verify in D1 recon) |
 | D7 | **First pool live** | 10–25 screened, registered, warming DIDs sized to the first program's lead geography (waits on that program's lead list for the area-code plan; buy the reserve pool immediately, coverage tail after) | Claude + Sean | ~$10–25 up + same /mo |
-| D8 | **Decisions needed from Sean** | (a) initial pool size + monthly DID budget cap; (b) per-tenant CNAM — display the tenant's brand on its programs' DIDs? (c) SMS-capable sub-pool now (+$0.10/mo each) or later | Sean | — |
+| D8 | **Decisions/actions needed from Sean** | (a) initial pool size + monthly DID budget cap; (b) per-tenant CNAM — display the tenant's brand on its programs' DIDs? (c) SMS-capable sub-pool now (+$0.10/mo each) or later; (d) **Number Reputation enablement** (from D1): agree ToS, sign/upload the LOA, note the fresh-query price from the portal — blocks D4 screening and D11 sweeps | Sean | LOA free; fresh-query rate TBD |
 
 ### Gate 2 — the loop runs itself
 
