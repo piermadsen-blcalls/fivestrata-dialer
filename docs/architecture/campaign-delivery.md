@@ -188,8 +188,16 @@ unique index) · `campaign_days` (plan ledger + binding constraint) · `dial_job
 named to never collide with V1's `dial_queue`) · `calls.campaign_uuid`/`dial_job_id` ·
 `campaign_did_coverage` view · config seeds. Additive only; RLS member-read per house
 pattern. Applied 8/18 via `db-apply.ts` (verified: 5 tables, both views execute, 3 seeds,
-one-active index). `zip_timezones` is created **empty** — the ZIP3→IANA seed script is a
-pending follow-up, needed before L3 scheduling first runs.
+one-active index). `zip_timezones` **seeded 2026-08-18** via `scripts/zip-tz-seed.ts`
+(dry-run default, `--apply` to upsert): GeoNames postal centroids (US+PR+VI+GU) → IANA
+zone per 5-digit ZIP (tz-lookup polygons) → ZIP3 by majority. 916 rows / 17 distinct
+zones, verified in-DB (949→America/Los_Angeles, 100→America/New_York,
+606→America/Chicago; every stored zone converts under `at time zone`). 96 ZIP3s straddle
+a timezone line and take the majority zone (worst: 401 Louisville at 50%, 373
+Chattanooga at 52% — inherent ZIP3 granularity, accepted per the 8/17 decision). Military
+APO/FPO ranges (090–098, 340, 962–966) are excluded — GeoNames pins them at the overseas
+bases — so those leads fall through to the phone-NPA fallback. L3's TCPA-window input is
+in place.
 
 ## Open questions
 
