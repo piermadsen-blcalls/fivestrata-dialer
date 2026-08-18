@@ -91,10 +91,15 @@ full sweep on any program-level contact-rate drop. Labels diverge by carrier (CI
 59%, T-Mobile 96% labeled on the same pool) — store per-source flags, not one boolean.
 
 **States:** extend `dids.status` (0001 has active/cooling/retired) to the full lifecycle:
-`screening → warming → active → resting → quarantined → retired`. "Resting" is an
-experiment arm, not a remedy — CIDR showed list-flags churn (2,036 cleared, 1,555
-re-flagged) and no measurable remediation effect; default path from quarantine is retire.
-Rest-and-recover is testable later, cheaply.
+`screening → warming → active → resting → quarantined → retired`. "Resting" is a
+**free option bounded by the billing month, never a remedy** (➤ Sean 8/17): the
+replacement is bought at quarantine time regardless (the pool stays at size), and Telnyx
+commits the 30-day price at purchase — so a quarantined DID rests through its already-paid
+month at $0 marginal cost, gets re-screened (cached query, free) just before renewal, and
+either returns to warming or is released before the next dollar. Rest past a renewal
+boundary is pure rent and is not a state the sweep permits. CIDR showed list-flags churn
+(2,036 cleared, 1,555 re-flagged) and no measurable remediation effect, so expect the
+policy to resolve to retire-at-renewal in practice — anything recovered is upside.
 
 ### Draft migration 0008 (not applied — schema TODO)
 
@@ -158,7 +163,7 @@ optimization experiments live. Ordered by dependency within each gate.
 | # | Item | What / acceptance | Owner | Cost |
 |---|---|---|---|---|
 | D9 | **Dial-path budget enforcement** | Queue engine DID selection reads status/`daily_budget`/`warmup_until`/`dial_count`: round-robin across eligible pool, area-code match with **pool** fallback (the TD default-CID lesson), hard stop at lifetime cap. Acceptance: a battery shows even spread + no DID over budget | Claude | $0 |
-| D10 | **Retirement sweep** | Cron: evaluate D2 thresholds (decline >5% warn / >10% quarantine over trailing 300; cohort answer-rate < half median) → state transitions + guarded replacement buy → re-enters D4 pipeline. Alert on every retirement with reason | Claude | replacement ~$1/DID |
+| D10 | **Retirement sweep** | Cron: evaluate D2 thresholds (decline >5% warn / >10% quarantine over trailing 300; cohort answer-rate < half median) → state transitions + guarded replacement buy (at quarantine, not retirement — the pool never shrinks) → re-enters D4 pipeline; quarantined DIDs rest to their renewal boundary, cached re-screen, recover-or-release (§3 rest policy). Alert on every transition with reason | Claude | replacement ~$1/DID |
 | D11 | **Scheduled reputation sweep** | Weekly sample of active pool (size vs D1 price), census on program-level contact-rate drop; per-source flags into `reputation_flags` | Claude | D1 price × sample |
 | D12 | **Console DID screen** | Buy/retire (guarded) + the health view; already in W8 scope — wire to D5's view, phones masked last-4 | Claude | $0 |
 
@@ -167,7 +172,7 @@ optimization experiments live. Ordered by dependency within each gate.
 | # | Item | What | Cost |
 |---|---|---|---|
 | D13 | Warm-up ramp length A/B (start ~5/day wk 1 → 20; vs straight-to-20) | contact-rate + decline-rate delta by cohort | dial time only |
-| D14 | Rest-and-recover trial (quarantined DIDs rested N weeks vs retired) — CIDR says expect nothing; cheap to prove | ~$1/mo per rested DID |
+| D14 | Rest-and-recover — RESHAPED (Sean 8/17) from a paid trial into a **free standing policy**: quarantined DIDs rest through their already-paid billing month, cached re-screen before renewal, recover-or-release at the boundary (never rest across a renewal — the replacement was bought at quarantine anyway, so cross-boundary rest is pure rent). The "experiment" is just logging the recovery rate the policy observes for free | $0 |
 | D15 | Daily-budget knee refinement — re-derive the TD 10–25/day curve on OUR pool from our own fact stream | $0 |
 | D16 | CIDR-as-second-eye — if Ashley's contract survives the 8/17 renegotiation, compare its flags vs Telnyx reputation API on the same pool | contract-dependent (Ashley) |
 
