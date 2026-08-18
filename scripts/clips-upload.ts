@@ -49,6 +49,11 @@ for (const f of files) {
   const bytes = readFileSync(join(packDir, f));
   const form = new FormData();
   form.append('media_name', mediaName);
+  // Telnyx media DEFAULTS to a ~48h expiry (discovered 8/17: the whole pack
+  // silently vanished between dial days and calls stalled on missing clips).
+  // ttl_secs is honored — pin 1 year; expiry then only matters for packs
+  // untouched for a year, and the persona-mix preflight still backstops.
+  form.append('ttl_secs', String(60 * 60 * 24 * 365));
   form.append('media', new Blob([bytes], { type: f.endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav' }), f);
   const res = await fetch(`${API}/media`, { method: 'POST', headers: auth, body: form });
   const body: any = await res.json().catch(() => ({}));

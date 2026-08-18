@@ -76,6 +76,170 @@ confirm turn. Hence the sticky `deflected` flag + the `deflectedInterest` confir
 
 Rebuttal telemetry: fired 3×, flipped 1, held-no 2, unclear 0. Avg call 44s.
 
-## Full battery (150 calls, seed 819, `windows` deck)
+## Full battery (150 calls, seed 819, `windows` deck) — 150/150 clean, ~$7
 
-*(results below)*
+Log: `scratch/persona-windows-bench-8-17.jsonl`. Avg call 48.4s.
+
+**Headlines:**
+
+1. **Convertible integrity perfect: 19/19** — normal_win 11/11, butch_win 8/8, including
+   every degraded-line call. The 98% bar holds at 100% on the Windows content.
+2. **The Linda knob works: price_shopper 15/16 correctly NOT transferred** (10 polite
+   opt-outs, 5 unclear) vs **20/20 leaked on 8/15**. The one leak (lag arm) was a race:
+   her deflection final was delivered after the clip-end judge read the half-turn.
+3. **Transfer precision ~49%** (23 intended / 47 promises; was ~31% on 8/15), at 31.3
+   promises per 100 conversations. Wishy_washy transfers (6) counted as acceptable per
+   the buyer-favoring doctrine (Sean's open knob #2), not intended.
+4. **Rebuttal: fired 31× — flipped 4 (all reflexive_decliner, 4/8 flip rate), held-no 26,
+   unclear 1.** Every flip came through the rebuttal; zero reflexive transfers without it.
+   The persuasion mechanism works and costs decliners ~10-15s each.
+5. **Callback exit: 19/20 busy_brushoffs** got the warm exit_callback goodbye.
+6. **Self-destruct: 18 kills, zero false positives** — but killed wasters averaged 46.1s vs
+   48.4s overall, so the sword is barely saving time on this deck (watch item).
+7. **18 wrongful transfers** (wrong_person 4/8, curmudgeon 4/8, talker 5 clean,
+   confused_elder 4, price_shopper+lag 1) — every one autopsied and reproduced from
+   four MECHANICAL causes; none were persona-rig artifacts. See fix stack below.
+
+## Autopsy → fix stack (deployed same day, verified by the `windows-verify` battery)
+
+The 3-agent analysis workflow reproduced all 18 wrongful transfers by replaying the
+committed matchers over event-ordered buffers. Root causes and fixes:
+
+1. **`judgeConfirm` precedence let yes beat no.** A pooled buffer holding an explicit
+   "not interested" AND a product-word question transferred (curmudgeon's double decline
+   lost to question credit). **Fix:** precedence is now buying-language > explicit assent >
+   explicit decline/deflection > engaged question — assent still beats a decline phrase in
+   the same turn ("I don't want to get roped in — but yeah, go ahead" stays a yes).
+2. **`engagedQuestion` was too loose.** No word boundaries (Doris's reading *glasses*
+   matched `glass` and transferred her), product word + question shape could come from
+   different pooled segments (knee-surgery anecdotes donated "how much" to identity-ask
+   '?'s two turns away), bare "how" anywhere counted as question shape. **Fix:** word-bounded
+   product regex, product + question shape required in the SAME segment, question shape =
+   terminal '?' or interrogative opener, negation guard ("I'm NOT looking for new windows"
+   earns nothing).
+3. **Cancelled playbacks advanced the state machine.** A clip we stopped mid-play still
+   emits `playback.ended` — treated as delivered, it transitioned to listening phases
+   prematurely, burned respond slots on pleasantries, and queued confirms up to 27s behind
+   live audio. **Fix:** `status !== 'cancelled'` gates on the greeting-ended, question-ended,
+   and confirm-landing branches.
+4. **`isDecline` gaps:** "take me off / taken off your list", "remove my number",
+   "not looking for", object-anchored "don't need" all evaded it. Added.
+5. **Identity-ask pollution:** Doris's post-cap third "who is this again?" donated its '?'
+   to the confirm pool. Short pure identity asks are now dropped from judged buffers.
+6. **Mid-utterance inquiry-branch fire** (n97): "I didn't submit any request for—" (sf=false)
+   consumed the turn and orphaned "…about replacing windows" as a naked turn. speech_final
+   gate added (same as the 8/15 price-interceptor lesson).
+7. Also from rebuttal design review: entering the confirm VIA the rebuttal now sets
+   `deflected` (the caller just declined — post-rebuttal product questions are not consent;
+   only explicit assent flips), and wrong-person/never-inquired claims are never rebutted
+   (identity mismatch ≠ interest decline).
+
+## Ack loop (standing policy) — round 7
+
+70B audit of 100 pairs: **overall 62%** (round 3: 64% — flat headline, compositionally
+healthier: sorry 100%, soft 81%, positive 67%, neutral 62%, question 41%). The question
+score is NOT the old statement-with-question-opener issue — it is almost entirely the
+callback-ask shape ("Can I call you back later?" → "That's a good question"), which is new
+exposure from this deck's busy_brushoff volume, plus accumulated-buffer first-fragment
+categorization. **Distills shipped:** new `request` ack category ("Oh — sure thing." /
+"Yeah, no worries at all." — accommodating, phrased so exit_callback's "Of course—" doesn't
+repeat) + `glad` category for well-being answers ("Glad to hear it!"); ackCategory now
+categorizes on the LAST buffered segment (hostility still scans the full turn);
+dead-air presence checks ("Hello?", "are you there") never draw acks; confusion/mistake
+claims route to sorry. Next battery's audit measures the delta.
+
+## Conversation-quality findings (Maria/Butch spot checks — benchmark-relevant)
+
+- Maria's direct opener "can you tell me about your process…" went unanswered
+  (evaded isProcessAsk — **widened same-day**: "about your process", "what can I expect",
+  "walk me through", "what happens next").
+- **Confirm-slot scarcity is the next design ceiling:** Maria asked price 3× and got the
+  specialist-deflection answer once; Butch's money question lost the slot to his repeated
+  inquiry ask (`inquiryAnswered`/`confirmAsked` are once-per-call). A caller with 2-3
+  legitimate questions gets non-answers after the first. Design item: a small per-call
+  answer budget (e.g. 2 answer clips) instead of single-shot flags.
+- **Queued-audio latency:** decisions render behind still-playing clips (acks up to 24s
+  late pre-fix). The cancelled-status gate removes the worst class; a queue-flush
+  discipline for confirm entries is the follow-on.
+
+## Verification battery (60 calls, seed 820, `windows-verify` deck) — leaks collapsed
+
+Log: `scratch/persona-windows-verify-8-17.jsonl` (59 dialed; 1 dial lost to a transient
+network outage the runner rode out).
+
+| persona | full battery | post-fix verify |
+|---|---|---|
+| wrong_person | 4/8 transferred | **8/8 clean opt-out** |
+| curmudgeon | 4/8 transferred | **0/7 transferred** (6 opt-out, 1 kill) |
+| talker | 5/12 transferred (clean arm) | **0/8 transferred** (7 unclear, 1 kill) |
+| price_shopper (+lag) | 1/16 leaked | **0/6 transferred** |
+| confused_elder (+lag) | 4 transferred | 1 transferred (explicit-assent shape, buyer-favoring by design) |
+| normal_win | 11/11 | **6/6 transferred** |
+| butch_win | 8/8 | **6/6 transferred** |
+| busy_brushoff | 19/20 exit_callback | 4/4 exit_callback |
+
+The stricter confirm cost ZERO buyers. New ack categories fired live (glad 6, request 2).
+
+**One regression it exposed: reflexive_decliner flips collapsed 4/8 → 0/6.** Setting
+`deflected` on rebuttal entry correctly stopped post-rebuttal questions from counting as
+consent — but a flippable decliner's natural next move IS a question, and she was
+dead-ending at "I'll take that as a maybe." Fix (deployed, spot-checked by the
+`windows-flip` deck): **post-rebuttal price/commitment/process questions get ANSWERED**
+(production R10.1 discipline — the answer clip ends in its own yes/no ask and re-arms the
+confirm window; `confirmAsked` doubles as the one-extra-answer budget). Explicit assent
+after the answer flips; anything else exits gracefully.
+
+## Flip spot-checks (12 + 12 calls, seeds 821/822, `windows-flip` deck)
+
+Round 1 (seed 821) exposed two problems the answer-turn alone didn't fix, both traced to
+the **landing read judging pre-ask buffered speech as the answer**:
+
+- Pam's "no thanks" ECHOES during the rebuttal clip; the landing judge read the echo as
+  her answer and opted her out while her actual reply ("That sounds interesting") was
+  in flight. Flips stayed 0/6.
+- **A normal_win was opt-outed** — the 8B rig drifted ("I was just browsing your
+  website"), "just browsing" matched the deflection pattern mid-clip, and the landing
+  read was decisive… one line before "I'm definitely interested."
+
+**Doctrine distilled (deployed):** *pre-ask deflection is not deflecting the ask.* A
+deflection-only 'no' at landing downgrades to the 15s window (the binary ask does its
+job; Linda still deflects post-ask and is caught by the live/timeout reads). At rebuttal
+landings, an echoed decline WITH an engaged ask alongside gets the ask ANSWERED
+(price/commitment → their clips, other product asks → resp_specialist_win); the window
+arms with the echo cleared. "That sounds interesting/good/great" joined the assent set.
+
+Round 2 (seed 822): **normal_win 3/3 + butch_win 3/3 transferred** (lost-Maria class
+fixed), **reflexive flips recovered 2/6** (3 held-no, 1 unclear — held-nos are valid
+contract outcomes; Pam flips only when the exchange stays low-pressure).
+
+## Bottom line for the vendor benchmark
+
+Across ~395 Windows dials today (6 batteries, ~$16 carrier+AI):
+
+- **Buyers: 28/28 transferred on the final code** (19/19 full battery + 12/12 verify +
+  6/6 flip-2, including every degraded-line call) — the 98% bar holds at 100%.
+- **Transfer precision roughly ~49% → higher post-fix** (the verify deck eliminated all
+  wrong_person/curmudgeon/talker/shopper leaks; a precision read at street frequencies
+  needs the next full street-mix battery).
+- **Persuasion live:** one production-R2 rebuttal per soft decline, flips real
+  convertible-decliners, never fires on DNC language or wrong-person claims, and answers
+  post-rebuttal product questions before re-asking the binary.
+- **Callback asks get a warm exit** instead of "that's a good question."
+- Windows-specific content everywhere the caller can probe: price (frame/glass/count +
+  pricing-better-today), process/specialist (2–7 day install), no-commitment, household
+  inquiry, energy/noise benefits.
+
+**Next design items (in priority order):**
+1. **Answer-budget redesign** — `confirmAsked`/`inquiryAnswered` one-shot flags starve
+   callers with 2–3 legitimate questions (Maria asked price 3×, answered once). A small
+   per-call answer budget (~2–3) with variant renders is the natural next step and the
+   biggest remaining naturalness gap for the benchmark.
+2. Queue-flush discipline for confirm entries (acks/confirms can still render late
+   behind queued audio in edge cases).
+3. Self-destruct tuning: 18 kills / 0 FP but killed wasters only saved ~2s vs average on
+   this deck — thresholds are calibrated for longer rambles than the street mix produces.
+4. Full street-mix re-run for a clean precision/SPH-proxy topline on the final code.
+
+**Open for Sean:** wishy_washy transfers (6 in the full battery) remain per the
+buyer-favoring doctrine — street-mix Decisions #2 is still his call. The Linda knob and
+the one-rebuttal policy are live and revertible.

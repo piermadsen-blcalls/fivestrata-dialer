@@ -51,6 +51,18 @@ const WINDOWS_DECK_SPEC: Array<[string, number, string?]> = [
   ['reflexive_decliner+lag', 4, 'q_windows'],
 ];
 
+// Verification deck (8/17 post-autopsy fix stack): oversamples the four leak
+// personas + the sacred buyers. Measures: wrongful transfers should collapse,
+// buyers must stay perfect, reflexive flips must survive the stricter confirm.
+const WINDOWS_VERIFY_SPEC: Array<[string, number, string?]> = [
+  ['wrong_person', 8, 'q_windows'], ['curmudgeon', 8, 'q_windows'],
+  ['talker', 8, 'q_windows'], ['confused_elder', 4, 'q_windows'],
+  ['confused_elder+lag', 4, 'q_windows'], ['reflexive_decliner', 6, 'q_windows'],
+  ['normal_win', 6, 'q_windows'], ['butch_win', 6, 'q_windows'],
+  ['price_shopper', 4, 'q_windows'], ['price_shopper+lag', 2, 'q_windows'],
+  ['busy_brushoff', 4, 'q_windows'],
+];
+
 // Pre-battery smoke deck: one pass over the new/changed paths (windows
 // convertibles, rebuttal, Linda knob, callback exit) before spending hours.
 const WINDOWS_SMOKE_SPEC: Array<[string, number, string?]> = [
@@ -68,6 +80,13 @@ const DECKS: Record<string, { spec: Array<[string, number, string?]>; greet: str
   street: { spec: DECK_SPEC, greet: 'demo_greet' },
   windows: { spec: WINDOWS_DECK_SPEC, greet: 'greet_windows' },
   'windows-smoke': { spec: WINDOWS_SMOKE_SPEC, greet: 'greet_windows' },
+  'windows-verify': { spec: WINDOWS_VERIFY_SPEC, greet: 'greet_windows' },
+  // Flip spot-check (8/17): does the post-rebuttal answer-the-question turn
+  // recover reflexive_decliner flips without costing buyers?
+  'windows-flip': {
+    spec: [['reflexive_decliner', 6, 'q_windows'], ['normal_win', 3, 'q_windows'], ['butch_win', 3, 'q_windows']],
+    greet: 'greet_windows',
+  },
 };
 const deckName = DECKS[process.argv[2] ?? ''] ? (process.argv[2] as string) : 'street';
 const seed = Number((deckName !== 'street' ? process.argv[3] : process.argv[2]) ?? 815);

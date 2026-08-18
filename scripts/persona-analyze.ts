@@ -20,6 +20,8 @@ const ACK_CATS: Record<string, string> = {
   ack_question_1: 'question', ack_question_2: 'question', ack_question_3: 'question',
   ack_sorry_1: 'sorry', ack_sorry_2: 'sorry',
   ack_pleasantry_1: 'pleasantry', ack_pleasantry_2: 'pleasantry',
+  ack_request_1: 'request', ack_request_2: 'request',
+  ack_glad_1: 'glad', ack_glad_2: 'glad',
   cv_ack_1: 'neutral', cv_ack_2: 'neutral', cv_ack_3: 'neutral', cv_ack_4: 'neutral', cv_ack_5: 'neutral',
 };
 

@@ -17,3 +17,6 @@ env.template
 
 # Vercel CLI project link (root-level after the repo-root relink 8/17)
 .vercel/
+
+.vercel
+.env*

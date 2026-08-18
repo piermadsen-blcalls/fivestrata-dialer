@@ -59,6 +59,13 @@ const CLIPS: Record<string, string> = {
   ack_sorry_2: 'I hear you, apologies.',
   ack_pleasantry_1: 'Doing great, thanks for asking!',
   ack_pleasantry_2: "Likewise — it's great talking with you!",
+  // 8/17 audit distills: callback/permission requests get an ACCOMMODATING
+  // ack (not "good question" — 8 misfires), phrased so the exit_callback
+  // clip's "Of course —" opener doesn't repeat; well-being answers get warmth.
+  ack_request_1: 'Oh — sure thing.',
+  ack_request_2: 'Yeah, no worries at all.',
+  ack_glad_1: 'Glad to hear it!',
+  ack_glad_2: "That's great — happy to hear it.",
   // Short-repeat question forms (production Long/Short repeat discipline —
   // Doris's "what's the question?" logged 8x in round 6)
   cv_q1_short: 'Just quickly — one to ten, how natural does this call feel?',

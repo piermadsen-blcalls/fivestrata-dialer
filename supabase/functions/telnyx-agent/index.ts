@@ -120,7 +120,10 @@ function isDecline(t: string): boolean {
   // you." failed a "no thank you" match on the 8/10 retest).
   const s = t.toLowerCase().replace(/['’‛`]/g, '').replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
   if (/^(no|nope|no thanks|no thank you|nah)$/.test(s)) return true;
-  return /(not interested|no thanks|no thank you|dont call|do not call|stop calling|remove me|take me off|dont want)/.test(s);
+  // 8/17 autopsy additions: "taken off your list", "not looking for", and
+  // object-anchored "don't need" all evaded the scan and rode question-credit
+  // to wrongful transfers (wrong_person n66/n92, elder n70/n89).
+  return /(not interested|no thanks|no thank you|dont call|do not call|stop calling|remove me|take me off|taken off|remove (my|this) number|removed from|dont want|not looking (for|to)|dont need (it|this|that|any|new|one))/.test(s);
 }
 // Hard opt-out (DNC-adjacent language): NEVER rebutted, straight to the
 // opt-out promise. A soft "not interested" without these forms may get the
@@ -128,6 +131,14 @@ function isDecline(t: string): boolean {
 function isHardOptOut(t: string): boolean {
   const s = t.toLowerCase().replace(/['’‛`]/g, '').replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
   return /(dont call|do not call|stop calling|remove me|take me off|never call|dont contact|do not contact|not to call|off (your|the) list)/.test(s);
+}
+
+// Wrong-person / never-inquired claims are identity mismatches, not interest
+// declines — rebutting them is tone-deaf (8/17 battery: wrong_person leaked
+// 4/8 to transfer through the rebuttal's confirm window). Straight opt-out.
+function isWrongPersonClaim(t: string): boolean {
+  const s = t.toLowerCase().replace(/['’‛`]/g, '').replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
+  return /(wrong (person|number|house|guy|lady)|never (asked|inquired|requested|signed up|filled|submitted)|didnt (ask|inquire|request)|dont know (what|anything about)|no ?one here (asked|requested|submitted)|nobody here)/.test(s);
 }
 
 // Windows-vertical clip routing (8/17 3rd-party soundboard benchmark is on
@@ -308,6 +319,10 @@ const ACK_SETS: Record<string, string[]> = {
   question: ['ack_question_1', 'ack_question_2', 'ack_question_3'],
   sorry: ['ack_sorry_1', 'ack_sorry_2'],
   pleasantry: ['ack_pleasantry_1', 'ack_pleasantry_2'],
+  // 8/17 audit distills: callback/permission requests are not "good
+  // questions" (8 misfires), and well-being ANSWERS are not neutral facts.
+  request: ['ack_request_1', 'ack_request_2'],
+  glad: ['ack_glad_1', 'ack_glad_2'],
   neutral: ACKS, // cv_ack_1..3
 };
 
@@ -322,6 +337,11 @@ function normalizeUtterance(t: string): string {
 function shouldAck(t: string): boolean {
   const s = normalizeUtterance(t);
   const words = s.split(' ').filter(Boolean);
+  // Dead-air presence checks want an immediate ANSWER, not an ack (8/17
+  // audit: "Hello?" drew acks 6x from inside accumulated buffers — the
+  // lone-"hello" gate below never saw it, so check the LAST segment too).
+  const lastSeg = normalizeUtterance((t.split(' ... ').pop() ?? t)).replace(/\?+\s*$/, '').trim();
+  if (/^(hello|hi|hey|are you (still )?there|you there|can you hear me)$/.test(lastSeg)) return false;
   // Round-3 audit tightening: fragments still slipped at <4 words.
   if (words.length < 3 && !/^(yes|yeah|yep|no|nope|sure|okay|ok)\b/.test(s)) return false;
   if (/^(hello|hi|hey)( there)?$/.test(s)) return false;
@@ -331,19 +351,33 @@ function shouldAck(t: string): boolean {
 
 function ackCategory(t: string): string {
   const s = normalizeUtterance(t);
-  const wordCount = s.split(' ').filter(Boolean).length;
+  // Categorize on the LAST buffered segment — accumulated turns open with
+  // stale fragments and the substance is the tail (8/17 audit: "good
+  // question" fired off a join's FIRST opener while the substance sat last).
+  // Hostility/confusion scans the FULL turn — a slight anywhere still
+  // deserves the apology.
+  const lastRaw = (t.split(' ... ').pop() ?? t).trim();
+  const last = normalizeUtterance(lastRaw);
+  const wordCount = last.split(' ').filter(Boolean).length;
+  if (
+    /(how did you get (my|this) number|annoy|frustrat|angry|already told|called me (before|already)|leave me alone|telemarketer|scam|spam|what do you want|what are you talking about|why are you calling|not this again|save it|stop bothering|waste of|so sick of|might be (some |a )?confusion|theres (been )?(some |a )?(confusion|mistake|mix ?up)|(youve|you have) (got )?the wrong|i never (asked|inquired|signed up|requested))/.test(s)
+  )
+    return 'sorry';
   // Pleasantry only for SHORT social utterances (round-3 audit: pleasantry
   // acks fired on pleasantry-fragments buried in longer conversational turns).
   // 15-word gate (round-4: 8 was too tight — "Hi Claire, so nice to talk to
   // you today" fell through to neutral)
-  if (wordCount <= 15 && /(nice to (talk|meet|speak)|how are you|good (morning|afternoon|evening)|pleasure (talking|to meet))/.test(s)) return 'pleasantry';
-  if (
-    /(how did you get (my|this) number|annoy|frustrat|angry|already told|called me (before|already)|leave me alone|telemarketer|scam|spam|what do you want|what are you talking about|why are you calling|not this again|save it|stop bothering|waste of|so sick of)/.test(s)
-  )
-    return 'sorry';
-  if (/\?\s*$/.test(t.trim()) || /^(how|what|why|when|where|can you|do you|is this|are you|whats)\b/.test(s)) return 'question';
-  if (/^(yes|yeah|yep|sure|okay|ok|sounds good|go ahead|absolutely|definitely|of course)\b/.test(s) || /(sounds good|that works|lets do it|im interested)/.test(s)) return 'positive';
-  if (/(maybe|i guess|not sure|i dont know|possibly|we ll see|depends|have to (ask|think|check))/.test(s)) return 'soft';
+  if (wordCount <= 15 && /(nice to (talk|meet|speak)|how are you|good (morning|afternoon|evening)|pleasure (talking|to meet))/.test(last)) return 'pleasantry';
+  // Well-being ANSWERS are warm, not neutral facts (8/17 audit).
+  if (/((im |i am )?doing (great|good|well|fine)|(thanks|thank you) for asking)/.test(last)) return 'glad';
+  // Callback/permission requests BEFORE the question rule — they end in '?'
+  // but "That's a good question" praises substance that isn't there (8/17
+  // audit headline, 8 misfires; the exit_callback branch handles the final,
+  // this covers the interim-fired ack).
+  if (/((can|could|may) i call (you )?back|call (you|me) back (later|this|tomorrow|tonight|another)|catch you (later|another)|(im|i am) in a meeting|(im|i am) (kind of |really )?busy)/.test(last)) return 'request';
+  if (/\?\s*$/.test(lastRaw) || /^(how|what|why|when|where|can you|do you|is this|are you|whats)\b/.test(last)) return 'question';
+  if (/^(yes|yeah|yep|sure|okay|ok|sounds good|go ahead|absolutely|definitely|of course)\b/.test(last) || /(sounds good|that works|lets do it|im interested)/.test(last)) return 'positive';
+  if (/(maybe|i guess|not sure|i dont know|possibly|we ll see|depends|have to (ask|think|check))/.test(last)) return 'soft';
   return 'neutral';
 }
 
@@ -423,7 +457,7 @@ function isPriceAsk(t: string): boolean {
 // with inquiry+price answered, these became the top unanswered class).
 function isProcessAsk(t: string): boolean {
   const s = normalizeUtterance(t);
-  return /(whats the process|what is the process|process look like|how does (this|it|that|the process) work|how (this|it) works|scope of (the )?(project|work)|whats the scope|who (am i|will i|would i)( going)?( to)? (be )?(talking|speaking)|who would i (talk|speak)|whats (their|his|her) (experience|background|relationship)|who is (this person|the specialist))/.test(s);
+  return /(whats the process|what is the process|process look like|how does (this|it|that|the process) work|how (this|it) works|about (your|the|this) process|what (can|should) i expect|what i can expect|walk me through|what happens (next|after|now|from here)|scope of (the )?(project|work)|whats the scope|who (am i|will i|would i)( going)?( to)? (be )?(talking|speaking)|who would i (talk|speak)|whats (their|his|her) (experience|background|relationship)|who is (this person|the specialist))/.test(s);
 }
 
 // The confirm-window binary read, shared by the live read and the timeout
@@ -450,18 +484,52 @@ function isDeflection(t: string): boolean {
 // buying language; a prior deflection only cancels engaged-question credit —
 // an explicit "yes"/"go ahead" at the confirm still transfers (a deflector
 // who warms up must actually say yes, and that counts).
+const PROD_RE = /\b(price|pricing|costs?|how much|quote|estimate|financ(e|ing)|schedule|consultation|appointment|included|install(ation)?|warranty|remodel|project|process|next steps?|windows?|glass|frames?|energy|drafts?|drafty)\b/;
+
+// An engaged product ask somewhere in the turn: word-bounded product term +
+// question shape in the SAME segment, with a negation guard ("I'm NOT looking
+// for new windows" earns nothing). Shared by judgeConfirm and the landing
+// answer-turn logic.
+function hasEngagedAsk(text: string): boolean {
+  return text.split(' ... ').some((seg) => {
+    const raw = seg.trim();
+    const n = normalizeUtterance(raw);
+    const m = PROD_RE.exec(n);
+    if (!m) return false;
+    if (/\b(dont|do not|not|never|didnt|no longer)\b/.test(n.slice(Math.max(0, m.index - 45), m.index))) return false;
+    return /\?\s*$/.test(raw) || /^(what|whats|how|when|where|can you|could you|do you|tell me|is there|are there)\b/.test(n);
+  });
+}
+
 function judgeConfirm(joined: string, priorDeflect = false): 'yes' | 'no' | 'unclear' {
   const s = normalizeUtterance(joined);
   // Anchored yes/no forms also read against the LAST buffered segment —
   // accumulation can bury a sentence-initial "Yeah, alright" mid-string.
-  const last = normalizeUtterance(joined.split(' ... ').pop() ?? '');
+  const segs = joined.split(' ... ');
+  const last = normalizeUtterance(segs[segs.length - 1] ?? '');
   const yesAnchor = /^(yes|yeah|yep|sure|okay|ok|please|absolutely|definitely|of course|lets do it)\b/;
-  const engagedQuestion = /(price|cost|how much|quote|estimate|financ|schedule|consultation|appointment|included|install|warranty|remodel|project|process|next step|window|glass|frame|energy|draft)/.test(s) && (/\?/.test(joined) || /(what|whats|how|when|can you|do you|tell me)/.test(s));
+  // Engaged-question credit, tightened per the 8/17 autopsy (18 wrongful
+  // transfers): product words are WORD-BOUNDED ('glass' matched Doris's
+  // reading glasses), product word + question shape must land in the SAME
+  // segment (knee-surgery anecdotes donated 'how much' to identity-ask '?'s
+  // pooled turns apart), question shape = terminal '?' or interrogative
+  // OPENER (bare 'how' anywhere matched narration), and a negated product
+  // mention ("I'm NOT looking for new windows") earns nothing.
+  const engagedQuestion = hasEngagedAsk(joined);
   const deflects = isDeflection(joined);
-  const yes = isInterested(joined) ||
-    (!deflects && (yesAnchor.test(s) || yesAnchor.test(last) || /(go ahead|sounds good|that works|lets do it|why not|set (it|that) up)/.test(s) || (!priorDeflect && engagedQuestion)));
-  const no = isDecline(joined) || /^(no|nope|nah)\b/.test(last) || deflects;
-  return no && !yes ? 'no' : yes ? 'yes' : 'unclear';
+  const declineNo = isDecline(joined) || /^(no|nope|nah)\b/.test(last);
+  // PRECEDENCE (8/17 autopsy: explicit declines were LOSING to product-word
+  // question credit pooled in the same buffer — curmudgeon's double "not
+  // interested" transferred): explicit buying language > explicit assent >
+  // explicit decline/deflection > engaged question. Assent still beats a
+  // decline phrase in the same turn ("I don't want to get roped in — but
+  // yeah, go ahead" is a yes).
+  if (isInterested(joined)) return 'yes';
+  const assent = !deflects && (yesAnchor.test(s) || yesAnchor.test(last) || /(go ahead|sounds good|that works|lets do it|why not|set (it|that) up|that sounds (really |very |pretty )?(interesting|good|great))/.test(s));
+  if (assent) return 'yes';
+  if (declineNo || deflects) return 'no';
+  if (engagedQuestion && !priorDeflect) return 'yes';
+  return 'unclear';
 }
 
 // A-priori compliance care (Gerald the hobby litigator, Sean 8/11): legal /
@@ -653,8 +721,11 @@ async function respondOrConfirm(ccid: string, next: CallState, said: string): Pr
   // "no thanks" must not depend on a judge hunch; buying language still wins.
   // Ambiguous LLM-inferred declines keep the clarifying confirm below —
   // persuade the clear no, clarify the unclear one.
-  if (q === 'q_windows' && !isInterested(said) && isDecline(said) && !isHardOptOut(said) && !next.rebutted) {
-    const c: CallState = { ...next, phase: 'confirm_listen', rebutted: true, ackFired: true, pending: undefined, confirmAskLanded: false };
+  if (q === 'q_windows' && !isInterested(said) && isDecline(said) && !isHardOptOut(said) && !isWrongPersonClaim(said) && !next.rebutted) {
+    // deflected: the caller just DECLINED — post-rebuttal product questions
+    // are not consent (8/17 battery: talker/curmudgeon rode question-credit
+    // through the rebuttal window). Only an explicit yes flips.
+    const c: CallState = { ...next, phase: 'confirm_listen', rebutted: true, deflected: true, ackFired: true, pending: undefined, confirmAskLanded: false };
     await saveState(ccid, c);
     await play(ccid, 'rebuttal_win', c); // transcription stays ON — listening for the yes/no
     armFallback(ccid, '"phase":"confirm_listen"', 45_000, { ...c, phase: 'wrapup' }, async () => {
@@ -889,7 +960,10 @@ async function handle(data: any): Promise<void> {
       (await telnyxCmd(`/calls/${ccid}/actions/transcription_start`, { ...base, transcription_engine: 'Deepgram' })) ||
       (await telnyxCmd(`/calls/${ccid}/actions/transcription_start`, { ...base, transcription_engine: 'B' }));
     await play(ccid, next.greet ?? 'cv_greet', next);
-  } else if (et === 'call.playback.ended' && state.phase === 'greeting') {
+  } else if (et === 'call.playback.ended' && p.status !== 'cancelled' && state.phase === 'greeting') {
+    // status gate (8/17 autopsy): a clip WE stopped mid-play still emits
+    // playback.ended (status 'cancelled') — treating it as delivered advanced
+    // phases prematurely and queued responses ~27s behind live audio.
     const next: CallState = { ...state, phase: 'consent_listen' };
     await saveState(ccid, next);
     armFallback(ccid, '"phase":"consent_listen"', CONSENT_FALLBACK_MS, { ...next, phase: 'question' }, async () => {
@@ -951,12 +1025,16 @@ async function handle(data: any): Promise<void> {
     et === 'call.transcription' &&
     ['greeting', 'consent_listen', 'question', 'rating_listen'].includes(state.phase) &&
     isFinal &&
+    p.transcription_data?.speech_final !== false &&
     transcript.length > 0 &&
     (state.question ?? '').startsWith('q_') &&
     isInquirySourceAsk(transcript) &&
     !state.inquiryAnswered &&
     (state.regreets ?? 0) < 3
   ) {
+    // speech_final gate (8/17 autopsy n97): firing on the mid-utterance half
+    // "I didn't submit any request for—" cleared pending and orphaned the
+    // continuation "…information about replacing windows." as a naked turn.
     // "This about that thing my wife filled out?" -> answer the inquiry
     // source ONCE, then the SHORT re-ask (barge-in like the identity regreet).
     // Round-2 finding: restatements ("you're calling about the remodel my
@@ -1001,6 +1079,7 @@ async function handle(data: any): Promise<void> {
     }
   } else if (
     et === 'call.playback.ended' &&
+    p.status !== 'cancelled' &&
     ['resp_price', 'resp_no_commit', 'resp_specialist', 'confirm_interest', 'resp_price_win', 'resp_no_commit_win', 'resp_specialist_win', 'rebuttal_win'].includes(p.media_name) &&
     state.phase === 'confirm_listen'
   ) {
@@ -1009,7 +1088,22 @@ async function handle(data: any): Promise<void> {
     // goodbye behind the still-playing clip — the caller never got to answer
     // the ask). A decisively-buffered answer responds now; anything else keeps
     // listening with the full 15s window.
-    const buffered = state.pending ? judgeConfirm(state.pending, state.deflected) : 'unclear';
+    const pendingText = state.pending ?? '';
+    let buffered = pendingText ? judgeConfirm(pendingText, state.deflected) : 'unclear';
+    const lastSegNo = /^(no|nope|nah)\b/.test(normalizeUtterance(pendingText.split(' ... ').pop() ?? ''));
+    const hardNo = isDecline(pendingText) || lastSegNo;
+    // PRE-ASK deflection is not "deflecting the ask" (8/17 flip battery: a
+    // drifted buyer's mid-clip "just browsing" opt-outed her one line before
+    // "I'm definitely interested"). A deflection-only 'no' downgrades to the
+    // window — Linda's true tell is deflecting AFTER the binary ask lands,
+    // and the live/timeout reads still catch that.
+    if (buffered === 'no' && !hardNo) buffered = 'unclear';
+    // Rebuttal landing: a buffered decline is usually the ECHO of the very no
+    // that triggered the rebuttal. If an engaged ask rode alongside it, the
+    // ask is the real signal — answer it below; a LONE decline stays a clean
+    // opt-out (brief decliners must not be hostage to a 15s window).
+    const rebuttalLanding = p.media_name === 'rebuttal_win';
+    if (rebuttalLanding && buffered === 'no' && hasEngagedAsk(pendingText)) buffered = 'unclear';
     if (buffered !== 'unclear') {
       const next: CallState = { ...state, phase: 'wrapup', pending: undefined };
       if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
@@ -1019,7 +1113,24 @@ async function handle(data: any): Promise<void> {
       }
       return;
     }
-    await saveState(ccid, { ...state, confirmAskLanded: true });
+    // Buffered engaged ask + answer budget remaining -> answer it now
+    // (production R10.1); the answer clip ends in its own yes/no ask and
+    // re-lands through this branch.
+    if (pendingText && state.rebutted && !state.confirmAsked && hasEngagedAsk(pendingText) && !isHardOptOut(pendingText)) {
+      const clip = isCommitmentAsk(pendingText) ? 'resp_no_commit' : isPriceAsk(pendingText) ? 'resp_price' : 'resp_specialist';
+      const c: CallState = { ...state, confirmAsked: true, confirmAskLanded: false, pending: undefined };
+      if (await casTransition(ccid, '"phase":"confirm_listen"', c)) {
+        await play(ccid, vclip(c, clip), c);
+        armFallback(ccid, '"phase":"confirm_listen"', 45_000, { ...c, phase: 'wrapup' }, async () => {
+          await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
+          await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
+        });
+      }
+      return;
+    }
+    // Rebuttal window arms FRESH — the echoed decline must not poison the
+    // live read of the caller's actual reply to the ask.
+    await saveState(ccid, { ...state, confirmAskLanded: true, pending: rebuttalLanding ? undefined : state.pending });
     // Now the caller gets a full 15s measured from the ASK, not the clip.
     // Inline (not armFallback): the timeout must judge the FRESHEST buffered
     // turn before declaring unclear, and armFallback's CAS writes an arm-time
@@ -1043,8 +1154,8 @@ async function handle(data: any): Promise<void> {
     // Windows bench (8/17): a SOFT decline gets the one-shot rebuttal first —
     // hard opt-out language never does.
     if (isFinal && isDecline(transcript)) {
-      if ((state.question ?? '') === 'q_windows' && !state.rebutted && !isHardOptOut(transcript)) {
-        const c: CallState = { ...state, phase: 'confirm_listen', rebutted: true, ackFired: true, pending: undefined, confirmAskLanded: false };
+      if ((state.question ?? '') === 'q_windows' && !state.rebutted && !isHardOptOut(transcript) && !isWrongPersonClaim(transcript)) {
+        const c: CallState = { ...state, phase: 'confirm_listen', rebutted: true, deflected: true, ackFired: true, pending: undefined, confirmAskLanded: false };
         if (await casTransition(ccid, '"phase":"consent_listen"', c)) {
           await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
           await play(ccid, 'rebuttal_win', c);
@@ -1073,8 +1184,8 @@ async function handle(data: any): Promise<void> {
     // buffered and processed the moment the clip ends. Windows bench (8/17):
     // a soft decline barge-in gets the one-shot rebuttal instead.
     if (isDecline(transcript)) {
-      if ((state.question ?? '') === 'q_windows' && !state.rebutted && !isHardOptOut(transcript)) {
-        const c: CallState = { ...state, phase: 'confirm_listen', rebutted: true, ackFired: true, pending: undefined, confirmAskLanded: false };
+      if ((state.question ?? '') === 'q_windows' && !state.rebutted && !isHardOptOut(transcript) && !isWrongPersonClaim(transcript)) {
+        const c: CallState = { ...state, phase: 'confirm_listen', rebutted: true, deflected: true, ackFired: true, pending: undefined, confirmAskLanded: false };
         if (await casTransition(ccid, '"phase":"question"', c)) {
           await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
           await play(ccid, 'rebuttal_win', c);
@@ -1092,6 +1203,9 @@ async function handle(data: any): Promise<void> {
         await play(ccid, next.goodbye ?? 'cv_goodbye', next);
       }
     } else {
+      // Post-cap identity re-asks are meta-noise — keep them out of the
+      // judged turn (8/17 autopsy; same rule as the confirm buffer).
+      if (isIdentityAsk(transcript) && normalizeUtterance(transcript).split(' ').filter(Boolean).length <= 8) return;
       // ACCUMULATE the turn (round-5 trace: overwrite kept only a trailing
       // "Install." and lost "I don't recall making an inquiry" — the LLM then
       // judged the fragment). Cap length to keep client_state small; the
@@ -1099,7 +1213,7 @@ async function handle(data: any): Promise<void> {
       const joined = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-400);
       await saveState(ccid, { ...state, pending: joined, deflected: state.deflected || isDeflection(transcript) });
     }
-  } else if (et === 'call.playback.ended' && [state.question ?? 'cv_q1', `${state.question ?? 'cv_q1'}_short`].includes(p.media_name) && (state.phase === 'question' || state.phase === 'consent_listen')) {
+  } else if (et === 'call.playback.ended' && p.status !== 'cancelled' && [state.question ?? 'cv_q1', `${state.question ?? 'cv_q1'}_short`].includes(p.media_name) && (state.phase === 'question' || state.phase === 'consent_listen')) {
     if (state.pending) {
       // They already answered mid-clip — respond immediately.
       const next: CallState = { ...state, phase: 'wrapup', ackFired: true, pending: undefined };
@@ -1165,9 +1279,37 @@ async function handle(data: any): Promise<void> {
     // all. Go ahead." was dropped by a speech_final gate and the turn was lost).
     // And NOTHING is judged until the ask has landed — speech during the answer
     // clip buffers too (8/15 Butch: pre-ask reactions burned the read).
+    // Post-cap identity re-asks are meta-noise, not answers — their '?' was
+    // donating question-shape to the confirm pool (8/17 autopsy: Doris's third
+    // "who is this again?" transferred her). Short pure asks are dropped.
+    if (isIdentityAsk(transcript) && normalizeUtterance(transcript).split(' ').filter(Boolean).length <= 8) return;
     if (!state.confirmAskLanded || p.transcription_data?.speech_final === false) {
       const buffered = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-300);
       await saveState(ccid, { ...state, pending: buffered, deflected: state.deflected || isDeflection(transcript) });
+      return;
+    }
+    // Post-rebuttal engaged question: ANSWER it (production R10.1 — "would
+    // you like me to proceed?" follows the answer), instead of reading it as
+    // consent (the old leak) or dead-ending unclear (8/17 verify battery:
+    // reflexive flips collapsed 4/8 -> 0/6 once questions stopped counting as
+    // yes). The answer clip ends in its own yes/no ask and re-arms the window
+    // at landing; confirmAsked doubles as the one-extra-answer budget.
+    if (
+      state.rebutted && !state.confirmAsked &&
+      (state.question ?? '').startsWith('q_') &&
+      (isCommitmentAsk(transcript) || isPriceAsk(transcript) || isProcessAsk(transcript)) &&
+      !isDecline(transcript) && !isHardOptOut(transcript)
+    ) {
+      const clip = isCommitmentAsk(transcript) ? 'resp_no_commit' : isPriceAsk(transcript) ? 'resp_price' : 'resp_specialist';
+      const c: CallState = { ...state, confirmAsked: true, confirmAskLanded: false, pending: undefined };
+      if (await casTransition(ccid, '"confirmAskLanded":true', c)) {
+        await telnyxCmd(`/calls/${ccid}/actions/playback_stop`, { stop: 'all' });
+        await play(ccid, vclip(c, clip), c);
+        armFallback(ccid, '"phase":"confirm_listen"', 45_000, { ...c, phase: 'wrapup' }, async () => {
+          await play(ccid, 'cv_resp_unclear', { ...c, phase: 'wrapup' });
+          await play(ccid, c.goodbye ?? 'cv_goodbye', { ...c, phase: 'wrapup' });
+        });
+      }
       return;
     }
     const joined = [state.pending, transcript].filter(Boolean).join(' ... ').slice(-300);
