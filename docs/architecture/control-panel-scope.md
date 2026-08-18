@@ -88,7 +88,7 @@ the engine is written to read it (config-first, so nothing here is throwaway):
    `tenant-lead-sourcing.md` §5: `max_dials_per_lead`, `min_rest_hours`, daily dial
    budget, calling hours) — **now fully specified as the L0 wizard in
    `campaign-delivery.md`** (pool → budget/timeframe → computed-cascade review pane →
-   activate; draft migration 0010)
+   activate; migration 0010 APPLIED 8/18)
 2. Pacing/caps + per-campaign stop switches (beyond the global `dialer_config` switches) —
    backed by `campaign_days` + `campaigns.status` per `campaign-delivery.md` §4/§7
 3. Split-test config (A/B assignment on clip/script versions)

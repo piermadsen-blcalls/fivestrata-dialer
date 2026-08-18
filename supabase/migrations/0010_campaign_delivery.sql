@@ -1,6 +1,7 @@
 -- 0010_campaign_delivery.sql
--- DRAFT (Sean 2026-08-17) — schema for docs/architecture/campaign-delivery.md.
--- *** NOT APPLIED — apply via db-apply.ts only on Sean's authorization. ***
+-- Schema for docs/architecture/campaign-delivery.md.
+-- ✅ APPLIED 2026-08-18 (Sean-authorized, via db-apply.ts; verified: 5 tables,
+-- 2 views executing, 3 config seeds, one-active-per-lead index).
 -- ADDITIVE ONLY — shared Supabase project with V1: no drops, no renames.
 -- V1 owns `dial_queue`; our queue table is `dial_jobs`, deliberately distinct.
 

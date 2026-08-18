@@ -180,14 +180,16 @@ $60 budget at $0.04/dial est:
   attempt 1; no-answers ladder to attempt 2 next daypart.
 - L4: each claim picks the least-used 949 DID for a 949 lead, reserve otherwise.
 
-## 9. Schema delta (migration 0010 — DRAFT, not applied)
+## 9. Schema delta (migration 0010 — ✅ APPLIED 2026-08-18, Sean-authorized)
 
 `supabase/migrations/0010_campaign_delivery.sql`: `campaigns` (budget/timeframe/pool_rules/
 narrowing overrides, status lifecycle) · `campaign_leads` (enrollment + one-active-per-lead
 unique index) · `campaign_days` (plan ledger + binding constraint) · `dial_jobs` (the queue —
 named to never collide with V1's `dial_queue`) · `calls.campaign_uuid`/`dial_job_id` ·
 `campaign_did_coverage` view · config seeds. Additive only; RLS member-read per house
-pattern. Apply when the first campaign build starts (Sean authorizes, `db-apply.ts`).
+pattern. Applied 8/18 via `db-apply.ts` (verified: 5 tables, both views execute, 3 seeds,
+one-active index). `zip_timezones` is created **empty** — the ZIP3→IANA seed script is a
+pending follow-up, needed before L3 scheduling first runs.
 
 ## Open questions
 
