@@ -105,7 +105,11 @@ the scale where each has power:
    bucket). Parameters tunable in `dialer_config` (`did_cusum_up/down/h`). DB-side by
    design: zero changes to telnyx-agent/webhook (parallel TTS work owns the agent), and
    the statistic runs regardless of which code path dials. Self-test verified:
-   0 → 1.90 → 1.81 → 3.70 → quarantined. Exposed in `did_health`.
+   0 → 1.90 → 1.81 → 3.70 → quarantined (at h=3). Exposed in `did_health`.
+   **➤ Posture (Sean 8/17): h set EXTREMELY LIBERAL at 10** (~6 near-consecutive
+   declines to fire) — the score is a visible showpiece first, an enforcement gate
+   later; tightening to the analytical h=3 is one `dialer_config` edit once real-traffic
+   calibration earns trust.
 2. **Per-DID slow burn: trailing-300 level** (>5% warn / >10% quarantine; SE ≈1.7% at
    p=10%, n=300).
 3. **Pool/cohort drift: the derivative lives HERE, well-powered** — at 500 dials/day
