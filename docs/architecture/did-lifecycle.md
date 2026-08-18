@@ -84,23 +84,35 @@ in-service** — pre-purchase screening is impossible; buy→screen→retire IS 
    published best practices ([voicespamfeedback.com/vsf/bestPractices](https://voicespamfeedback.com/vsf/bestPractices),
    the Verizon-side analytics engine) require a "consistent, real, and **user-dialable**"
    calling number and a contact path for complaint/DNC reporting — a pool DID that rings
-   dead on callback pattern-matches spam infrastructure. Design sketch: every `active`
-   (and `warming`) pool DID answers inbound with a minimal branded IVR — "You received a
-   call from <tenant CNAM brand>. Press 1 to be added to our do-not-call list; press 2 to
-   speak with us." Press-1 writes `dnc_numbers` directly (same table the inbound DNC API
-   feeds); press-2 can route to the AI agent — a callback is a *high-intent warm inbound
-   lead*, so this is upside, not just compliance. One Telnyx Call Control app answering
-   for the whole pool (webhook already exists); per-tenant greeting from `tenants.cnam`.
+   dead on callback pattern-matches spam infrastructure.
+   **v1 scope (✅ Sean 8/18): answer + DNC only — a basic mailbox.** Every pool DID
+   answers with a minimal branded greeting whose ONLY offered action is removal from
+   future calls (press-1 → `dnc_numbers`, the same table the inbound DNC API feeds;
+   confirm and disconnect). The fuller menu was considered and cut: the only other
+   legitimate option is **"request a consultation"** (a *queued callback* placed when a
+   warm transfer is possible — NOT a live bridge), and that path is an
+   exception-to-an-exception-to-an-exception — ~0 benefit for the build cost right now.
+   It stays here as the acknowledged later shape if callback volume ever justifies it.
+   One Telnyx Call Control app answering for the whole pool (webhook already exists);
+   per-tenant greeting from `tenants.cnam`.
+   **⚠ The greeting script is a legal artifact (✅ Sean 8/18): anyone can trivially
+   record it, and plaintiff-side TCPA firms do — it must be airtight, double- and
+   triple-checked before any live deployment**, versioned in the repo, and changed only
+   through the same review. Framing for that review: this line can double as the
+   FCC-required automated opt-out mechanism (47 CFR §64.1200(b)(3)) if we ever leave
+   prerecorded voicemails, so draft to that standard from day one — identify the calling
+   party by the legally correct name (inherits the open New Strata DBA /
+   Contractors.com display-name decision; greeting and CNAM must land consistently),
+   state the opt-out plainly, execute it immediately, zero marketing content.
+   ❓ Who owns the legal review (Kinsey? outside counsel?).
    **Cost: airtime only** — no Telnyx per-DID inbound fee beyond the $1/mo already paid;
    inbound leg ≈ $0.002/min Call Control + ~$0.0035/min inbound termination ≈
-   **$0.0055/min**, and a DNC IVR call runs well under a minute. Bridging press-2 to a
-   live/AI leg adds the normal outbound-leg rates. At plausible callback volume
-   (a small fraction of dials), this is fractions of a dollar per day.
-   ➤ Defaults (Claude, overridable): v1 is **DNC-only** (press-2 → AI agent as a
-   fast-follow once the TTS work on telnyx-agent settles — the IVA shouldn't collide with
-   that surface mid-flight); answer on `warming`/`active`/`resting` DIDs (resting numbers
-   were dialed from most recently and are paid through the month anyway); `quarantined`
-   same as resting; `retired`/released numbers are gone from the account regardless.
+   **$0.0055/min**, and a DNC mailbox call runs well under a minute. At plausible
+   callback volume (a small fraction of dials), this is fractions of a dollar per day.
+   ➤ Answer-scope default (Claude, overridable): answer on `warming`/`active`/`resting`
+   DIDs (resting numbers were dialed from most recently and are paid through the month
+   anyway); `quarantined` same as resting; `retired`/released numbers are gone from the
+   account regardless.
 
 ## 3. Health monitoring — two eyes, ours is primary
 
@@ -229,7 +241,7 @@ optimization experiments live. Ordered by dependency within each gate.
 | D10 | **Retirement sweep** | CUSUM fast-burn tier ✅ LIVE via migration 0009 (DB trigger auto-quarantines, no cron needed). Remaining sweep cron: trailing-300 level + cohort answer-rate < half median (pool-slope tier tabled → Snowflake, Sean 8/17) → state transitions + guarded replacement buy (at quarantine, not retirement — the pool never shrinks) → re-enters D4 pipeline; quarantined DIDs rest to their renewal boundary, cached re-screen, recover-or-release (§3 rest policy). Alert on every transition with reason | Claude | replacement ~$1/DID |
 | D11 | **Scheduled reputation sweep** | Weekly sample of active pool (size vs D1 price), census on program-level contact-rate drop; per-source flags into `reputation_flags` | Claude | D1 price × sample |
 | D12 | **Console DID screen** | Buy/retire (guarded) + the health view; already in W8 scope — wire to D5's view, phones masked last-4 | Claude | $0 |
-| D17 | **Inbound callback IVR on pool DIDs** (✅ APPROVED Sean 8/18 — full sketch §2.6) | One Call Control app answers inbound on all warming/active/resting pool DIDs: per-tenant branded greeting, press-1 → `dnc_numbers`; v1 DNC-only, press-2 → AI agent as fast-follow (➤ default, avoids the in-flight TTS surface). Satisfies TNS "user-dialable" + complaint-path best practices; callbacks double as warm inbound leads. Acceptance: call any pool DID → greeting plays, press-1 lands in `dnc_numbers` | Claude | airtime only (~$0.0055/min inbound, no monthly adder) |
+| D17 | **Inbound DNC mailbox on pool DIDs** (✅ APPROVED Sean 8/18, scope narrowed same day — full sketch §2.6) | One Call Control app answers inbound on all warming/active/resting pool DIDs: minimal branded greeting, sole option = removal from future calls (press-1 → `dnc_numbers`, confirm, disconnect). "Request a consultation" (queued callback at warm-transfer time) acknowledged as the only legitimate future option — deferred, exception³. **Gate: greeting script passes legal review before live** (trivially recordable → must be airtight; ❓ review owner). Satisfies TNS "user-dialable" + complaint-path best practices; drafted to the 47 CFR §64.1200(b)(3) opt-out-mechanism standard. Acceptance: call any pool DID → reviewed greeting plays, press-1 lands in `dnc_numbers` | Claude (build) + ❓ legal (script) | airtime only (~$0.0055/min inbound, no monthly adder) |
 
 ### Gate 3 — optimization experiments (the platform's test-bench nature applied to DIDs)
 
