@@ -121,6 +121,17 @@ Why event-driven: cadence adapts to outcomes (a CALLBACK reschedules to the requ
 time, not the ladder), the queue stays at |active leads| rows, and a mid-campaign cadence
 edit affects every future attempt with zero rewrites.
 
+**❓ Queue-ordering / dialing algorithm (opened 8/18 shareout,
+`meetings/2026-08-18-shareout.md`):** within the dialable-now set, *which* job is claimed
+first is currently implicit (ready-time order). Open design axes: FIFO vs LIFO,
+round-robin across leads vs bunched attempts, speed-to-lead priority for fresh.
+Precedent to mine: FiveStrata's prior **"Prism"** algorithm — per-lead algorithm
+assignment under a master prioritization layer (parameters requested from the team; even
+high-level tuning variables — lead quality, speed-to-lead, time-of-day — are useful now).
+Target shape: **algorithm selectable per campaign** so variants A/B cleanly (same slot as
+`daypart_pref` rotation: shipped default + config override, later a Snowflake-tuned
+directive). CV is the power user; AutoWeb runs a generic variant.
+
 ## 6. L4 — claim-time allocation: where ZIP+DID pairs actually live
 
 The pacer is the `concurrency-queueing.md` loop with two claim-filter additions:

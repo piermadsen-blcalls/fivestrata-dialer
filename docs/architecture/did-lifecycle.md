@@ -59,6 +59,13 @@ in-service** — pre-purchase screening is impossible; buy→screen→retire IS 
 1. **CNAM** — `scripts/did-cnam.ts` exists (`FIVESTRATA`). ❓ Per-tenant CNAM: should a
    tenant program's DIDs display that tenant's brand instead? (Whole-call branding is why
    pre-auth-at-dial exists; CNAM is the same question one layer down.)
+   **❓ Display-name decision opened at the 8/18 shareout** (see
+   `meetings/2026-08-18-shareout.md`): `FIVESTRATA` rendered as **"Five Strata" on
+   Verizon during the demo** (carrier-dependent), but Five Strata is **not a legal
+   entity** — the DBA is **"New Strata"** (confirm before STIR/SHAKEN-adjacent
+   registration). **Contractors.com proposed** as the display name (strong home-services
+   branding fit); hard constraint: the displayed name **must match the partner list on
+   the lead forms** before any change goes live.
 2. **Free Caller Registry** — covers the three analytics networks behind the big carriers
    (First Orion/T-Mobile, TNS/Verizon, Hiya/AT&T). Today a manual Sean web form (pending
    for the test DID); at pool scale this becomes a batch step per acquisition wave.
