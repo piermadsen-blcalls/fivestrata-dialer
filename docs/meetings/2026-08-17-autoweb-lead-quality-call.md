@@ -87,6 +87,25 @@ Sean's on-call claim — "we pretty much have most of those functions already bu
 | 3 | Buyer-pool (internal_pool strategy) built exactly for non-Command-Center tenants; pre-auth-at-dial + client hours; transfer script ready (`transfer-test.ts`) | Warm-transfer bridge **never live-run**; dealer availability config + AutoWeb-side dealer readiness (their long pole) |
 | 4 | Telnyx SMS exists under same account | Entirely new capability: 10DLC/carrier flow approval, opt-out handling, org overlap with Allison/Iterable — ownership unresolved |
 
+## 6b. Post-call addendum — DID pool + regional partitioning (Teams, 8/17)
+
+Sean followed up in writing: the dialer buys its own phone numbers (DIDs), so a small pilot
+partitions naturally **by region** — pick a geography and the pool stays small (e.g. an
+Orange-County test ≈ a batch of 949/714/909 numbers). Ammie asked whether region choice
+matters / should track pilot dealers, and cost. Sean's answers, which are now **client-facing
+commitments** the build must honor (they map to hitlist items in
+`../architecture/did-lifecycle.md`):
+
+- Local-to-recipient numbers get answered more (→ pick the region; D7's area-code plan now
+  waits on **Ammie's region pick** in addition to her lead list).
+- ~$1/mo per number, SMS +$0.20/mo.
+- **"We scan them on origination; ~80% are kept"** (D4 screening — requires the reputation
+  LOA, D8d, now on the critical path of a client promise; the 80% renders CIDR's
+  16.4%-refused finding, to be replaced by our own measured keep-rate).
+- Registered with A-attestation **"and our brand (or yours)"** (D6; half-commits the
+  per-tenant CNAM option, D8b).
+- ~1,500 dials per DID before degradation (the lifetime-cap policy, simplified).
+
 ## 7. Action items
 
 | Who | What |
