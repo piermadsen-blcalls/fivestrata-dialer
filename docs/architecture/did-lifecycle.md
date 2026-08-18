@@ -79,6 +79,25 @@ in-service** — pre-purchase screening is impossible; buy→screen→retire IS 
 5. **Warm-up ramp** — new DIDs run at reduced daily budget before full duty. ➤ Start
    conservative (~5/day for the first week, then 20); the platform's test-bench nature
    makes ramp length itself a testable variable.
+6. **Inbound callback path** (➤ Sean 8/18, raising with team — hitlist D17). TNS's
+   published best practices ([voicespamfeedback.com/vsf/bestPractices](https://voicespamfeedback.com/vsf/bestPractices),
+   the Verizon-side analytics engine) require a "consistent, real, and **user-dialable**"
+   calling number and a contact path for complaint/DNC reporting — a pool DID that rings
+   dead on callback pattern-matches spam infrastructure. Design sketch: every `active`
+   (and `warming`) pool DID answers inbound with a minimal branded IVR — "You received a
+   call from <tenant CNAM brand>. Press 1 to be added to our do-not-call list; press 2 to
+   speak with us." Press-1 writes `dnc_numbers` directly (same table the inbound DNC API
+   feeds); press-2 can route to the AI agent — a callback is a *high-intent warm inbound
+   lead*, so this is upside, not just compliance. One Telnyx Call Control app answering
+   for the whole pool (webhook already exists); per-tenant greeting from `tenants.cnam`.
+   **Cost: airtime only** — no Telnyx per-DID inbound fee beyond the $1/mo already paid;
+   inbound leg ≈ $0.002/min Call Control + ~$0.0035/min inbound termination ≈
+   **$0.0055/min**, and a DNC IVR call runs well under a minute. Bridging press-2 to a
+   live/AI leg adds the normal outbound-leg rates. At plausible callback volume
+   (a small fraction of dials), this is fractions of a dollar per day.
+   ❓ Team questions: keep answering on `resting`/`quarantined` DIDs (numbers recently
+   dialed from — arguably yes, through the billing month)? Should press-2 exist at all in
+   v1, or DNC-only first?
 
 ## 3. Health monitoring — two eyes, ours is primary
 
@@ -131,6 +150,11 @@ the scale where each has power:
 
 p₀/p₁/h calibrate on real off-net traffic (with D2's bucket) before D10 wires them.
 
+**Upstream protection:** the cheapest health intervention is never placing the dial —
+the L1 dead-number hygiene rule (`campaign-delivery.md` §3, ➤ Sean 8/18) excludes
+N+-attempts/zero-answers phones at campaign compile, because TNS scores dead-number
+dialing and poor completion rates against the *calling* number, not just the campaign.
+
 **External (scheduled, billable):** weekly reputation-API sample of the active pool;
 full sweep on any program-level contact-rate drop. Labels diverge by carrier (CIDR: Verizon
 59%, T-Mobile 96% labeled on the same pool) — store per-source flags, not one boolean.
@@ -174,7 +198,7 @@ buy script, so a runaway loop can never spend past its weekly allowance.
 effect from monitoring+remediation; every wear stratum reached 13–25% refusal within six
 weeks regardless. Retire-and-replace is cheaper and measurably works.
 
-## The hitlist (D1–D16)
+## The hitlist (D1–D17)
 
 The tracked work surface for the DID workflow (house style: C1–C7, T1–T11). Three gates:
 **Gate 1** = a clean screened pool dialing for the first live program. **Gate 2** = the loop
@@ -202,6 +226,7 @@ optimization experiments live. Ordered by dependency within each gate.
 | D10 | **Retirement sweep** | CUSUM fast-burn tier ✅ LIVE via migration 0009 (DB trigger auto-quarantines, no cron needed). Remaining sweep cron: trailing-300 level + cohort answer-rate < half median (pool-slope tier tabled → Snowflake, Sean 8/17) → state transitions + guarded replacement buy (at quarantine, not retirement — the pool never shrinks) → re-enters D4 pipeline; quarantined DIDs rest to their renewal boundary, cached re-screen, recover-or-release (§3 rest policy). Alert on every transition with reason | Claude | replacement ~$1/DID |
 | D11 | **Scheduled reputation sweep** | Weekly sample of active pool (size vs D1 price), census on program-level contact-rate drop; per-source flags into `reputation_flags` | Claude | D1 price × sample |
 | D12 | **Console DID screen** | Buy/retire (guarded) + the health view; already in W8 scope — wire to D5's view, phones masked last-4 | Claude | $0 |
+| D17 | **Inbound callback IVR on pool DIDs** (➤ Sean 8/18, pending team discussion — full sketch §2.6) | One Call Control app answers inbound on all warming/active pool DIDs: per-tenant branded greeting, press-1 → `dnc_numbers`, press-2 → AI agent (❓ v1 scope). Satisfies TNS "user-dialable" + complaint-path best practices; callbacks double as warm inbound leads. Acceptance: call any pool DID → greeting plays, press-1 lands in `dnc_numbers` | Claude (build) + Sean/team (go) | airtime only (~$0.0055/min inbound, no monthly adder) |
 
 ### Gate 3 — optimization experiments (the platform's test-bench nature applied to DIDs)
 

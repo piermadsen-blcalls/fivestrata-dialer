@@ -57,6 +57,21 @@ next plan tick with no migration of in-flight state.
 - **Pool** = a WHERE clause, same philosophy as 0007 `source_rules`:
   `pool_rules` jsonb = `{batch_ids, source_ids, cost_min/max, lead_type, states, zips}`.
   Consent-scope and platform DNC gates apply unconditionally (0007 rules).
+- **Dead-number hygiene** (➤ Sean 8/18, raising with team): an unconditional compile-time
+  exclusion — alongside DNC/consent — for phones with **N+ lifetime attempts and zero
+  answers** across every history we can see (our own `calls` fact stream; KB/TD replica
+  dial logs for revive leads, joinable via OLeadID). Two independent justifications:
+  (a) **DID-reputation protection** — TNS's published best practices
+  ([voicespamfeedback.com/vsf/bestPractices](https://voicespamfeedback.com/vsf/bestPractices))
+  explicitly score "calling unassigned numbers frequently" and poor answer/completion
+  rates against the calling number, i.e. dialing dead numbers burns our DIDs directly
+  (`did-lifecycle.md` §3), not just wastes spend; (b) it's the **free in-house counter to
+  CIDR's ~1¢/number "Dial Right" upsell** from the 8/18 checkpoint call — the same signal
+  computed from data we already own. Start N conservative (❓ N=6? calibrate against the
+  KB replica's attempts-vs-ever-answered distribution before hard-coding); excluded leads
+  get a distinct `campaign_leads`-absent reason so the compile report shows what hygiene
+  removed (no silent shrinkage). Revive batches — many-attempt leads by definition — are
+  where this bites hardest and where the answer-rate payoff is largest.
 - **Enrollment** materializes matching leads into `campaign_leads`. A partial unique index
   enforces **one active campaign per lead** — the one-call-center-per-lead rule,
   internalized. Leads can be added later (recurring drops, e.g. AutoWeb's EOD list, enroll
