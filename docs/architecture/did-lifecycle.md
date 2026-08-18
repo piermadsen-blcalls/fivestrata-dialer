@@ -1,9 +1,9 @@
 # DID Lifecycle — Acquisition → Registration → Health → Loop
 
-Draft v1, Sean 2026-08-17 (➤ direction; individual policies marked below). Prompted by the
-AutoWeb phase-1 greenlight: survey results are only as good as the numbers we dial from, and
-our single test DID was spam-tagged from its first dial. This doc turns the accumulated
-empirical work into an operating design.
+Draft v1, Sean 2026-08-17 (➤ direction; individual policies marked below). Prompted by
+standing up the first production dial pool: every program's results are only as good as the
+numbers we dial from, and our single test DID was spam-tagged from its first dial. This doc
+turns the accumulated empirical work into an operating design.
 
 **Evidence base** (all in the workspace repo `C:\Claude\fivestrata\docs\reporting\`):
 `td-windows-did-study.md` (7/31 — decay curve, TD rotation shape, default-CID lesson),
@@ -43,7 +43,7 @@ flowchart LR
 | Shape | **Scattered singles across NPA-NXX prefixes**, never contiguous blocks | Burn is block-level: KB's 582-295-2xxx / 732-327-2xxx blocks flagged together; TD's big purchased blocks burned as units (7/31, 8/5 studies) |
 | Geography | Area-code coverage matched to lead geography, plus a **reserve pool as the no-match fallback** | TD's single default CID took 173K dials in 90 days and is permanently burned — the fallback must be a pool, one config line for us (7/31 study §1) |
 | Count | **dials/day ÷ ~20** target intensity, floor of coverage + reserve; start 50–100 per the roadmap default | TD decay curve: answered% 30.2 → 21.4 → 18.9 across 1–10 / 11–25 / 26–50 dials/DID/day — the knee is ~10–25 (7/31 §3). Roadmap open-item default: 50–100 with a backup group |
-| Capabilities | Voice; **+SMS flag ($0.10/mo) on a designated sub-pool** | AutoWeb stage 4 floated SMS; cheap option now vs re-buying later |
+| Capabilities | Voice; **+SMS flag ($0.10/mo) on a designated sub-pool** | SMS follow-up is a plausible future lane for several programs; cheap option now vs re-buying later |
 | Price guardrails | Per-order $ cap + per-week count cap, same pattern as `scripts/did-purchase.ts` (cheapest candidates, hard abort over budget, never prints keys) | Existing approved guardrail style (8/7) |
 
 **Provisioning-time screening is the earliest-leverage step** (CIDR finding 4: 2,957
@@ -56,8 +56,8 @@ screen moves before the buy.
 
 ## 2. Registration (all before first dial, during warm-up)
 
-1. **CNAM** — `scripts/did-cnam.ts` exists (`FIVESTRATA`). ❓ Per-tenant CNAM: should
-   AutoWeb-program DIDs display an AutoWeb brand instead? (Whole-call branding is why
+1. **CNAM** — `scripts/did-cnam.ts` exists (`FIVESTRATA`). ❓ Per-tenant CNAM: should a
+   tenant program's DIDs display that tenant's brand instead? (Whole-call branding is why
    pre-auth-at-dial exists; CNAM is the same question one layer down.)
 2. **Free Caller Registry** — covers the three analytics networks behind the big carriers
    (First Orion/T-Mobile, TNS/Verizon, Hiya/AT&T). Today a manual Sean web form (pending
@@ -122,8 +122,8 @@ product: the 7/22 call named per-DID retirement-by-benchmark as exactly the leve
 won't give the human floors (they rotate whole blocks, some still good).
 
 **Economics.** At a fixed retirement threshold, consumption depends only on dial volume,
-not pool size (CIDR §Economics): volume ÷ 1,500 = numbers/month. AutoWeb phase 1 at, say,
-2K dials/day ≈ 40 numbers/mo ≈ **$40–80/mo** — noise. The CV pilot at 100K/day ≈ 2K/mo ≈
+not pool size (CIDR §Economics): volume ÷ 1,500 = numbers/month. A small first program at,
+say, 2K dials/day ≈ 40 numbers/mo ≈ **$40–80/mo** — noise. The CV pilot at 100K/day ≈ 2K/mo ≈
 $2–4K/mo — still small against what rotation buys (CIDR measured ~+20–25% contacts/mo and
 ~6M dead paid dials/mo removed at KB scale). Budget caps live in config, enforcement in the
 buy script, so a runaway loop can never spend past its weekly allowance.
@@ -136,11 +136,11 @@ weeks regardless. Retire-and-replace is cheaper and measurably works.
 ## The hitlist (D1–D16)
 
 The tracked work surface for the DID workflow (house style: C1–C7, T1–T11). Three gates:
-**Gate 1** = clean screened pool dialing for AutoWeb phase 1. **Gate 2** = the loop runs
-itself (budgets enforced, retirement + replacement automated). **Gate 3** = optimization
-experiments live. Ordered by dependency within each gate.
+**Gate 1** = a clean screened pool dialing for the first live program. **Gate 2** = the loop
+runs itself (budgets enforced, retirement + replacement automated). **Gate 3** =
+optimization experiments live. Ordered by dependency within each gate.
 
-### Gate 1 — clean pool for AutoWeb phase 1 (the pressing case)
+### Gate 1 — clean pool for the first live program (the pressing case)
 
 | # | Item | What / acceptance | Owner | Cost |
 |---|---|---|---|---|
@@ -150,8 +150,8 @@ experiments live. Ordered by dependency within each gate.
 | D4 | **Screening step** | Same-day reputation check on every new number BEFORE first dial; flagged → auto-retire (write-off). Pre-purchase if D1 allows | Claude | D1's per-query price × pool |
 | D5 | **Migration 0008** | Apply the draft (six lifecycle states, `daily_budget`, `warmup_until`, `npa_nxx`, `reputation_flags` jsonb, batch id, tenant affinity) + per-DID health view over `calls` | Claude (`db-apply.ts`) | $0 |
 | D6 | **Registration batch** | CNAM per batch (extend `did-cnam.ts`); FCR — investigate bulk path, else generate a paste-ready batch file for Sean's web-form session; record `registered_*` flags | Claude + Sean (FCR form) | $0 (FCR free; ❓ CNAM storage fee — verify in D1 recon) |
-| D7 | **Phase-1 pool live** | 10–25 screened, registered, warming DIDs sized to Ammie's list geography (waits on her spreadsheet for the area-code plan; buy the reserve pool immediately, coverage tail after) | Claude + Sean | ~$10–25 up + same /mo |
-| D8 | **Decisions needed from Sean** | (a) initial pool size + monthly DID budget cap; (b) per-tenant CNAM — do AutoWeb-program DIDs display AUTOWEB? (c) SMS-capable sub-pool now (+$0.10/mo each) or later | Sean | — |
+| D7 | **First pool live** | 10–25 screened, registered, warming DIDs sized to the first program's lead geography (waits on that program's lead list for the area-code plan; buy the reserve pool immediately, coverage tail after) | Claude + Sean | ~$10–25 up + same /mo |
+| D8 | **Decisions needed from Sean** | (a) initial pool size + monthly DID budget cap; (b) per-tenant CNAM — display the tenant's brand on its programs' DIDs? (c) SMS-capable sub-pool now (+$0.10/mo each) or later | Sean | — |
 
 ### Gate 2 — the loop runs itself
 
@@ -171,7 +171,7 @@ experiments live. Ordered by dependency within each gate.
 | D15 | Daily-budget knee refinement — re-derive the TD 10–25/day curve on OUR pool from our own fact stream | $0 |
 | D16 | CIDR-as-second-eye — if Ashley's contract survives the 8/17 renegotiation, compare its flags vs Telnyx reputation API on the same pool | contract-dependent (Ashley) |
 
-**Affordability envelope:** phase-1 pool ≈ **$25 up-front + $25–30/mo**; CV-pilot scale
+**Affordability envelope:** first pool ≈ **$25 up-front + $25–30/mo**; CV-pilot scale
 (100K dials/day) ≈ 2K numbers/mo ≈ **$2–4K/mo** — vs the ~+20–25% contacts/mo rotation
 bought at KB scale. The only unpriced line is reputation queries (D1). Everything spendable
 sits behind an explicit cap (D3/D8a/D10) so nothing can run away.
