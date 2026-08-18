@@ -133,22 +133,45 @@ buy script, so a runaway loop can never spend past its weekly allowance.
 effect from monitoring+remediation; every wear stratum reached 13–25% refusal within six
 weeks regardless. Retire-and-replace is cheaper and measurably works.
 
-## Build order (smallest useful first)
+## The hitlist (D1–D16)
 
-1. **Screen + register the AutoWeb pool** (~10–25 DIDs for phase 1): extend
-   `did-purchase.ts` to N scattered singles with the screening step; run CNAM + FCR.
-   This unblocks AutoWeb phase 1 with clean numbers — the pressing case.
-2. **Migration 0008** + per-DID health view over `calls`.
-3. **Budget enforcement in the dial path** (queue engine reads `daily_budget`,
-   `dial_count`, status).
-4. **Retirement sweep + guarded auto-replacement** (cron: evaluate thresholds, retire,
-   buy, re-enter pipeline).
-5. Console DID screen (buy/retire already in W8 scope) reads the same views.
+The tracked work surface for the DID workflow (house style: C1–C7, T1–T11). Three gates:
+**Gate 1** = clean screened pool dialing for AutoWeb phase 1. **Gate 2** = the loop runs
+itself (budgets enforced, retirement + replacement automated). **Gate 3** = optimization
+experiments live. Ordered by dependency within each gate.
 
-## Open questions
+### Gate 1 — clean pool for AutoWeb phase 1 (the pressing case)
 
-❓ Reputation API pre-purchase screening (above) · ❓ per-tenant CNAM/pools · ❓ FCR bulk
-registration · ❓ warm-up ramp length (test) · ❓ rest-and-recover viability (test) ·
-❓ CIDR contract survival post-8/17 meeting (Ashley) — affects whether we get a second
-monitoring eye for free · ❓ exact Telnyx hangup-cause taxonomy mapping to "carrier decline"
-(verify against live call_events before setting thresholds).
+| # | Item | What / acceptance | Owner | Cost |
+|---|---|---|---|---|
+| D1 | **Reputation-API recon** | Answer: can Telnyx Number Reputation query numbers we don't own (screen-before-buy vs buy-screen-retire)? Per-query price? Which sources reported (First Orion/TNS/Hiya)? Latency? This shapes D3 and prices D11 — the *only* materially unknown cost in the whole design | Claude (docs + a live probe on the test DID) | ~pennies |
+| D2 | **Decline-signal mapping** | Map Telnyx hangup causes in our live `call_events` to the "carrier decline" bucket (SIP 603/403-equivalent) so thresholds measure what the KB/TD studies measured. Acceptance: a query over existing battery calls producing a per-DID decline rate we believe | Claude | $0 |
+| D3 | **Pool-purchase script** | Extend `did-purchase.ts`: N scattered singles (enforce ≤1 per NPA-NXX per batch), area-code plan as input, per-order $ cap + per-week count cap, writes `dids` rows with `acquisition_batch`. Same guardrail style as the 8/7 approval | Claude builds; **Sean approves spend** | ~$1/DID upfront |
+| D4 | **Screening step** | Same-day reputation check on every new number BEFORE first dial; flagged → auto-retire (write-off). Pre-purchase if D1 allows | Claude | D1's per-query price × pool |
+| D5 | **Migration 0008** | Apply the draft (six lifecycle states, `daily_budget`, `warmup_until`, `npa_nxx`, `reputation_flags` jsonb, batch id, tenant affinity) + per-DID health view over `calls` | Claude (`db-apply.ts`) | $0 |
+| D6 | **Registration batch** | CNAM per batch (extend `did-cnam.ts`); FCR — investigate bulk path, else generate a paste-ready batch file for Sean's web-form session; record `registered_*` flags | Claude + Sean (FCR form) | $0 (FCR free; ❓ CNAM storage fee — verify in D1 recon) |
+| D7 | **Phase-1 pool live** | 10–25 screened, registered, warming DIDs sized to Ammie's list geography (waits on her spreadsheet for the area-code plan; buy the reserve pool immediately, coverage tail after) | Claude + Sean | ~$10–25 up + same /mo |
+| D8 | **Decisions needed from Sean** | (a) initial pool size + monthly DID budget cap; (b) per-tenant CNAM — do AutoWeb-program DIDs display AUTOWEB? (c) SMS-capable sub-pool now (+$0.10/mo each) or later | Sean | — |
+
+### Gate 2 — the loop runs itself
+
+| # | Item | What / acceptance | Owner | Cost |
+|---|---|---|---|---|
+| D9 | **Dial-path budget enforcement** | Queue engine DID selection reads status/`daily_budget`/`warmup_until`/`dial_count`: round-robin across eligible pool, area-code match with **pool** fallback (the TD default-CID lesson), hard stop at lifetime cap. Acceptance: a battery shows even spread + no DID over budget | Claude | $0 |
+| D10 | **Retirement sweep** | Cron: evaluate D2 thresholds (decline >5% warn / >10% quarantine over trailing 300; cohort answer-rate < half median) → state transitions + guarded replacement buy → re-enters D4 pipeline. Alert on every retirement with reason | Claude | replacement ~$1/DID |
+| D11 | **Scheduled reputation sweep** | Weekly sample of active pool (size vs D1 price), census on program-level contact-rate drop; per-source flags into `reputation_flags` | Claude | D1 price × sample |
+| D12 | **Console DID screen** | Buy/retire (guarded) + the health view; already in W8 scope — wire to D5's view, phones masked last-4 | Claude | $0 |
+
+### Gate 3 — optimization experiments (the platform's test-bench nature applied to DIDs)
+
+| # | Item | What | Cost |
+|---|---|---|---|
+| D13 | Warm-up ramp length A/B (start ~5/day wk 1 → 20; vs straight-to-20) | contact-rate + decline-rate delta by cohort | dial time only |
+| D14 | Rest-and-recover trial (quarantined DIDs rested N weeks vs retired) — CIDR says expect nothing; cheap to prove | ~$1/mo per rested DID |
+| D15 | Daily-budget knee refinement — re-derive the TD 10–25/day curve on OUR pool from our own fact stream | $0 |
+| D16 | CIDR-as-second-eye — if Ashley's contract survives the 8/17 renegotiation, compare its flags vs Telnyx reputation API on the same pool | contract-dependent (Ashley) |
+
+**Affordability envelope:** phase-1 pool ≈ **$25 up-front + $25–30/mo**; CV-pilot scale
+(100K dials/day) ≈ 2K numbers/mo ≈ **$2–4K/mo** — vs the ~+20–25% contacts/mo rotation
+bought at KB scale. The only unpriced line is reputation queries (D1). Everything spendable
+sits behind an explicit cap (D3/D8a/D10) so nothing can run away.
