@@ -101,23 +101,14 @@ boundary is pure rent and is not a state the sweep permits. CIDR showed list-fla
 (2,036 cleared, 1,555 re-flagged) and no measurable remediation effect, so expect the
 policy to resolve to retire-at-renewal in practice — anything recovered is upside.
 
-### Draft migration 0008 (not applied — schema TODO)
+### Migration 0008 — ✅ APPLIED 8/17
 
-```sql
-alter table dids
-  add column npa_nxx            text generated always as (substring(phone_number from 3 for 6)) stored,
-  add column daily_budget       integer not null default 20,
-  add column warmup_until       timestamptz,
-  add column acquisition_batch  text,
-  add column screened_at        timestamptz,
-  add column registered_cnam    boolean not null default false,
-  add column registered_fcr     boolean not null default false,
-  add column sms_capable        boolean not null default false,
-  add column reputation_flags   jsonb not null default '{}'::jsonb,  -- per-source labels
-  add column reputation_checked_at timestamptz,
-  add column tenant_id          uuid references tenants (id);        -- pool affinity (❓ shared vs per-tenant pools)
--- widen the status check to the six lifecycle states; per-DID daily spend view over calls
-```
+The real DDL lives at `supabase/migrations/0008_did_lifecycle.sql` (applied via
+`db-apply.ts`): the columns above plus `cnam`, `tenants.cnam` (per-tenant CNAM seeds),
+the widened six-state check ('cooling' rows migrated to 'resting'), scatter/tenant
+indexes, and the **`did_health` view** — per-DID hangup totals, 7-day/today dial counts,
+decline counts + `decline_pct` (D2 bucket), bad-number counts. ❓ shared vs per-tenant
+pools remains open (`tenant_id` is nullable pool affinity for now).
 
 ## 4. The acquisition loop
 
@@ -151,12 +142,12 @@ optimization experiments live. Ordered by dependency within each gate.
 |---|---|---|---|---|
 | D1 | **Reputation-API recon** | ✅ DONE 8/17 (`scripts/did-reputation-probe.ts`, read-only). Findings: (a) numbers must be **on-account + in-service** → no pre-purchase screening, buy→screen→retire confirmed; (b) enablement is one-time: ToS agree → create enterprise → **signed LOA** → Hiya vetting ~minutes (Sean's clicks — added to D8d); (c) pricing: **$100/mo per enterprise base fee** + billed `fresh=true` queries (rate TBD from portal); **cached queries free** — at first-pool scale the base fee dominates all other DID costs combined (decision point in D8d); (d) vetting + risk scores are **Hiya-centric** (`spam_risk`/`spam_category` + maturity/connection/engagement/sentiment 0–100) — verify multi-source coverage once live; (e) side-probe: `/number_lookup` returns 403 on our key — separate product, could be a cheap pre-buy carrier/line-type layer if enabled (❓ optional) | Claude ✅ | pennies |
 | D2 | **Decline-signal mapping** | ✅ MACHINERY DONE 8/17 (`scripts/did-decline-audit.ts`): pages all `call.hangup` events, tallies hangup_cause × SIP × source, per-DID decline rate (masked last-4). Bucket: `call_rejected` + `unspecified` = DECLINE; `not_found`/`unallocated_number`/`invalid_number_format` count against the **list**, not the DID. Current data (4,107 hangups) is all `normal_clearing` — the persona rig stays on-net at Telnyx and never crosses a carrier analytics gate, so **0 declines observed is expected, not evidence**. Calibration (incl. whether `unspecified` belongs in the bucket) waits for real off-net outbound | Claude ✅ (calibration pending real traffic) | $0 |
-| D3 | **Pool-purchase script** | Extend `did-purchase.ts`: N scattered singles (enforce ≤1 per NPA-NXX per batch), area-code plan as input, per-order $ cap + per-week count cap, writes `dids` rows with `acquisition_batch`. Same guardrail style as the 8/7 approval | Claude builds; **Sean approves spend** | ~$1/DID upfront |
-| D4 | **Screening step** | Same-day reputation check on every new number BEFORE first dial; flagged → auto-retire (write-off). **Built screening-ready, degrades gracefully** (➤ Sean 8/17): while the service is deferred (D8d), numbers pass through marked `unscreened`; on enablement day the whole live pool is **retro-screened** (the API works on owned in-service numbers) and flagged DIDs retire then | Claude | per-query price × pool, deferred |
-| D5 | **Migration 0008** | Apply the draft (six lifecycle states, `daily_budget`, `warmup_until`, `npa_nxx`, `reputation_flags` jsonb, batch id, tenant affinity) + per-DID health view over `calls` | Claude (`db-apply.ts`) | $0 |
-| D6 | **Registration batch** | CNAM per batch (extend `did-cnam.ts`); FCR — investigate bulk path, else generate a paste-ready batch file for Sean's web-form session; record `registered_*` flags | Claude + Sean (FCR form) | $0 (FCR free; ❓ CNAM storage fee — verify in D1 recon) |
+| D3 | **Pool-purchase script** | ✅ BUILT 8/17: `scripts/did-pool-purchase.ts` — N scattered singles (≤1/NPA-NXX per batch AND never a held prefix), area codes + tenant as input, $2/number hard cap, weekly volume cap from `dialer_config did_weekly_buy_cap` (default 25), **dry-run default / `--buy` to spend**, inserts `dids` rows as `screening` with batch + tenant. Smoke: 4 scattered 949/714 singles @ $1+$1/mo each | Claude ✅; **Sean approves each --buy** | ~$1/DID upfront |
+| D4 | **Screening step** | ✅ BUILT 8/17: `scripts/did-screen.ts` — deferred mode live (service off → `screening`→`warming` tagged `{"unscreened":true}`, 7-day warm-up); live mode ready (associate → read `spam_risk`, medium/high → `quarantined`, prints the real keep-rate); `--all` = enablement-day retro-screen. Never releases numbers (that stays guarded in D10) | Claude ✅ | per-query price × pool, deferred |
+| D5 | **Migration 0008** | ✅ APPLIED 8/17 (`db-apply.ts`, HTTP 201): six lifecycle states ('cooling'→'resting'), `daily_budget`/`warmup_until`/`npa_nxx` (generated)/`reputation_flags`/batch/`tenant_id`/`cnam` cols, `tenants.cnam` seeded (FIVESTRATA/AUTOWEB), **`did_health` view live** (decline bucket per D2; verified showing the test DID's 4,156 hangups, 0% decline on-net). Test DID backfilled into `dids` (batch dev-2026-08-07) | Claude ✅ | $0 |
+| D6 | **Registration batch** | ✅ BUILT 8/17: `scripts/did-register.ts` — per-tenant CNAM from `tenants.cnam` (default `dialer_config cnam_default`), sets `registered_cnam`+`cnam`; writes FCR paste-ready batch file to `C:\Claude\scratch\fcr-batch-<date>.txt` for Sean's freecallerregistry.com session, `--mark-fcr` records completion; demo 555-rows excluded everywhere | Claude ✅ + Sean (FCR form per batch) | $0 |
 | D7 | **First pool live** | 10–25 screened, registered, warming DIDs sized to the first program's lead geography (waits on that program's lead list for the area-code plan; buy the reserve pool immediately, coverage tail after) | Claude + Sean | ~$10–25 up + same /mo |
-| D8 | **Decisions/actions needed from Sean** | (a) initial pool size + monthly DID budget cap; (b) per-tenant CNAM — display the tenant's brand on its programs' DIDs? (c) SMS-capable sub-pool now (+$0.10/mo each) or later; (d) **Number Reputation enablement — ➤ DEFERRED (Sean 8/17): build all flows screening-ready, enable later.** Interim: D2 decline-monitoring catches bad DIDs during warm-up (days at pilot volume); D11 sweeps wait. Enable trigger: monthly churn × ~20% bad-buy rate > $100/mo, or a client conversation needs the keep-rate live. Activation is a ~10-min event: fill `C:\Claude\aicc-enterprise.json`, sign the LOA, run `scripts/did-reputation-enable.ts --i-approve-tos-and-fee` (ToS + enterprise + LOA + enable + vet-poll + associate, idempotent), then retro-screen the pool (D4). Fee hits the existing prepaid Telnyx balance — auto-recharge becomes mandatory at enablement (negative balance bricks AI inference account-wide) | Sean (timing) | **$100/mo once enabled** + fresh queries |
+| D8 | **Decisions/actions needed from Sean** | (a) initial pool size + monthly budget cap — **TBD** (weekly buy-cap default 25 governs meanwhile); (b) per-tenant CNAM — **✅ YES (Sean 8/17)**, seeded FIVESTRATA/AUTOWEB in `tenants.cnam`; (c) SMS sub-pool — **❓ PARKED (Sean 8/17), needs further research** before any SMS-capable buys; (d) **Number Reputation enablement — ➤ DEFERRED (Sean 8/17): build all flows screening-ready, enable later.** Interim: D2 decline-monitoring catches bad DIDs during warm-up (days at pilot volume); D11 sweeps wait. Enable trigger: monthly churn × ~20% bad-buy rate > $100/mo, or a client conversation needs the keep-rate live. Activation is a ~10-min event: fill `C:\Claude\aicc-enterprise.json`, sign the LOA, run `scripts/did-reputation-enable.ts --i-approve-tos-and-fee` (ToS + enterprise + LOA + enable + vet-poll + associate, idempotent), then retro-screen the pool (D4). Fee hits the existing prepaid Telnyx balance — auto-recharge becomes mandatory at enablement (negative balance bricks AI inference account-wide) | Sean (timing) | **$100/mo once enabled** + fresh queries |
 
 ### Gate 2 — the loop runs itself
 
