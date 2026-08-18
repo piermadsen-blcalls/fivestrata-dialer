@@ -92,16 +92,16 @@ Sean's on-call claim — "we pretty much have most of those functions already bu
 Sean followed up in writing: the dialer buys its own phone numbers (DIDs), so a small pilot
 partitions naturally **by region** — pick a geography and the pool stays small (e.g. an
 Orange-County test ≈ a batch of 949/714/909 numbers). Ammie asked whether region choice
-matters / should track pilot dealers, and cost. Sean's answers, which are now **client-facing
-commitments** the build must honor (they map to hitlist items in
-`../architecture/did-lifecycle.md`):
+matters / should track pilot dealers, and cost. Sean's answers — all describing Gate-1
+functionality already on the DID hitlist (`../architecture/did-lifecycle.md`); nothing here
+created new scope, since the pilot can't ship without it (Sean 8/17):
 
 - Local-to-recipient numbers get answered more (→ pick the region; D7's area-code plan now
   waits on **Ammie's region pick** in addition to her lead list).
 - ~$1/mo per number, SMS +$0.10/mo (the Teams message said $.20 — Sean's typo, ignore).
-- **"We scan them on origination; ~80% are kept"** (D4 screening — requires the reputation
-  LOA, D8d, now on the critical path of a client promise; the 80% renders CIDR's
-  16.4%-refused finding, to be replaced by our own measured keep-rate).
+- **"We scan them on origination; ~80% are kept"** (D4 screening, behind the reputation
+  LOA D8d; the 80% renders CIDR's 16.4%-refused finding, to be replaced by our own
+  measured keep-rate).
 - Registered with A-attestation **"and our brand (or yours)"** (D6; half-commits the
   per-tenant CNAM option, D8b).
 - ~1,500 dials per DID before degradation (the lifetime-cap policy, simplified).
