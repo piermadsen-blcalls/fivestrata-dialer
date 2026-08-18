@@ -36,6 +36,8 @@ const durations: number[] = [];
 let bargeIns = 0;
 const rebuttal = { fired: 0, flipped: 0, heldNo: 0, unclear: 0 };
 const rebuttalCalls: Array<{ persona: string; outcome: string }> = [];
+const tts = { rendered: 0, skipped: 0 };
+const ttsLines: Array<{ persona: string; kind: string; text: string }> = [];
 
 for (const c of calls) {
   const rows: any[] = await fetch(
@@ -82,6 +84,16 @@ for (const c of calls) {
   // barge-in signature: playback_stop only fires on mid-clip declines
   if (rows.some((e) => e.event_type === 'call.playback.ended' && e.payload?.status === 'cancelled')) bargeIns++;
 
+  // Live-TTS long tail (8/17): renders per call + what they replaced.
+  for (const e of rows.filter((ev) => ev.event_type === 'aicc.tts_render')) {
+    const pl = e.payload ?? {};
+    if (pl.skipped) tts.skipped++;
+    else {
+      tts.rendered++;
+      ttsLines.push({ persona: c.persona, kind: pl.kind, text: (pl.text ?? '').slice(0, 110) });
+    }
+  }
+
   const t0 = rows.find((e) => e.event_type === 'call.initiated');
   const t1 = rows.find((e) => e.event_type === 'call.hangup');
   if (t0 && t1) durations.push((new Date(t1.occurred_at).getTime() - new Date(t0.occurred_at).getTime()) / 1000);
@@ -100,6 +112,11 @@ if (rebuttal.fired) {
   const byPersona: Record<string, string[]> = {};
   for (const r of rebuttalCalls) (byPersona[r.persona] ??= []).push(r.outcome);
   for (const [p, outs] of Object.entries(byPersona)) console.log(`  ${p}: ${outs.join(', ')}`);
+}
+if (tts.rendered || tts.skipped) {
+  console.log(`\n=== LIVE TTS LONG TAIL ===`);
+  console.log(`rendered ${tts.rendered}, skipped ${tts.skipped} (cap/compose-fail -> canned fallback)`);
+  for (const l of ttsLines.slice(0, 15)) console.log(`  [${l.persona}/${l.kind}] "${l.text}"`);
 }
 console.log(`\n=== DURATIONS: avg ${(durations.reduce((a, b) => a + b, 0) / durations.length).toFixed(0)}s  min ${Math.min(...durations).toFixed(0)}s  max ${Math.max(...durations).toFixed(0)}s ===`);
 console.log('\n=== TOP CALLER QUESTIONS (the rebuttal backlog) ===');

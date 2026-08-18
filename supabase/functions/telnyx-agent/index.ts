@@ -60,6 +60,8 @@ interface CallState {
   rebutted?: boolean; // one-shot soft-decline rebuttal used (8/17 windows bench: persuasive-if-needed, exactly once, never on hard opt-out language)
   deflected?: boolean; // caller has deflected commitment at least once (Linda knob 8/17) — set at BUFFER time on the uncapped final, because the pending cap can slice the tell out of the accumulated turn
   confirmAskLanded?: boolean; // the answer/confirm clip finished playing — only then may the binary read judge (8/15 Butch: mid-clip reactions were judged before the ask landed)
+  ttsUsed?: number; // live-TTS renders this call (cap 3 — never loop; cap hit falls back to canned)
+  afterSpeak?: string; // media to play when the current live-TTS speak ends (goodbye sequencing)
   mode?: 'persona';
   persona?: string;
   history?: Array<{ role: 'claire' | 'me'; text: string }>;
@@ -280,8 +282,10 @@ async function saveState(ccid: string, s: CallState): Promise<void> {
 
 // CAS: apply `next` only if the stored phase (or marker) still matches — the
 // LIKE filter makes Postgres the arbiter; losers skip their side effects.
+// MEM is written only on a WIN (8/17 lost-Butch autopsy: a losing isolate's
+// MEM held a transition that never happened — inquiryAnswered=true with no
+// regreet played — and suppressed the caller's retry when a DB read wobbled).
 async function casTransition(ccid: string, expectMarker: string, next: CallState): Promise<boolean> {
-  MEM.set(ccid, next);
   const { data, error } = await supabase
     .from('dialer_config')
     .update({ value: JSON.stringify(next), updated_at: new Date().toISOString() })
@@ -292,7 +296,9 @@ async function casTransition(ccid: string, expectMarker: string, next: CallState
     console.error('casTransition failed:', error.message);
     return false;
   }
-  return (data?.length ?? 0) > 0;
+  const won = (data?.length ?? 0) > 0;
+  if (won) MEM.set(ccid, next);
+  return won;
 }
 
 const dropState = (ccid: string) => {
@@ -580,6 +586,87 @@ async function chooseClip(transcript: string, question: string): Promise<{ clip:
   }
 }
 
+// --- LIVE TTS LONG TAIL (Sean 8/17, priority #1: "in no scenario should this
+// solution not have a live TTS ready to go if it detects that it doesn't have
+// an appropriate clip" — a tenth of a penny on a good answer beats "I'll take
+// that as a maybe"). Primary path: in-call `speak` with Claire's OWN DragonHD
+// voice (probe 8/17: accepted, ~1.9s seam — the category ack in front masks
+// it, same trick as the LLM decision). Generation is CONSTRAINED: rephrase
+// approved facts only, deterministic digit/percent rejection, hard word cap,
+// CANNOT -> canned fallback. Every render logs aicc.tts_render for the
+// overnight distill loop (cluster renders -> recommend new canned clips).
+const CLAIRE_VOICE = 'Azure.en-US-Ava:DragonHDLatestNeural';
+const TTS_CAP_PER_CALL = 3;
+
+function logTts(ccid: string, payload: Record<string, unknown>): void {
+  waitUntil(
+    supabase
+      .from('call_events')
+      .insert({ event_type: 'aicc.tts_render', call_control_id: ccid, occurred_at: new Date().toISOString(), payload })
+      .then(({ error }) => {
+        if (error) console.error('tts_render log failed:', error.message);
+      }),
+  );
+}
+
+async function composeLine(kind: 'answer' | 'wrap', callerSaid: string, vertical: string): Promise<{ text: string; ms: number }> {
+  const t0 = Date.now();
+  const ending = kind === 'answer'
+    ? 'End your line with the exact ask: "Want me to set that up? A quick yes or no is perfect."'
+    : 'This is a warm goodbye: briefly acknowledge what they actually said, close kindly, ask nothing.';
+  const system = `You are Claire, a warm, natural-sounding phone agent for Five Strata, on a recorded outbound ${vertical} call. Compose ONE short spoken line (max 35 words) responding to what the caller just said. STRICT CONTENT RULES — you may only rephrase these approved facts: you are Claire with Five Strata; the offer is a free, no-obligation quote from a licensed ${vertical} specialist in their area; you cannot quote prices yourself because price depends on materials, size, and scope — the specialist gives an exact free quote; typical installs finish in two to seven days; agreeing only means talking to the specialist, never a purchase. NEVER state any number, price, discount, percentage, legal or consent language, or any fact not listed above. Sound like a real person on the phone, not a script. ${ending} If you cannot produce a compliant line, reply exactly CANNOT.`;
+  try {
+    const apiKey = await getApiKey();
+    const res = await fetch(`${TELNYX}/ai/chat/completions`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: CHOOSE_MODEL,
+        max_tokens: 90,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: `Caller just said: "${callerSaid.slice(-400)}"` },
+        ],
+      }),
+    });
+    const body: any = await res.json().catch(() => ({}));
+    let text: string = (body?.choices?.[0]?.message?.content ?? '').trim().replace(/^["']|["']$/g, '');
+    // Deterministic compliance floor: no digits/currency/percent ever reaches
+    // the caller from a live render; word cap enforced here, not by hope.
+    if (!text || /CANNOT/i.test(text) || /[$%€£]|\d/.test(text) || text.split(/\s+/).length > 48) text = '';
+    return { text, ms: Date.now() - t0 };
+  } catch {
+    return { text: '', ms: Date.now() - t0 };
+  }
+}
+
+// Speak a live-rendered line in Claire's own voice. Returns false if the
+// budget is spent or the speak command fails — callers MUST fall back to a
+// canned clip on false (the long tail augments the pack, never strands a call).
+async function liveTTS(ccid: string, state: CallState, kind: 'answer' | 'wrap', callerSaid: string, afterSpeak?: string): Promise<boolean> {
+  const used = state.ttsUsed ?? 0;
+  if (used >= TTS_CAP_PER_CALL) {
+    logTts(ccid, { kind, skipped: 'cap', callerSaid: callerSaid.slice(-200) });
+    return false;
+  }
+  const vertical = (state.question ?? '').startsWith('q_') ? state.question!.slice(2) : 'home improvement';
+  const { text, ms } = await composeLine(kind, callerSaid, vertical);
+  if (!text) {
+    logTts(ccid, { kind, skipped: 'compose_failed', composeMs: ms, callerSaid: callerSaid.slice(-200) });
+    return false;
+  }
+  const next: CallState = { ...state, ttsUsed: used + 1, afterSpeak };
+  await saveState(ccid, next);
+  const ok = await telnyxCmd(`/calls/${ccid}/actions/speak`, {
+    payload: text,
+    voice: CLAIRE_VOICE,
+    language: 'en-US',
+    client_state: encodeState(next),
+  });
+  logTts(ccid, { kind, ok, text, composeMs: ms, callerSaid: callerSaid.slice(-200), phase: state.phase });
+  return ok;
+}
+
 // Respond — or, if the judge is unsure about an engaged caller, CONFIRM once
 // instead of guessing (Sean 8/14: Maria at 98%+ — structure beats classifier
 // tuning; mirrors the production TCPA unclear-yes confirm discipline).
@@ -758,6 +845,9 @@ async function respondOrConfirm(ccid: string, next: CallState, said: string): Pr
     return;
   }
   waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+  // Long tail: a generic unclear exit is exactly the "no apt clip" moment —
+  // render a bespoke contextual wrap instead; goodbye plays at speak.ended.
+  if (clip === 'cv_resp_unclear' && (await liveTTS(ccid, next, 'wrap', said, next.goodbye ?? 'cv_goodbye'))) return;
   await play(ccid, vclip(next, clip), next);
   await play(ccid, next.goodbye ?? 'cv_goodbye', next);
 }
@@ -1144,12 +1234,20 @@ async function handle(data: any): Promise<void> {
         const next: CallState = { ...cur, phase: 'wrapup', pending: undefined };
         if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
           waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+          // Long tail: they SAID something unjudgeable — wrap it bespoke.
+          // Pure silence keeps the canned exit (nothing to respond to).
+          if (v === 'unclear' && cur.pending && (await liveTTS(ccid, next, 'wrap', cur.pending, next.goodbye ?? 'cv_goodbye'))) return;
           await play(ccid, vclip(next, v === 'yes' ? 'resp_interested' : v === 'no' ? 'resp_not_interested' : 'cv_resp_unclear'), next);
           await play(ccid, next.goodbye ?? 'cv_goodbye', next);
         }
       })(),
     );
-  } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0) {
+  } else if (et === 'call.transcription' && state.phase === 'consent_listen' && transcript.length > 0 && isFinal) {
+    // isFinal gate (8/17 lost-Butch autopsy): this branch used to transition
+    // on INTERIMS — a partial "this about that thing my wife filled out?"
+    // stole the consent->question CAS ~200ms before the final reached the
+    // inquiry branch, which then lost its CAS and the caller's question
+    // evaporated. Finals only; the 6s fallback still covers silence.
     // A decline at consent is an opt-out, not a yes (8/10 rehearsal finding).
     // Windows bench (8/17): a SOFT decline gets the one-shot rebuttal first —
     // hard opt-out language never does.
@@ -1319,13 +1417,69 @@ async function handle(data: any): Promise<void> {
       await saveState(ccid, { ...state, pending: joined, deflected: state.deflected || isDeflection(transcript) }); // fragment — keep listening
       return;
     }
+    // Long tail, second/third answers: the canned answer budget is spent but
+    // the caller asked another real product question (8/17 quality autopsy:
+    // Maria asked price 3x, answered once). Compose a fresh answer in
+    // Claire's voice ending in the binary ask; speak.ended re-arms the window.
+    if (
+      state.confirmAsked && !isDecline(joined) && !isHardOptOut(joined) &&
+      (isCommitmentAsk(transcript) || isPriceAsk(transcript) || isProcessAsk(transcript) || hasEngagedAsk(transcript)) &&
+      judgeConfirm(joined, state.deflected) !== 'yes'
+    ) {
+      const c: CallState = { ...state, confirmAskLanded: false, pending: undefined };
+      if (await casTransition(ccid, '"confirmAskLanded":true', c)) {
+        if (await liveTTS(ccid, c, 'answer', joined)) return;
+        // Budget/compose failed — restore the landed flag and judge normally.
+        await saveState(ccid, { ...c, confirmAskLanded: true, pending: joined });
+      }
+    }
     const verdict = judgeConfirm(joined, state.deflected);
     const next: CallState = { ...state, phase: 'wrapup', pending: undefined };
     if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
       waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+      // Long tail: bespoke wrap instead of "I'll take that as a maybe".
+      if (verdict === 'unclear' && (await liveTTS(ccid, next, 'wrap', joined, next.goodbye ?? 'cv_goodbye'))) return;
       await play(ccid, vclip(next, verdict === 'no' ? 'resp_not_interested' : verdict === 'yes' ? 'resp_interested' : 'cv_resp_unclear'), next);
       await play(ccid, next.goodbye ?? 'cv_goodbye', next);
     }
+  } else if (et === 'call.speak.ended' && state.afterSpeak) {
+    // A live-TTS wrap just finished — play the queued goodbye.
+    const media = state.afterSpeak;
+    const next: CallState = { ...state, afterSpeak: undefined };
+    await saveState(ccid, next);
+    await play(ccid, media, next);
+  } else if (et === 'call.speak.ended' && state.phase === 'confirm_listen') {
+    // A live-TTS ANSWER just landed — same discipline as a canned answer-clip
+    // landing: judge anything decisively buffered, else arm the 15s window.
+    const pendingText = state.pending ?? '';
+    let buffered = pendingText ? judgeConfirm(pendingText, state.deflected) : 'unclear';
+    const hardNo = isDecline(pendingText) || /^(no|nope|nah)\b/.test(normalizeUtterance(pendingText.split(' ... ').pop() ?? ''));
+    if (buffered === 'no' && !hardNo) buffered = 'unclear';
+    if (buffered !== 'unclear') {
+      const next: CallState = { ...state, phase: 'wrapup', pending: undefined };
+      if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
+        waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+        await play(ccid, vclip(next, buffered === 'yes' ? 'resp_interested' : 'resp_not_interested'), next);
+        await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+      }
+      return;
+    }
+    await saveState(ccid, { ...state, confirmAskLanded: true, pending: undefined });
+    waitUntil(
+      (async () => {
+        await new Promise((r) => setTimeout(r, 15_000));
+        const cur = await loadState(ccid);
+        if (cur.phase !== 'confirm_listen') return;
+        const v = cur.pending ? judgeConfirm(cur.pending, cur.deflected) : 'unclear';
+        const next: CallState = { ...cur, phase: 'wrapup', pending: undefined };
+        if (await casTransition(ccid, '"phase":"confirm_listen"', next)) {
+          waitUntil(telnyxCmd(`/calls/${ccid}/actions/transcription_stop`, {}).then(() => {}));
+          if (v === 'unclear' && cur.pending && (await liveTTS(ccid, next, 'wrap', cur.pending, next.goodbye ?? 'cv_goodbye'))) return;
+          await play(ccid, vclip(next, v === 'yes' ? 'resp_interested' : v === 'no' ? 'resp_not_interested' : 'cv_resp_unclear'), next);
+          await play(ccid, next.goodbye ?? 'cv_goodbye', next);
+        }
+      })(),
+    );
   } else if (et === 'call.playback.ended' && p.media_name === (state.goodbye ?? 'cv_goodbye')) {
     await saveState(ccid, { ...state, phase: 'done' });
     // Flush any stray queued playback before hanging up (8/11: a stale-state

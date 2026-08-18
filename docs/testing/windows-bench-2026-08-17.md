@@ -243,3 +243,56 @@ Across ~395 Windows dials today (6 batteries, ~$16 carrier+AI):
 **Open for Sean:** wishy_washy transfers (6 in the full battery) remain per the
 buyer-favoring doctrine — street-mix Decisions #2 is still his call. The Linda knob and
 the one-rebuttal policy are live and revertible.
+
+## Live TTS long tail (same night — Sean: PRIORITY #1)
+
+Sean's directive on seeing the per-call render scatter (Claire = zero live TTS by
+construction): *"in no scenario should this solution not have a live TTS ready to go if
+it detects that it doesn't have an appropriate clip"* — a tenth of a penny on a good
+answer beats "I'll take that as a maybe"; renders feed an overnight analysis that
+recommends new canned clips; the good voice was picked precisely so live renders sound
+seamless.
+
+**Latency probe (`scripts/tts-probe.ts`, live call):** Telnyx in-call `speak` ACCEPTS
+Claire's own DragonHD voice — ~1.9s command→speech seam (server-side synthesis; basic
+voice baseline 11ms proves it's synthesis time). Render→upload→play measured 4.4s — the
+fallback, not the primary. The category ack already fires instantly and runs ~1.5–2s,
+masking the seam — the same trick that buys the LLM its decision time.
+
+**Wiring (deployed):** `liveTTS()` + `composeLine()` in telnyx-agent. Generation is
+CONSTRAINED — rephrase approved facts only (identity, free no-obligation quote,
+can't-quote-price + factors, 2–7 day installs, talk-not-purchase), 35-word cap, and a
+deterministic rejection floor: any digit/currency/percent in a render kills it (canned
+fallback). Cap 3 renders/call. Fires exactly where the state machine previously admitted
+defeat: (a) unclear exits with the confirm spent — bespoke contextual wrap instead of
+"I'll take that as a maybe"; (b) second/third product questions after the canned answer
+budget is spent — fresh answer ending in the binary ask, window re-arms at `speak.ended`;
+(c) timeout exits where the caller actually said something. Silence keeps canned exits.
+Every render/skip logs `aicc.tts_render` (kind, caller words, text, compose ms) — the
+telemetry for both the flywheel and the future clip-selector-with-RENDER-action (the
+tunable cheap-LLM layer; v1 routing is the deterministic else-branch, zero new latency).
+
+**First longtail battery (28 calls, seed 823):** 10 renders, 0 compose failures, 0 cap
+hits; `cv_resp_unclear` endings GONE from the outcome matrix — hedgers and ramblers got
+bespoke wraps ("Sounds like you want to discuss it with your husband first, completely
+understandable…"). Buyers: normal_win 4/4; butch_win 3/4 — the miss autopsied to a
+PRE-EXISTING race, not TTS.
+
+**The lost-Butch race (found + fixed same night):** the consent branch transitioned the
+state machine on INTERIM transcripts — a partial stole the consent→question CAS ~200ms
+before the final reached the inquiry branch, whose CAS then lost and the caller's
+question EVAPORATED (no regreet, no answer). Compounding: `casTransition` wrote MEM
+before the DB arbiter, so losing isolates kept a transition that never happened
+(`inquiryAnswered=true` with no regreet played), suppressing retries. Fixes: consent
+transitions on finals only (the 6s fallback still covers silence); MEM written only on
+CAS win. This race likely explains the historical repeat-inquiry non-answers in the 8/14
+Butch rounds and the 8/17 flip-battery quality findings. Verified by longtail battery 2
+(seed 824).
+
+**The overnight flywheel (`scripts/tts-distill.ts`):** clusters `aicc.tts_render` events
+and recommends reusable canned clips (70B judge; no-digit rule enforced on outputs).
+First real run: 9 renders → 3 recommended clips (`considering_options` ~4x,
+`discuss_with_others` ~2x, `positive_experience` ~2x) + 3 singletons left live. Runs
+locally against call_events tonight; moves to Snowflake when the FIVESTRATADIALER schema
+lands (the events already ride `snowflake-sync.ts`). Known nit: the recommendation
+prompt should carry each cluster's kind (a goodbye cluster got the answer-ask suffix).

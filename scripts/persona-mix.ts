@@ -87,6 +87,18 @@ const DECKS: Record<string, { spec: Array<[string, number, string?]>; greet: str
     spec: [['reflexive_decliner', 6, 'q_windows'], ['normal_win', 3, 'q_windows'], ['butch_win', 3, 'q_windows']],
     greet: 'greet_windows',
   },
+  // Live-TTS long-tail battery (8/17, Sean priority #1): oversamples the
+  // personas that generate "no apt clip" moments (hedgers, ramblers,
+  // multi-question buyers) — measures renders/call, that cv_resp_unclear
+  // endings drop, and that buyers stay perfect.
+  'windows-longtail': {
+    spec: [
+      ['wishy_washy', 6, 'q_windows'], ['talker', 6, 'q_windows'],
+      ['price_shopper', 4, 'q_windows'], ['normal_win', 4, 'q_windows'],
+      ['butch_win', 4, 'q_windows'], ['confused_elder', 4, 'q_windows'],
+    ],
+    greet: 'greet_windows',
+  },
 };
 const deckName = DECKS[process.argv[2] ?? ''] ? (process.argv[2] as string) : 'street';
 const seed = Number((deckName !== 'street' ? process.argv[3] : process.argv[2]) ?? 815);
