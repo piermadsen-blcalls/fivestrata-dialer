@@ -121,16 +121,20 @@ Why event-driven: cadence adapts to outcomes (a CALLBACK reschedules to the requ
 time, not the ladder), the queue stays at |active leads| rows, and a mid-campaign cadence
 edit affects every future attempt with zero rewrites.
 
-**❓ Queue-ordering / dialing algorithm (opened 8/18 shareout,
-`meetings/2026-08-18-shareout.md`):** within the dialable-now set, *which* job is claimed
-first is currently implicit (ready-time order). Open design axes: FIFO vs LIFO,
-round-robin across leads vs bunched attempts, speed-to-lead priority for fresh.
-Precedent to mine: FiveStrata's prior **"Prism"** algorithm — per-lead algorithm
-assignment under a master prioritization layer (parameters requested from the team; even
-high-level tuning variables — lead quality, speed-to-lead, time-of-day — are useful now).
-Target shape: **algorithm selectable per campaign** so variants A/B cleanly (same slot as
-`daypart_pref` rotation: shipped default + config override, later a Snowflake-tuned
-directive). CV is the power user; AutoWeb runs a generic variant.
+**➤ Queue-ordering / dialing algorithm (raised 8/18 shareout; position Sean 8/18,
+`meetings/2026-08-18-shareout.md`):** most of "the dialing algorithm" already exists in
+this cascade — per-lead next-attempt scheduling (rest hours, daypart rotation, TCPA
+windows), campaign priority, pacing, per-campaign narrowing config. The genuinely
+unresolved sliver is claim order *within* the dialable-now set (currently implicit
+ready-time order): FIFO vs LIFO, round-robin across leads vs bunched attempts,
+speed-to-lead boost for fresh — a config-shaped knob in the same slot as `daypart_pref`
+(shipped default + override, later a Snowflake-tuned directive), **selectable per
+campaign** so variants A/B cleanly. FiveStrata's prior **"Prism"** algorithm (per-lead
+algorithm assignment under a master prioritization layer; parameters requested from the
+team) is a **harvest, not a spec**: review its tuning variables (lead quality,
+speed-to-lead, time-of-day) and fold in additional optimization parameters **only where
+truly novel** vs what's already modeled here. CV is the power user; AutoWeb runs a
+generic variant.
 
 ## 6. L4 — claim-time allocation: where ZIP+DID pairs actually live
 
