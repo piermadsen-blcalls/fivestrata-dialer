@@ -170,7 +170,7 @@ the L2 plan clamp and **purchase suggestions**: gap × target intensity → a re
 | Level | Runs in | Exists today? |
 |---|---|---|
 | L0 | Console Phase-2 screen 1, grown into a wizard whose **review pane shows the computed cascade before activation** (est dials/day, end-date feasibility, DID coverage gaps) — the Ammie-facing screen | prototype console live; screen is new |
-| L1 compile + L2 planner | `scripts/campaign-plan.ts` first (cron later); deliberately NOT a DB trigger — unlike CUSUM this is heavy, multi-table, and wants logs | new, small |
+| L1 compile + L2 planner | `scripts/campaign-plan.ts` (cron later); deliberately NOT a DB trigger — unlike CUSUM this is heavy, multi-table, and wants logs | ✅ BUILT 8/18: `create` (narrowing invariant enforced at write) / `compile` (enroll + dial_jobs + geography + allowance) / `plan` (five-term min, binding constraint, `campaign_days` upsert, coverage-gap buy suggestions, completion detection). Dry-run default = the wizard review-pane math. Read paths verified on demo leads; **committed write paths await the first sanctioned live campaign** (permission-gated on shared project) |
 | L3 rescheduler | disposition-handling path (same place dispo write-back happens) | new |
 | L4 pacer | the queue-engine worker — this cascade is the spec that makes W-queue concrete | designed (`concurrency-queueing.md`), unbuilt |
 | Kill switches | `campaigns.status = paused` = claim filter; "dialing paused" keeps its precise meaning (in-flight calls finish, queue holds) | pattern live in `dialer_config` |
