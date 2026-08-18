@@ -98,7 +98,7 @@ commitments** the build must honor (they map to hitlist items in
 
 - Local-to-recipient numbers get answered more (→ pick the region; D7's area-code plan now
   waits on **Ammie's region pick** in addition to her lead list).
-- ~$1/mo per number, SMS +$0.20/mo.
+- ~$1/mo per number, SMS +$0.10/mo (the Teams message said $.20 — Sean's typo, ignore).
 - **"We scan them on origination; ~80% are kept"** (D4 screening — requires the reputation
   LOA, D8d, now on the critical path of a client promise; the 80% renders CIDR's
   16.4%-refused finding, to be replaced by our own measured keep-rate).

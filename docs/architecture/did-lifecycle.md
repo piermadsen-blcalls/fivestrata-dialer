@@ -43,7 +43,7 @@ flowchart LR
 | Shape | **Scattered singles across NPA-NXX prefixes**, never contiguous blocks | Burn is block-level: KB's 582-295-2xxx / 732-327-2xxx blocks flagged together; TD's big purchased blocks burned as units (7/31, 8/5 studies) |
 | Geography | Area-code coverage matched to lead geography, plus a **reserve pool as the no-match fallback** | TD's single default CID took 173K dials in 90 days and is permanently burned — the fallback must be a pool, one config line for us (7/31 study §1) |
 | Count | **dials/day ÷ ~20** target intensity, floor of coverage + reserve; start 50–100 per the roadmap default | TD decay curve: answered% 30.2 → 21.4 → 18.9 across 1–10 / 11–25 / 26–50 dials/DID/day — the knee is ~10–25 (7/31 §3). Roadmap open-item default: 50–100 with a backup group |
-| Capabilities | Voice; **+SMS flag ($0.20/mo, Sean portal check 8/17) on a designated sub-pool** | SMS follow-up is a plausible future lane for several programs; cheap option now vs re-buying later |
+| Capabilities | Voice; **+SMS flag ($0.10/mo) on a designated sub-pool** | SMS follow-up is a plausible future lane for several programs; cheap option now vs re-buying later |
 | Price guardrails | Per-order $ cap + per-week count cap, same pattern as `scripts/did-purchase.ts` (cheapest candidates, hard abort over budget, never prints keys) | Existing approved guardrail style (8/7) |
 
 **Provisioning-time screening is the earliest-leverage step** (CIDR finding 4: 2,957
@@ -156,7 +156,7 @@ optimization experiments live. Ordered by dependency within each gate.
 | D5 | **Migration 0008** | Apply the draft (six lifecycle states, `daily_budget`, `warmup_until`, `npa_nxx`, `reputation_flags` jsonb, batch id, tenant affinity) + per-DID health view over `calls` | Claude (`db-apply.ts`) | $0 |
 | D6 | **Registration batch** | CNAM per batch (extend `did-cnam.ts`); FCR — investigate bulk path, else generate a paste-ready batch file for Sean's web-form session; record `registered_*` flags | Claude + Sean (FCR form) | $0 (FCR free; ❓ CNAM storage fee — verify in D1 recon) |
 | D7 | **First pool live** | 10–25 screened, registered, warming DIDs sized to the first program's lead geography (waits on that program's lead list for the area-code plan; buy the reserve pool immediately, coverage tail after) | Claude + Sean | ~$10–25 up + same /mo |
-| D8 | **Decisions/actions needed from Sean** | (a) initial pool size + monthly DID budget cap; (b) per-tenant CNAM — display the tenant's brand on its programs' DIDs? (c) SMS-capable sub-pool now (+$0.20/mo each, Sean 8/17) or later; (d) **Number Reputation enablement** (from D1): agree ToS, sign/upload the LOA, note the fresh-query price from the portal — blocks D4 screening and D11 sweeps | Sean | LOA free; fresh-query rate TBD |
+| D8 | **Decisions/actions needed from Sean** | (a) initial pool size + monthly DID budget cap; (b) per-tenant CNAM — display the tenant's brand on its programs' DIDs? (c) SMS-capable sub-pool now (+$0.10/mo each) or later; (d) **Number Reputation enablement** (from D1): agree ToS, sign/upload the LOA, note the fresh-query price from the portal — blocks D4 screening and D11 sweeps | Sean | LOA free; fresh-query rate TBD |
 
 ### Gate 2 — the loop runs itself
 
