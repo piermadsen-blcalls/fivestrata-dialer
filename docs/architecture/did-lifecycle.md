@@ -86,6 +86,29 @@ unlike the human floors, whose replicas are T-1. Per-DID rolling views (Brandon'
 | Lifetime dials | **1,500 auto-retire** — already `dids.max_dials` in schema | July-16 DID Health Review action 1; no vendor ever implemented it (8/5 §1 correction) — our native differentiator |
 | Carrier voicemail-diversion pattern | consecutive instant-voicemail on a carrier | hypothesized only — an earlier "observed on the test DID" readout was a misread (the callee simply wasn't answering; corrected by Sean 8/17). Validate before wiring as a trigger |
 
+### Trigger statistics (➤ Sean's derivative question, 8/17)
+
+Decline events are Bernoulli per dial, so at the 20/day budget a per-DID *derivative*
+(d rate/dt) is underpowered: daily-bin SE ≈ 4.9% at p=5%, 7-day slope SE ≈ 0.9%/day —
+a +1%/day burn is ~1σ, and a fast burn crosses the level threshold before its slope is
+significant. Differencing amplifies noise; the trailing-window level IS the best
+low-pass-filtered derivative at this n. The design therefore uses statistics matched to
+the scale where each has power:
+
+1. **Per-DID fast burn: CUSUM change-point on the raw dial stream** (optimal at low n) —
+   per dial: decline adds log(p₁/p₀) ≈ +1.90, clean adds log((1−p₁)/(1−p₀)) ≈ −0.09
+   (p₀=1.5% TD-healthy, p₁=10% burned), floor 0, fire at h≈3. Two declines ≤~21 clean
+   dials apart trip it — detection within tens of dials, one accumulator per DID.
+2. **Per-DID slow burn: trailing-300 level** (>5% warn / >10% quarantine; SE ≈1.7% at
+   p=10%, n=300).
+3. **Pool/cohort drift: the derivative lives HERE, well-powered** — at 500 dials/day
+   pool-wide, daily-rate SE ≈1%, 7-day slope SE ≈0.2%/day → +0.5%/day systemic drift
+   detectable inside a week. Response is investigate/slow-down (list quality, campaign,
+   carrier policy), not retirement. Same cohort machinery powers D15's wear-curve
+   re-derivation d(answer)/d(lifetime dials).
+
+p₀/p₁/h calibrate on real off-net traffic (with D2's bucket) before D10 wires them.
+
 **External (scheduled, billable):** weekly reputation-API sample of the active pool;
 full sweep on any program-level contact-rate drop. Labels diverge by carrier (CIDR: Verizon
 59%, T-Mobile 96% labeled on the same pool) — store per-source flags, not one boolean.
@@ -154,7 +177,7 @@ optimization experiments live. Ordered by dependency within each gate.
 | # | Item | What / acceptance | Owner | Cost |
 |---|---|---|---|---|
 | D9 | **Dial-path budget enforcement** | Queue engine DID selection reads status/`daily_budget`/`warmup_until`/`dial_count`: round-robin across eligible pool, area-code match with **pool** fallback (the TD default-CID lesson), hard stop at lifetime cap. Acceptance: a battery shows even spread + no DID over budget | Claude | $0 |
-| D10 | **Retirement sweep** | Cron: evaluate D2 thresholds (decline >5% warn / >10% quarantine over trailing 300; cohort answer-rate < half median) → state transitions + guarded replacement buy (at quarantine, not retirement — the pool never shrinks) → re-enters D4 pipeline; quarantined DIDs rest to their renewal boundary, cached re-screen, recover-or-release (§3 rest policy). Alert on every transition with reason | Claude | replacement ~$1/DID |
+| D10 | **Retirement sweep** | Cron: evaluate the §3 three-tier triggers (per-DID CUSUM fast-burn + trailing-300 level + pool-slope drift; cohort answer-rate < half median) → state transitions + guarded replacement buy (at quarantine, not retirement — the pool never shrinks) → re-enters D4 pipeline; quarantined DIDs rest to their renewal boundary, cached re-screen, recover-or-release (§3 rest policy). Alert on every transition with reason | Claude | replacement ~$1/DID |
 | D11 | **Scheduled reputation sweep** | Weekly sample of active pool (size vs D1 price), census on program-level contact-rate drop; per-source flags into `reputation_flags` | Claude | D1 price × sample |
 | D12 | **Console DID screen** | Buy/retire (guarded) + the health view; already in W8 scope — wire to D5's view, phones masked last-4 | Claude | $0 |
 
