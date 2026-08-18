@@ -57,7 +57,7 @@ next plan tick with no migration of in-flight state.
 - **Pool** = a WHERE clause, same philosophy as 0007 `source_rules`:
   `pool_rules` jsonb = `{batch_ids, source_ids, cost_min/max, lead_type, states, zips}`.
   Consent-scope and platform DNC gates apply unconditionally (0007 rules).
-- **Dead-number hygiene** (➤ Sean 8/18, raising with team): an unconditional compile-time
+- **Dead-number hygiene** (✅ Sean 8/18: "no reason not to — basically free"): an unconditional compile-time
   exclusion — alongside DNC/consent — for phones with **N+ lifetime attempts and zero
   answers** across every history we can see (our own `calls` fact stream; KB/TD replica
   dial logs for revive leads, joinable via OLeadID). Two independent justifications:
