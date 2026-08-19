@@ -17,11 +17,12 @@ if (!account || !username || !privateKeyPath) {
 }
 
 snowflake.configure({ logLevel: 'ERROR' });
+const authenticator = (process.env.SNOWFLAKE_AUTHENTICATOR ?? 'SNOWFLAKE_JWT').toUpperCase();
 const conn = snowflake.createConnection({
   account,
   username,
-  authenticator: 'SNOWFLAKE_JWT',
-  privateKeyPath,
+  authenticator,
+  ...(authenticator === 'SNOWFLAKE_JWT' ? { privateKeyPath } : {}),
 });
 
 function exec(sqlText: string): Promise<Record<string, unknown>[]> {
@@ -35,7 +36,9 @@ function exec(sqlText: string): Promise<Record<string, unknown>[]> {
 
 try {
   await new Promise<void>((resolve, reject) => {
-    conn.connect((err) => (err ? reject(err) : resolve()));
+    const cb = (err: Error | undefined) => (err ? reject(err) : resolve());
+    if (authenticator === 'EXTERNALBROWSER') conn.connectAsync(cb);
+    else conn.connect(cb);
   });
 } catch (e) {
   console.log(`DISCOVER FAIL  connect: ${(e as Error).message}`);
@@ -64,16 +67,18 @@ try {
 }
 
 try {
-  const schemas = await exec("SHOW SCHEMAS LIKE 'FIVESTRATADIALER' IN ACCOUNT");
-  if (schemas.length) {
-    for (const s of schemas) {
-      console.log(`SCHEMA      FOUND: ${s.database_name}.${s.name} (owner role ${s.owner})`);
-    }
-  } else {
-    console.log('SCHEMA      FIVESTRATADIALER not visible yet (ticket not landed, or no grant yet)');
-  }
+  const schemas = await exec('SHOW SCHEMAS IN DATABASE FIVESTRATA_DIALER');
+  console.log(`SCHEMAS     in FIVESTRATA_DIALER: ${schemas.map((s) => s.name).join(', ') || '(none)'}`);
 } catch (e) {
-  console.log(`SCHEMA      FAIL ${(e as Error).message}`);
+  console.log(`SCHEMAS     FAIL ${(e as Error).message}`);
+}
+
+try {
+  const grants = await exec('SHOW GRANTS ON DATABASE FIVESTRATA_DIALER');
+  const mine = grants.map((g) => `${g.privilege}->${g.grantee_name}`).join(', ');
+  console.log(`DB GRANTS   ${mine || '(none visible)'}`);
+} catch (e) {
+  console.log(`DB GRANTS   FAIL ${(e as Error).message}`);
 }
 
 conn.destroy(() => process.exit(0));

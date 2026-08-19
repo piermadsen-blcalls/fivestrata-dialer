@@ -47,21 +47,31 @@ export function readSnowflakeEnv(): SnowflakeEnv {
 
 export type SfConnection = snowflake.Connection;
 
+// SNOWFLAKE_AUTHENTICATOR=EXTERNALBROWSER switches to SSO browser popup
+// (no key needed — Sean approves in his own browser). Default is key-pair JWT.
 export async function connect(env: SnowflakeEnv): Promise<SfConnection> {
   snowflake.configure({ logLevel: 'ERROR' });
+  const authenticator = (process.env.SNOWFLAKE_AUTHENTICATOR ?? 'SNOWFLAKE_JWT').toUpperCase();
   const conn = snowflake.createConnection({
     account: env.account,
     username: env.username,
-    authenticator: 'SNOWFLAKE_JWT',
-    privateKeyPath: env.privateKeyPath,
+    authenticator,
+    ...(authenticator === 'SNOWFLAKE_JWT'
+      ? { privateKeyPath: env.privateKeyPath }
+      : { clientStoreTemporaryCredential: true }), // cache SSO token — no popup per run
     role: env.role,
     warehouse: env.warehouse,
     database: env.database,
     schema: env.schema,
   });
   await new Promise<void>((resolve, reject) => {
-    conn.connect((err) => (err ? reject(err) : resolve()));
+    const cb = (err: Error | undefined) => (err ? reject(err) : resolve());
+    if (authenticator === 'EXTERNALBROWSER') conn.connectAsync(cb);
+    else conn.connect(cb);
   });
+  // warehouse USAGE may sit on a different granted role than the scoped-admin
+  // role (e.g. DATA_ANALYST holds COMPUTE_WH_DEV) — combine them
+  await exec(conn, 'USE SECONDARY ROLES ALL');
   return conn;
 }
 
