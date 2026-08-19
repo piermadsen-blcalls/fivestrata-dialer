@@ -4,8 +4,14 @@
 Pier's prototype (`ai-dialer-prototype-e7ia.vercel.app`, shared 7/28 — see
 `pier-vercel-prototype.md`; 🆕 8/19 Pier re-endorsed it in team chat, specifically the
 **campaign builder** for Phase-2's campaign-wizard screens, and granted repo access —
-builder-UI elements to lift are itemized in that doc) as the design reference. Supersedes
-the PRD's "hosted on Netlify"
+builder-UI elements to lift are itemized in that doc) as the design reference.
+**✅ Promoted to UI model (Sean → Pier, 8/19):** after reviewing visuals + full source,
+Sean told Pier "I'm going to model the aicc app after it." Console UI north star =
+**best of the prototype + Ashley's dashboard view (`reporting/kb-wi-dashboard-spec.md`)
++ the remaining operational surfaces** (e.g. script/must-hit uploads and the other
+wizards in `tenant-lead-sourcing.md`). UI modeling only — the architecture caveats in
+`pier-vercel-prototype.md` (Telnyx-hosted AI, DID cooling loop) remain superseded and are
+not part of what's being modeled. Supersedes the PRD's "hosted on Netlify"
 wording (functionally equivalent choice; Vercel is Next.js-native and matches Pier's
 demonstrated deploy path). Driver for pulling this forward from Step 3: **AutoWeb is already
 asking to use the platform** — their use case is most instructive if the tenant-aware initial

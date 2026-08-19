@@ -19,6 +19,14 @@ current design (and Pier had already self-updated on the biggest one — soundbo
 > trump anything planned for the new concept — `docs/PRD.md` remains the governing
 > artifact. Value here is (a) vocabulary insight into how Pier pictures the system, useful
 > for the PRD-merge conversation, and (b) the credential/T2 status it settled (below).
+>
+> **✅ Partially superseded (Sean, 2026-08-19): promoted to the console's UI model.**
+> After the 8/19 review (Sean visual pass + full source read), Sean told Pier: "I'm going
+> to model the aicc app after it" — best of this prototype + Ashley's dashboard view +
+> the remaining operational surfaces (script uploads etc.). The promotion is **UI/UX
+> only**; the architecture divergences below (Telnyx-hosted AI vs soundboard-first, DID
+> cooling loop vs retire-don't-remediate) remain superseded by the PRD and
+> `did-lifecycle.md`. See `control-panel-scope.md` for the console framing.
 
 ## What it is (and isn't)
 
