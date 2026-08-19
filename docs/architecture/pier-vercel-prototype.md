@@ -23,10 +23,26 @@ current design (and Pier had already self-updated on the biggest one — soundbo
 > **✅ Partially superseded (Sean, 2026-08-19): promoted to the console's UI model.**
 > After the 8/19 review (Sean visual pass + full source read), Sean told Pier: "I'm going
 > to model the aicc app after it" — best of this prototype + Ashley's dashboard view +
-> the remaining operational surfaces (script uploads etc.). The promotion is **UI/UX
-> only**; the architecture divergences below (Telnyx-hosted AI vs soundboard-first, DID
-> cooling loop vs retire-don't-remediate) remain superseded by the PRD and
-> `did-lifecycle.md`. See `control-panel-scope.md` for the console framing.
+> the remaining operational surfaces (script uploads etc.). The promotion is **UI and
+> flow only — Sean: "there are going to be some hard content differences."** What the
+> screens *look like and how you move through them* comes from here; what they *contain*
+> comes from the decided architecture:
+> - **Agents screen** → programs/playbooks + voice packs and per-clip telemetry
+>   (soundboard-first engine), not Telnyx-hosted AI Assistant cards.
+> - **Vocabulary/keys** → tenant → program → campaign (= bounded run), leads keyed by
+>   OLeadID, calls/call_turns grains — not person/attempts/conversations.
+> - **Campaign detail** → L2 dials/day plan with the binding-constraint ledger ("why
+>   isn't it faster"), one-active-campaign-per-lead — not a simple progress bar.
+> - **Cadence semantics** → event-driven L3 per-lead jobs on ZIP-derived lead timezone,
+>   rest hours, per-program max dials — the touch-row/preview UI survives, the fixed
+>   clock-time-per-touch model doesn't.
+> - **DIDs** → `did-lifecycle.md` states (screen-before-first-dial, warm-up, budgets,
+>   1,500 retire, D17 inbound) — not the cooling→re-test loop.
+> - **Reports** → Ashley's KPI dictionary (`reporting/kb-wi-dashboard-spec.md`: SPH,
+>   contact rate, real-vs-fake contact) — not the generic report cards.
+> - **Intake** → LeadConduit/batch-file + consent-scope gates and the inbound contract
+>   APIs — not generic form-webhook framing.
+> See `control-panel-scope.md` for the console framing.
 
 ## What it is (and isn't)
 

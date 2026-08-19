@@ -9,9 +9,10 @@ builder-UI elements to lift are itemized in that doc) as the design reference.
 Sean told Pier "I'm going to model the aicc app after it." Console UI north star =
 **best of the prototype + Ashley's dashboard view (`reporting/kb-wi-dashboard-spec.md`)
 + the remaining operational surfaces** (e.g. script/must-hit uploads and the other
-wizards in `tenant-lead-sourcing.md`). UI modeling only — the architecture caveats in
-`pier-vercel-prototype.md` (Telnyx-hosted AI, DID cooling loop) remain superseded and are
-not part of what's being modeled. Supersedes the PRD's "hosted on Netlify"
+wizards in `tenant-lead-sourcing.md`). **UI and flow only — Sean 8/19: "there are going
+to be some hard content differences"; "our job is to use it as a reference as we actually
+lay out OUR app."** The content divergences are enumerated in `pier-vercel-prototype.md`;
+the resulting screen layout is §"Screen layout" below. Supersedes the PRD's "hosted on Netlify"
 wording (functionally equivalent choice; Vercel is Next.js-native and matches Pier's
 demonstrated deploy path). Driver for pulling this forward from Step 3: **AutoWeb is already
 asking to use the platform** — their use case is most instructive if the tenant-aware initial
@@ -118,6 +119,43 @@ delivery target) — "onboarding touches zero TypeScript and zero DDL" gets prov
 AutoWeb pilot program end-to-end in `testing` status; overnight-suggestions surface;
 recordings search; per-tenant cost attribution; Snowflake-backed long-range reports (after
 first sync lands).
+
+## Screen layout — Pier's prototype as reference (Sean 8/19: "model the aicc app after it")
+
+Layout/flow lifted from the prototype; content from the decided architecture ("hard
+content differences" — Sean 8/19). Builds nothing new: every cell references a phase item
+above or a decided doc.
+
+| Console screen | Prototype ancestor (what we lift) | Our content (source of truth) |
+|---|---|---|
+| **Overview** | Overview page: KPI tile row, campaign cards w/ progress, live-now panel, **dial-queue-next-24h widget**, DID mini-health, quick actions | Phase-1 §1 ops queries; tiles = dials vs plan, contact rate (real-vs-fake), transfers, spend/dial; campaign cards carry the **L2 binding-constraint chip** ("why isn't it faster" at the top level); queue widget = `dial_jobs` due buckets |
+| **Campaigns** (+ builder) | List → expandable detail; **6-step builder**: preset chips, touch rows, SVG cadence timeline w/ shaded legal window, projected-outcomes panel, amber pre-flight card, review-then-activate | L0 wizard (`campaign-delivery.md`): Basics → Pool (+consent-scope gate) → Budget/timeframe → Cadence overrides (narrowing-only) → Review = the computed cascade (enrollment count, geography, L2 dials/day plan + binding constraints, DID coverage-gap suggestions) → Activate. Detail = `campaign_days` ledger, not a progress bar |
+| **Leads** | Table + status tabs + bulk-action bar; lead detail w/ activity timeline | OLeadID-keyed, phones masked last-4, canonical dispos, next-attempt from `dial_jobs`; detail timeline = `calls` + per-turn `call_turns` drill (recording/transcript links); upload = Phase-1 §4 CSV wizard |
+| **Live** | Live-calls page: state counts (ringing/AMD/in-conversation/on-transfer) + active-call list | `call_events` stream; per-turn clip feed; "Listen" button = Phase-3 candidate (Telnyx media streaming) |
+| **Programs** (replaces "Agents") | Card-grid layout only | The biggest content rewrite: playbooks — script/must-hit lines (Phase-2 §5), voice packs + clip manager (Phase-1 §5), dispo mappings, field defs, cadence defaults, sourcing panel (Phase-2 §6) |
+| **DIDs** | 4-tab layout: state cards, lifecycle diagram, per-number table, **thresholds-as-settings** | `did-lifecycle.md` states (screening/warming/active/resting/quarantined/retired), burn bars vs 1,500, screen-before-first-dial results, guarded buy/retire, D17 inbound activity |
+| **Reports** | Saved-report card grid w/ schedule + owner | Ashley's KPI dictionary (`kb-wi-dashboard-spec.md`) + 0002 views; Snowflake long-range = Phase 3 |
+| **Controls · DNC · Buyers** | (no ancestor — new screens, same visual language) | Phase-1 §2/§3/§6 |
+| **How it works** | **System-flow animated walkthrough** — Pier's most distinctive UI idea | Retarget the animation to OUR cascade (L0 wizard → L1 enroll → L2 plan → L3 jobs → L4 DID claim → engine → outcomes). Phase 3; doubles as demo/onboarding collateral |
+
+### Divergence triage (Sean 8/19: rationalize, incorporate, or debate — every difference dispositioned)
+
+| Prototype element | Disposition | Why |
+|---|---|---|
+| Telnyx-hosted AI Assistants (STT+LLM+TTS in-network) | ⤵ **Skip — rationalized** | Soundboard-first is decided and non-negotiable (Sean 8/19); V1 economics killed pure-generative; Pier himself moved to soundboard 7/30. Prototype predates both |
+| DID cooling(7d) → 50-call re-test → return-to-active | ⤵ **Skip — rationalized** | CIDR verdict (8/14): remediation/rest restores nothing; retire-don't-rest decided. Prototype predates the study |
+| 70 dials/day cap (50 on high-volume pool) | ⤵ **Skip — rationalized** | Our ~20–25 budget comes from the TD decay-curve knee — evidence over instinct |
+| Generic form-webhook intake + fresh-first framing | ⤵ **Skip — rationalized** | LeadConduit/batch-file + authed `fivestrata-inbound` decided; revive-first pilot w/ fresh switch built in |
+| **Short-call rate (<10s) as a DID health input** | ⬆ **Incorporate — candidate 3rd signal** | Free from our per-dial fact stream; complements decline-rate + cohort answer-rate. Add to `did-lifecycle.md` §3 as a tracked-not-triggering column first |
+| **Inbound "who is this" callback rate as health input** | ⬆ **Incorporate** | D17 answering inbound gives us this stream for free; prototype's 0.20 weight is the right instinct |
+| Auto-purchase alerts + manual-approval threshold on mass release | ⬆ **Incorporate** | Matches our guarded auto-replacement; add alert channel (Teams, not Slack — org is M365) + >N/day release approval gate |
+| Builder cost projection ($ range + $/conversation) + est. completion | ⬆ **Incorporate** | L2 plan already computes dials/day and days-to-complete; multiply by the cost model (`concurrency-queueing.md` sizing + per-dial cost note) in the review pane |
+| Campaign templates / duplicate | ⬆ **Incorporate (cheap)** | Program defaults already are the template; "duplicate campaign" is natural for bounded runs |
+| **Person table** (cross-lead identity: attach-or-create by phone) | ❓ **Debate** | We key on OLeadID per-lead. Same phone can hold two leads → two active campaigns: one-active-campaign-per-**lead** doesn't dedupe per-**phone**. Cadence carve-out coordination + DNC argue for a phone-level view. Assumptions discussion w/ Pier |
+| Lead scoring (enrichment score; score-routed agent variants) | ❓ **Debate — parked to Snowflake lane** | No score concept in v1; `snowflake-value.md` outputs / `analytics_directives` is the natural home. Decide whether the leads table reserves the column now |
+| Carrier/line-type lookup at ingest | ❓ **Debate** | Telnyx Number Lookup per lead ≈ cheap; feeds TCPA posture + IVA/contact-rate classification (a required capability). Cost-per-lead vs value at 2M dials/day scale |
+| Per-touch "if no answer →" branching | ❓ **Debate** | Our cadence config (max dials, rest hours) is uniform per program; prototype has per-attempt branching. Is dispo-dependent branching a v1.1 config need or L3-engine logic that shouldn't be user-facing? |
+| Toll-free fallback pool | ❓ **Debate (leaning skip)** | Our fallback is a local reserve pool (TD default-CID lesson); toll-free outbound has its own reputation regime. Only revisit if reserve-pool coverage gaps persist |
 
 ## Non-goals (v1)
 Customer/public access · billing/metering · free-form generative script authoring (clip
