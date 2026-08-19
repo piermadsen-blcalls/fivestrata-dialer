@@ -59,8 +59,17 @@ flowchart TB
 ## What is shared vs. what is separate
 
 **Shared (built once, identical for every tenant):** the dial/voice engine, the per-dial +
-per-turn fact stream, DID pool management, pacing/concurrency, the A/B harness, recording
-capture, canonical disposition & sentiment taxonomies, the Snowflake results pipeline.
+per-turn fact stream, DID pool *management* (the pools themselves are per-tenant — see
+below), pacing/concurrency, the A/B harness, recording capture, canonical disposition &
+sentiment taxonomies, the Snowflake results pipeline.
+
+**Why can't we all just share DIDs?** (✅ Sean 8/19, full rationale in
+`did-lifecycle.md`) Two independent reasons, either sufficient: (1) carrier analytics
+score content↔number alignment — one number carrying unrelated purposes reads as spam,
+and a repurposed number needs ≥45 days idle; (2) tenants renting this box need clean
+attribution — shared DIDs make it murky whose campaign burned the number, whose bill
+carries the replacement, and whose contact rate the label hit. DIDs never move between
+tenants; a program's numbers retire and the next program buys fresh at $1/number.
 
 **Separate (config rows, never code):** front-end/login surface, lead payload shape, scripts,
 disposition mappings, transfer destinations, compliance parameters, branding rules, engine mode
@@ -84,5 +93,7 @@ rows in the program tables plus a validated playbook.
 ## Still open (tracked in `docs/open-questions.md`)
 
 Legal/retention isolation per tenant (TCPA posture differs by industry) · per-tenant secret
-management · playbook QA gate before go-live · DID pools shared vs. program-reserved
-(spam-reputation isolation) · cost attribution per tenant-program.
+management · playbook QA gate before go-live · ~~DID pools shared vs. program-reserved~~
+(✅ resolved 8/19: per-tenant, never shared — see above; per-*program* affinity within a
+tenant still ➤) · cost attribution per tenant-program (the per-tenant DID decision
+settles the DID slice of this; dial/engine cost attribution still open).

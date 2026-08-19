@@ -116,6 +116,15 @@ function poolWhere(c: Campaign): string {
   return conds.join('\n    and ');
 }
 
+// One-strike dead-number exclusion (campaign-delivery.md §3, ✅ Sean 8/19): any phone
+// with a carrier-confirmed nonexistence hangup is excluded after ONE occurrence — no N.
+// Cause set = D2's NUMBER_BAD bucket; served by migration 0011's partial index.
+const deadNumber = (phoneExpr: string) => `exists (
+    select 1 from call_events e
+    where e.event_type = 'call.hangup'
+      and e.payload->>'hangup_cause' in ('unallocated_number','not_found','invalid_number_format')
+      and phone_digits(e.payload->>'to') = phone_digits(${phoneExpr}))`;
+
 // Allowance = min(budget_usd/cpd, dial_budget, pool remaining attempts) — §3.
 async function allowance(c: Campaign) {
   const cpd = c.est_cost_per_dial ?? (await config('campaign_est_cost_per_dial', 0.04));
@@ -195,17 +204,24 @@ async function compile() {
   const c = await getCampaign(ref);
   const where = poolWhere(c);
 
-  const [counts] = await q<{ pool: number; enrolled_here: number; locked_elsewhere: number }>(`
+  // dead_number counts only otherwise-enrollable leads so the arithmetic stays exact;
+  // it prints even at 0 — hygiene exclusions are never silent (§3 no-silent-shrinkage).
+  const [counts] = await q<{ pool: number; enrolled_here: number; locked_elsewhere: number; dead_number: number }>(`
     select count(*)::int as pool,
            count(*) filter (where exists (select 1 from campaign_leads x
              where x.lead_id = l.id and x.campaign_id = ${esc(c.id)}))::int as enrolled_here,
            count(*) filter (where exists (select 1 from campaign_leads x
-             where x.lead_id = l.id and x.status = 'active' and x.campaign_id <> ${esc(c.id)}))::int as locked_elsewhere
+             where x.lead_id = l.id and x.status = 'active' and x.campaign_id <> ${esc(c.id)}))::int as locked_elsewhere,
+           count(*) filter (where ${deadNumber('l.phone_number')}
+             and not exists (select 1 from campaign_leads x
+               where x.lead_id = l.id and (x.campaign_id = ${esc(c.id)}
+                     or (x.status = 'active' and x.campaign_id <> ${esc(c.id)}))))::int as dead_number
     from leads l
     where ${where}`);
-  const newLeads = counts.pool - counts.enrolled_here - counts.locked_elsewhere;
+  const newLeads = counts.pool - counts.enrolled_here - counts.locked_elsewhere - counts.dead_number;
   console.log(`[${c.name}] pool match: ${counts.pool} · already enrolled: ${counts.enrolled_here} · ` +
-    `locked to another active campaign: ${counts.locked_elsewhere} · would enroll: ${newLeads}`);
+    `locked to another active campaign: ${counts.locked_elsewhere} · ` +
+    `excluded dead-number (one-strike): ${counts.dead_number} · would enroll: ${newLeads}`);
 
   const npas = await q<{ npa: string; n: number }>(`
     select left(right(phone_digits(l.phone_number), 10), 3) as npa, count(*)::int as n
@@ -221,15 +237,20 @@ async function compile() {
 
   const enrolled = await q<{ lead_id: string }>(`
     insert into campaign_leads (campaign_id, lead_id)
-    select ${esc(c.id)}, l.id from leads l where ${where}
+    select ${esc(c.id)}, l.id from leads l
+    where ${where}
+      and not ${deadNumber('l.phone_number')}
     on conflict do nothing
     returning lead_id`);
+  // The dead-number gate also applies here: a lead enrolled BEFORE its number proved
+  // dead must not get fresh jobs on a recompile of a live campaign.
   const jobs = await q<{ id: number }>(`
     insert into dial_jobs (campaign_id, lead_id, attempt_no, not_before, priority)
     select cl.campaign_id, cl.lead_id, cl.attempts_done + 1,
            greatest(now(), ${esc(c.starts_at)}::timestamptz), ${c.priority}
-    from campaign_leads cl
+    from campaign_leads cl join leads l on l.id = cl.lead_id
     where cl.campaign_id = ${esc(c.id)} and cl.status = 'active'
+      and not ${deadNumber('l.phone_number')}
       and not exists (select 1 from dial_jobs dj
                       where dj.campaign_id = cl.campaign_id and dj.lead_id = cl.lead_id
                         and dj.state in ('due','claimed','dialing'))
