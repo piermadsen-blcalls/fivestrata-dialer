@@ -95,7 +95,9 @@ const SPECS: TableSpec[] = [
 ];
 
 const PAGE = 1000; // PostgREST hard cap per page
-const INSERT_CHUNK = 5000;
+// Snowflake rejects statements with too many bind params — size insert chunks
+// so rows * columns stays well under the limit.
+const MAX_BINDS_PER_INSERT = 14000;
 
 const supabaseUrl = process.env.SUPABASE_URL ?? '';
 const supabaseKey = process.env.SUPABASE_SECRET_KEY ?? '';
@@ -123,13 +125,35 @@ function castExpr(col: string, type: ColType): string {
   }
 }
 
-// Fetch everything past the watermark. Append-only tables use exact keyset
-// pagination on the bigint id; ts tables use offset pagination ordered by
-// (watermark, id) — a concurrent insert can shift pages, which the JS-side
-// dedupe plus the next run's lookback window both absorb.
-async function fetchRows(spec: TableSpec, watermark: unknown): Promise<Record<string, unknown>[]> {
+// Stream everything past the watermark into the staging table page by page —
+// never holds the full backlog in memory (first call_events run is ~240k rows).
+// Append-only tables use exact keyset pagination on the bigint id; ts tables
+// use offset pagination ordered by (watermark, id) — a concurrent insert can
+// shift pages, which MERGE idempotency plus the next run's lookback absorb.
+async function stageRows(
+  conn: SfConnection,
+  spec: TableSpec,
+  stg: string,
+  watermark: unknown,
+): Promise<number> {
   const cols = spec.columns.map(([c]) => c).join(',');
-  const out: Record<string, unknown>[] = [];
+  const placeholders = `(${spec.columns.map(() => '?').join(',')})`;
+  const chunk = Math.max(1, Math.floor(MAX_BINDS_PER_INSERT / spec.columns.length));
+  let buffer: (string | null)[][] = [];
+  let staged = 0;
+
+  const flush = async (force: boolean) => {
+    while (buffer.length >= chunk || (force && buffer.length)) {
+      const batch = buffer.slice(0, chunk);
+      buffer = buffer.slice(chunk);
+      await exec(conn, `INSERT INTO ${stg} VALUES ${placeholders}`, batch);
+      staged += batch.length;
+    }
+  };
+  const push = async (rows: Record<string, unknown>[]) => {
+    for (const r of rows) buffer.push(spec.columns.map(([c, t]) => toStaged(r[c], t)));
+    await flush(false);
+  };
 
   if (spec.watermark.kind === 'id') {
     let lastId = typeof watermark === 'number' ? watermark : Number(watermark ?? 0) || 0;
@@ -142,52 +166,45 @@ async function fetchRows(spec: TableSpec, watermark: unknown): Promise<Record<st
         .limit(PAGE);
       if (error) throw new Error(`supabase ${spec.table}: ${error.message}`);
       const rows = (data ?? []) as unknown as Record<string, unknown>[];
-      out.push(...rows);
+      await push(rows);
       if (rows.length < PAGE) break;
       lastId = Number(rows[rows.length - 1][spec.watermark.column]);
     }
-    return out;
+  } else {
+    const wmDate = watermark ? new Date(String(watermark)) : new Date(0);
+    const since = new Date(wmDate.getTime() - spec.watermark.lookbackHours * 3_600_000).toISOString();
+    const seen = new Set<string>(); // offset pages can double-deliver on concurrent writes
+    for (let offset = 0; ; offset += PAGE) {
+      const { data, error } = await supabase
+        .from(spec.table)
+        .select(cols)
+        .gte(spec.watermark.column, since)
+        .order(spec.watermark.column, { ascending: true })
+        .order('id', { ascending: true })
+        .range(offset, offset + PAGE - 1);
+      if (error) throw new Error(`supabase ${spec.table}: ${error.message}`);
+      const rows = (data ?? []) as unknown as Record<string, unknown>[];
+      await push(rows.filter((r) => !seen.has(String(r.id)) && (seen.add(String(r.id)), true)));
+      if (rows.length < PAGE) break;
+    }
   }
-
-  const wmDate = watermark ? new Date(String(watermark)) : new Date(0);
-  const since = new Date(wmDate.getTime() - spec.watermark.lookbackHours * 3_600_000).toISOString();
-  for (let offset = 0; ; offset += PAGE) {
-    const { data, error } = await supabase
-      .from(spec.table)
-      .select(cols)
-      .gte(spec.watermark.column, since)
-      .order(spec.watermark.column, { ascending: true })
-      .order('id', { ascending: true })
-      .range(offset, offset + PAGE - 1);
-    if (error) throw new Error(`supabase ${spec.table}: ${error.message}`);
-    const rows = (data ?? []) as unknown as Record<string, unknown>[];
-    out.push(...rows);
-    if (rows.length < PAGE) break;
-  }
-  // dedupe by id (offset pagination can double-deliver on concurrent writes)
-  const seen = new Map<string, Record<string, unknown>>();
-  for (const r of out) seen.set(String(r.id), r);
-  return [...seen.values()];
+  await flush(true);
+  return staged;
 }
 
 async function syncTable(conn: SfConnection, spec: TableSpec): Promise<void> {
   const target = spec.table.toUpperCase();
   const wmCol = spec.watermark.column.toUpperCase();
   const [wmRow] = await exec(conn, `SELECT MAX(${wmCol}) AS WM FROM ${target}`);
-  const rows = await fetchRows(spec, wmRow.WM);
-  if (!rows.length) {
-    console.log(`${target.padEnd(12)} OK    0 new rows (high-water ${wmCol}=${String(wmRow.WM ?? 'empty')})`);
-    return;
-  }
 
   const stg = `STG_${target}`;
   const colNames = spec.columns.map(([c]) => c.toUpperCase());
   await exec(conn, `CREATE OR REPLACE TEMPORARY TABLE ${stg} (${colNames.map((c) => `${c} VARCHAR`).join(', ')})`);
 
-  const staged = rows.map((r) => spec.columns.map(([c, t]) => toStaged(r[c], t)));
-  const placeholders = `(${spec.columns.map(() => '?').join(',')})`;
-  for (let i = 0; i < staged.length; i += INSERT_CHUNK) {
-    await exec(conn, `INSERT INTO ${stg} VALUES ${placeholders}`, staged.slice(i, i + INSERT_CHUNK));
+  const staged = await stageRows(conn, spec, stg, wmRow.WM);
+  if (!staged) {
+    console.log(`${target.padEnd(12)} OK    0 new rows (high-water ${wmCol}=${String(wmRow.WM ?? 'empty')})`);
+    return;
   }
 
   const casts = spec.columns.map(([c, t]) => `${castExpr(c, t)} AS ${c.toUpperCase()}`).join(', ');
@@ -205,7 +222,7 @@ async function syncTable(conn: SfConnection, spec: TableSpec): Promise<void> {
   const stats = merged[0] ?? {};
   const inserted = Number(stats['number of rows inserted'] ?? 0);
   const updated = Number(stats['number of rows updated'] ?? 0);
-  console.log(`${target.padEnd(12)} OK    ${rows.length} pulled -> ${inserted} inserted, ${updated} updated`);
+  console.log(`${target.padEnd(12)} OK    ${staged} pulled -> ${inserted} inserted, ${updated} updated`);
 }
 
 const only = process.argv[2]?.toLowerCase();
