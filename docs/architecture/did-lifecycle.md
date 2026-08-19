@@ -169,6 +169,12 @@ p₀/p₁/h calibrate on real off-net traffic (with D2's bucket) before D10 wire
 the L1 dead-number hygiene rule (`campaign-delivery.md` §3, ✅ Sean 8/18) excludes
 N+-attempts/zero-answers phones at campaign compile, because TNS scores dead-number
 dialing and poor completion rates against the *calling* number, not just the campaign.
+➤ One-strike tightening (Claude, from the TNS/Verizon best-practices list 8/19, pending
+Sean): a carrier-confirmed nonexistence cause (`unallocated_number` / `not_found` /
+`invalid_number_format` — D2's "against the list" bucket) is deterministic, so the phone
+should be excluded after **one** such result rather than waiting out N attempts — TNS
+item 2 flags "calls to unassigned numbers" specifically, and every repeat dial to a known-dead
+number is pure reputation damage on the calling DID.
 
 **External (scheduled, billable):** weekly reputation-API sample of the active pool;
 full sweep on any program-level contact-rate drop. Labels diverge by carrier (CIDR: Verizon
@@ -192,7 +198,15 @@ The real DDL lives at `supabase/migrations/0008_did_lifecycle.sql` (applied via
 the widened six-state check ('cooling' rows migrated to 'resting'), scatter/tenant
 indexes, and the **`did_health` view** — per-DID hangup totals, 7-day/today dial counts,
 decline counts + `decline_pct` (D2 bucket), bad-number counts. ❓ shared vs per-tenant
-pools remains open (`tenant_id` is nullable pool affinity for now).
+pools remains open (`tenant_id` is nullable pool affinity for now). ➤ New input on that
+❓ (TNS/Verizon best-practices list, 8/19): items 3–4 score **content↔number alignment** —
+reusing one number for unrelated purposes raises spam risk, and a repurposed number should
+sit idle **≥45 days** before reassignment. That argues for at least per-tenant (probably
+per-program) pool affinity, and it hardens the existing retire-don't-repurpose posture
+into a written rule: **a DID never moves between programs; if a program ends, its DIDs
+retire and the new program buys fresh** (the 45-day cooling figure is the constraint to
+honor if repurposing is ever reconsidered — note it exceeds our billing-month rest
+boundary, so a repurpose-rest would be paid rent, further favoring retirement).
 
 ## 4. The acquisition loop
 
@@ -211,7 +225,12 @@ buy script, so a runaway loop can never spend past its weekly allowance.
 **What we deliberately do NOT build:** remediation automation. The 8/14 CIDR evaluation
 (matched panel, 2,950 enrolled, adversarially verified) found no measurable performance
 effect from monitoring+remediation; every wear stratum reached 13–25% refusal within six
-weeks regardless. Retire-and-replace is cheaper and measurably works.
+weeks regardless. Retire-and-replace is cheaper and measurably works. Note (8/19): TNS
+item 8 points at the **free** carrier dispute channels (voicespamfeedback.com form for
+Verizon/TNS, equivalents at First Orion/Hiya) — but those free forms are exactly what
+remediation vendors file under the hood, so the CIDR null result already covers them.
+At most a $0 Gate-3 curiosity (log dispute→label-change rate on a handful of quarantined
+DIDs); never a pipeline step.
 
 ## The hitlist (D1–D17)
 

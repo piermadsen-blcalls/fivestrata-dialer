@@ -68,7 +68,12 @@ next plan tick with no migration of in-flight state.
   (`did-lifecycle.md` §3), not just wastes spend; (b) it's the **free in-house counter to
   CIDR's ~1¢/number "Dial Right" upsell** from the 8/18 checkpoint call — the same signal
   computed from data we already own. Start N conservative (❓ N=6? calibrate against the
-  KB replica's attempts-vs-ever-answered distribution before hard-coding); excluded leads
+  KB replica's attempts-vs-ever-answered distribution before hard-coding). ➤ One-strike
+  companion rule (Claude, from the TNS/Verizon best-practices list 8/19, pending Sean):
+  a phone whose last dial ended in a carrier-confirmed nonexistence cause
+  (`unallocated_number`/`not_found`/`invalid_number_format`) is excluded after **one**
+  occurrence — no N needed, the carrier already said the number doesn't exist, and TNS
+  scores unassigned-number dialing against the calling DID. Excluded leads
   get a distinct `campaign_leads`-absent reason so the compile report shows what hygiene
   removed (no silent shrinkage). Revive batches — many-attempt leads by definition — are
   where this bites hardest and where the answer-rate payoff is largest.
