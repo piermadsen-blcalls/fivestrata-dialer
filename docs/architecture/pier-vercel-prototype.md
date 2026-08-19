@@ -4,6 +4,17 @@ Documented 2026-08-03 by introspecting the deployed JS bundle (the app is a stat
 Vite/React SPA — no backend, no API calls, no credentials embedded). Shared by Pier in the
 Sean↔Pier 1:1 Teams chat on **2026-07-28**: https://ai-dialer-prototype-e7ia.vercel.app/
 
+**🆕 2026-08-19:** Pier re-shared it in team Teams chat ("really click through it — the
+campaign builder i think showcases a solid UI for dialing patterns") and added Sean as
+collaborator on the source repo, `github.com/piermadsen-blcalls/ai-dialer-prototype`.
+Full source read (one 1,611-line `App.jsx`, all data hardcoded) confirms the 8/3 bundle
+dissection and adds hard provenance: **every commit is 2026-05-12** (13:24–14:54, UI dated
+"Monday, May 11") — the prototype predates the 7/17 founding call by two months and the V1
+post-mortem economics entirely. It is almost certainly pitch-stage material from the
+original directive, which reframes its divergences as pre-project thinking, not competing
+current design (and Pier had already self-updated on the biggest one — soundboard — by
+7/30, below). §"Campaign builder" added below per his 8/19 pointer.
+
 > **Status (Sean, 2026-08-03): old artifact, frame of reference at best.** It does NOT
 > trump anything planned for the new concept — `docs/PRD.md` remains the governing
 > artifact. Value here is (a) vocabulary insight into how Pier pictures the system, useful
@@ -55,6 +66,39 @@ release"), "8 agents · all hosted on Telnyx AI Assistants", named agents seen:
   the FiveStrata plumbing that is the PRD's whole point is absent from its frame.
 - **Ops signal worth keeping:** Pier has a working Vercel deploy path — a candidate target
   for the orchestration app's public webhook endpoint (the "tunnel/deploy" unblocker).
+
+## Campaign builder (Pier's 8/19 pointer — UI reference for console Phase-2 screens)
+
+Pier: "the campaign builder i think showcases a solid UI for dialing patterns." From the
+source, the 6-step wizard (Basics → Leads → Cadence → Agent → DIDs → Review) maps almost
+1:1 onto `campaign-delivery.md`'s L0 wizard + pre-activation review. Elements worth lifting
+directly into the Phase-2 screens:
+
+- **Cadence step (the "dialing patterns" UI):** preset chips (Aggressive fresh / Standard
+  fresh 5-touch·7d / Revival 3-touch·4d) → editable numbered touch rows, each with
+  When / Time / **If-no-answer next-action** dropdowns → a live **SVG timeline preview**
+  (touches plotted on a day axis with the legal calling window shaded beneath) → a
+  **projected-outcomes panel** (dials / conversations / transfers / est. spend / days to
+  complete, "based on past 7d") → an amber **"things to check" card** (e.g. "142 leads are
+  on your DNC list — skipped automatically", "Touch 4 on a Friday rolls to Monday"). The
+  preview + pre-flight-warnings pattern is exactly the L2 binding-constraint ledger's
+  "why isn't it faster" ethos applied *before* activation.
+- **Leads step:** auto-route-by-source-filter vs static-list toggle, with a live
+  "N leads match this filter now, ~X/day going forward" count.
+- **Review step:** config summary + projections side by side, compliance checklist,
+  single Activate button — matches the decided pre-activation review.
+- Overview page also has a **"Dial queue · next 24h"** widget (Ready now / within 4h /
+  tomorrow / held-outside-window) — a good console rendering of L3 job state.
+
+**One 5/12-era divergence to NOT lift:** the DIDs "Rotation lifecycle" tab models a
+remediation loop — health score (0.50×answer-rate-ratio + 0.30×(1−short-call rate) +
+0.20×(1−inbound-callback rate)), Active → 7-day Cooling → 50-test-call re-evaluation →
+back-to-Active-or-retire, 70 dials/day cap. `did-lifecycle.md` (post-CIDR, 8/17) decided
+the opposite: retire-don't-rest, no remediation, ~20/day budget, 1,500 lifetime. The
+prototype's *input signals* (short-call rate as spam proxy, inbound "who is this"
+callbacks) do echo our two-eye monitoring, and its callback-rate term is a point for the
+D17 inbound path — but the cool-down/re-test loop itself is superseded. Screen layout
+(state cards + per-number table + thresholds-as-settings) remains a fine visual for D12.
 
 ## Credential status this settles (2026-08-03)
 

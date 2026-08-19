@@ -2,7 +2,10 @@
 
 **Status:** ✅ Decided (Sean, 2026-08-14): build the initial layer now, on **Vercel**, with
 Pier's prototype (`ai-dialer-prototype-e7ia.vercel.app`, shared 7/28 — see
-`pier-vercel-prototype.md`) as the design reference. Supersedes the PRD's "hosted on Netlify"
+`pier-vercel-prototype.md`; 🆕 8/19 Pier re-endorsed it in team chat, specifically the
+**campaign builder** for Phase-2's campaign-wizard screens, and granted repo access —
+builder-UI elements to lift are itemized in that doc) as the design reference. Supersedes
+the PRD's "hosted on Netlify"
 wording (functionally equivalent choice; Vercel is Next.js-native and matches Pier's
 demonstrated deploy path). Driver for pulling this forward from Step 3: **AutoWeb is already
 asking to use the platform** — their use case is most instructive if the tenant-aware initial

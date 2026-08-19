@@ -113,6 +113,33 @@ in-service** — pre-purchase screening is impossible; buy→screen→retire IS 
    DIDs (resting numbers were dialed from most recently and are paid through the month
    anyway); `quarantined` same as resting; `retired`/released numbers are gone from the
    account regardless.
+   **🆕 Pier vamp on the decided scope (Teams, 8/19 — ➤ pending Sean):** Sean shared the
+   8/18 D17 decision with Pier, who endorsed it and riffed further. Supporting detail he
+   added from Verizon's best-practices material: carriers penalize numbers that have
+   **inbound disabled** when flagged callers dial back — reinforcing the answer-inbound
+   rationale (airtime ≈ free). His escalation: skip straight past the mailbox to a
+   callback IVR — greeting ("Thanks for calling in
+   to Contractors.com. If you are returning a call from us, press 1 and we will reach out
+   to you as soon as we can"), line held ~30s more; press-1 on an ANI-matched in-campaign
+   lead bumps that lead to "call immediately" in its campaign; unmatched callers go to a
+   generic AI agent; automatic IVR when outside client hours. Assessment vs the decided v1:
+   - The **in-campaign requeue half is far cheaper than the cut "request a consultation"
+     design** — IVR keypress event → one `dial_jobs` next-attempt UPDATE, no new AI
+     surface, no in-flight TTS change. The exception^3 cost argument that justified the
+     cut does not apply to it; legitimate v1.1 fast-follow candidate.
+   - The **unmatched-caller → generic-AI half IS the expensive exception^3 part**
+     (a brand-new inbound conversation surface) — keep deferred.
+   - **His sample greeting omits the removal option entirely** — removal is the legal
+     backbone of D17 and the good-faith story. Any merged IVR keeps removal first-class
+     (e.g. press 1 = remove, press 2 = callback); the merged script is still one legal
+     artifact through the same gate; "Contractors.com" inherits the open display-name
+     decision.
+   - "Call immediately" must clamp to TCPA quiet hours + the campaign's calling windows
+     (= next legal window), and ❓ should the callback originate from the same DID the
+     lead just dialed (recognition argues yes — a narrow, principled exception to
+     rotate-never-sticky, decide when this builds).
+   - ❓ Whether a press-1 requeue consumes one of the lead's `max_attempts` (an inbound
+     return call is express engagement; leaning no, but decide explicitly).
 
 ## 3. Health monitoring — two eyes, ours is primary
 
@@ -169,12 +196,13 @@ p₀/p₁/h calibrate on real off-net traffic (with D2's bucket) before D10 wire
 the L1 dead-number hygiene rule (`campaign-delivery.md` §3, ✅ Sean 8/18) excludes
 N+-attempts/zero-answers phones at campaign compile, because TNS scores dead-number
 dialing and poor completion rates against the *calling* number, not just the campaign.
-➤ One-strike tightening (Claude, from the TNS/Verizon best-practices list 8/19, pending
-Sean): a carrier-confirmed nonexistence cause (`unallocated_number` / `not_found` /
-`invalid_number_format` — D2's "against the list" bucket) is deterministic, so the phone
-should be excluded after **one** such result rather than waiting out N attempts — TNS
-item 2 flags "calls to unassigned numbers" specifically, and every repeat dial to a known-dead
-number is pure reputation damage on the calling DID.
+**✅ One-strike tightening (Sean 8/19, SHIPPED same day):** a carrier-confirmed
+nonexistence cause (`unallocated_number` / `not_found` / `invalid_number_format` — D2's
+"against the list" bucket) is deterministic, so the phone is excluded after **one** such
+result rather than waiting out N attempts — every repeat dial to a known-dead number is
+pure reputation damage on the calling DID. Gates both enrollment and job creation in
+`campaign-plan.ts`; migration 0011 partial index; smoke-verified (details in
+`campaign-delivery.md` §3).
 
 **External (scheduled, billable):** weekly reputation-API sample of the active pool;
 full sweep on any program-level contact-rate drop. Labels diverge by carrier (CIDR: Verizon
@@ -197,16 +225,29 @@ The real DDL lives at `supabase/migrations/0008_did_lifecycle.sql` (applied via
 `db-apply.ts`): the columns above plus `cnam`, `tenants.cnam` (per-tenant CNAM seeds),
 the widened six-state check ('cooling' rows migrated to 'resting'), scatter/tenant
 indexes, and the **`did_health` view** — per-DID hangup totals, 7-day/today dial counts,
-decline counts + `decline_pct` (D2 bucket), bad-number counts. ❓ shared vs per-tenant
-pools remains open (`tenant_id` is nullable pool affinity for now). ➤ New input on that
-❓ (TNS/Verizon best-practices list, 8/19): items 3–4 score **content↔number alignment** —
-reusing one number for unrelated purposes raises spam risk, and a repurposed number should
-sit idle **≥45 days** before reassignment. That argues for at least per-tenant (probably
-per-program) pool affinity, and it hardens the existing retire-don't-repurpose posture
-into a written rule: **a DID never moves between programs; if a program ends, its DIDs
-retire and the new program buys fresh** (the 45-day cooling figure is the constraint to
-honor if repurposing is ever reconsidered — note it exceeds our billing-month rest
-boundary, so a repurpose-rest would be paid rent, further favoring retirement).
+decline counts + `decline_pct` (D2 bucket), bad-number counts.
+
+**✅ DID pools are per-tenant, never shared (Sean 8/19).** This is the standing answer
+to "why can't we all just share DIDs" — two independent reasons, either sufficient:
+
+1. **Reputation (TNS items 3–4):** carrier analytics score **content↔number alignment** —
+   one number carrying unrelated purposes raises spam risk, and a repurposed number
+   should sit idle **≥45 days** before reassignment. That figure exceeds our
+   billing-month rest boundary, so any cross-purpose reuse would be paid rent on top of
+   reputation risk.
+2. **Billing & attribution (Sean 8/19):** the platform's commercial posture is that
+   tenants *want to rent this box* — and that requires clean per-tenant attribution of
+   every dial, every DID cost, and every reputation outcome. Shared DIDs make all three
+   murky: whose campaign burned the number, whose bill carries the replacement, whose
+   contact rate did the label hit?
+
+Consequences: **a DID never moves between tenants or programs — when a program ends,
+its DIDs retire and the next program buys fresh** ($1/number makes this cheap by
+design); every buy carries `tenant_id` (D3 already requires it); existing
+`tenant_id is null` rows are transitional dev inventory, not a supported state — D9's
+eligibility query drops the null-tenant fallback once the first real pool lands.
+Per-**program** affinity within a tenant stays ➤ direction (the TNS content-alignment
+argument favors it; revisit when one tenant runs dissimilar programs concurrently).
 
 ## 4. The acquisition loop
 
@@ -225,12 +266,9 @@ buy script, so a runaway loop can never spend past its weekly allowance.
 **What we deliberately do NOT build:** remediation automation. The 8/14 CIDR evaluation
 (matched panel, 2,950 enrolled, adversarially verified) found no measurable performance
 effect from monitoring+remediation; every wear stratum reached 13–25% refusal within six
-weeks regardless. Retire-and-replace is cheaper and measurably works. Note (8/19): TNS
-item 8 points at the **free** carrier dispute channels (voicespamfeedback.com form for
-Verizon/TNS, equivalents at First Orion/Hiya) — but those free forms are exactly what
-remediation vendors file under the hood, so the CIDR null result already covers them.
-At most a $0 Gate-3 curiosity (log dispute→label-change rate on a handful of quarantined
-DIDs); never a pipeline step.
+weeks regardless. Retire-and-replace is cheaper and measurably works. (The free carrier
+dispute forms — voicespamfeedback.com etc. — are what remediation vendors file under the
+hood, so the same null result covers them.)
 
 ## The hitlist (D1–D17)
 
