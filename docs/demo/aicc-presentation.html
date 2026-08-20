@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Call Center — FiveStrata</title>
+<style>
+  :root {
+    --paper: #FBF8F2;
+    --paper-deep: #F3EEE4;
+    --ink: #23201B;
+    --ink-soft: #575147;
+    --muted: #8A8275;
+    --accent: #C2542B;
+    --accent-deep: #9C3F1D;
+    --line: #E2DACB;
+    --card: #FFFFFF;
+    --serif: "Charter", "Cambria", Georgia, "Times New Roman", serif;
+    --sans: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  /* ---------- deck chrome ---------- */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 50; transition: width .45s cubic-bezier(.4,0,.2,1);
+  }
+  #counter {
+    position: fixed; bottom: 26px; left: 34px; z-index: 50;
+    font-size: 13px; letter-spacing: .14em; color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  #navhint {
+    position: fixed; bottom: 26px; right: 34px; z-index: 50;
+    display: flex; gap: 8px; align-items: center;
+  }
+  #navhint button {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid var(--line); background: var(--card);
+    color: var(--ink-soft); font-size: 16px; cursor: pointer;
+    transition: all .15s ease; line-height: 1;
+  }
+  #navhint button:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- slides ---------- */
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    padding: 7vh 9vw;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .slide.active { display: flex; animation: rise .5s cubic-bezier(.25,.1,.25,1) both; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .kicker {
+    font-size: 13px; font-weight: 600; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 22px;
+  }
+  .kicker .idx { color: var(--muted); margin-right: 10px; }
+
+  h1 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: clamp(52px, 8.5vw, 118px);
+    line-height: 1.02; letter-spacing: -0.015em;
+  }
+  h2 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: clamp(34px, 4.6vw, 60px);
+    line-height: 1.06; letter-spacing: -0.01em; margin-bottom: 30px;
+    max-width: 22ch;
+  }
+  .lede {
+    font-size: clamp(16px, 1.55vw, 21px); color: var(--ink-soft);
+    line-height: 1.55; max-width: 58ch;
+  }
+  .accent { color: var(--accent); }
+  em { font-family: var(--serif); }
+
+  /* ---------- title slide ---------- */
+  .title-slide { justify-content: space-between; padding-top: 10vh; padding-bottom: 12vh; }
+  .title-top { font-size: 14px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .title-live {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 34px; font-size: 15px; color: var(--ink-soft);
+    border: 1px solid var(--line); background: var(--card);
+    border-radius: 100px; padding: 10px 20px;
+  }
+  .dot {
+    width: 9px; height: 9px; border-radius: 50%; background: var(--accent);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+
+  /* ---------- timeline (what just happened) ---------- */
+  .timeline { display: flex; flex-direction: column; gap: 0; max-width: 980px; }
+  .t-step { display: flex; gap: 26px; padding: 13px 0; align-items: baseline; }
+  .t-step + .t-step { border-top: 1px solid var(--line); }
+  .t-num {
+    font-family: var(--serif); font-size: 20px; color: var(--accent);
+    min-width: 34px; font-variant-numeric: tabular-nums;
+  }
+  .t-body b { font-weight: 600; }
+  .t-body { font-size: clamp(15px, 1.4vw, 19px); line-height: 1.5; color: var(--ink-soft); }
+  .t-body b { color: var(--ink); }
+  .stat-row { display: flex; gap: 54px; margin-top: 44px; }
+  .stat .n { font-family: var(--serif); font-size: clamp(26px, 2.8vw, 40px); color: var(--ink); }
+  .stat .l { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  /* ---------- pillars (what is it) ---------- */
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+  .pillar {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 34px 30px 30px;
+  }
+  .pillar h3 {
+    font-family: var(--serif); font-weight: 500; font-size: clamp(20px, 2vw, 27px);
+    margin-bottom: 14px; line-height: 1.2;
+  }
+  .pillar p { font-size: clamp(14px, 1.25vw, 16.5px); line-height: 1.55; color: var(--ink-soft); }
+  .pillar .tag {
+    font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px; font-weight: 600;
+  }
+
+  /* ---------- stack (how) ---------- */
+  .stack { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .layer {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 26px 24px; display: flex; flex-direction: column;
+  }
+  .layer .role {
+    font-family: var(--serif); font-size: clamp(18px, 1.8vw, 24px); margin-bottom: 2px;
+  }
+  .layer .vendor {
+    font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .layer p { font-size: clamp(13px, 1.15vw, 15.5px); line-height: 1.5; color: var(--ink-soft); }
+  .stack-foot {
+    margin-top: 26px; padding: 18px 24px; border-radius: 12px;
+    background: var(--paper-deep); border: 1px solid var(--line);
+    font-size: clamp(13.5px, 1.2vw, 16px); color: var(--ink-soft); line-height: 1.55;
+  }
+  .stack-foot b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- differentiators grid ---------- */
+  .diff-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .diff {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 22px 20px;
+  }
+  .diff .d-num {
+    font-family: var(--serif); font-size: 15px; color: var(--accent); margin-bottom: 10px;
+  }
+  .diff h4 { font-size: clamp(14.5px, 1.3vw, 17px); font-weight: 600; margin-bottom: 8px; line-height: 1.25; }
+  .diff p { font-size: clamp(12.5px, 1.05vw, 14.5px); line-height: 1.5; color: var(--ink-soft); }
+
+  /* ---------- who / when ---------- */
+  .bigline {
+    font-family: var(--serif); font-size: clamp(30px, 3.8vw, 52px);
+    line-height: 1.18; max-width: 24ch; margin-bottom: 36px;
+  }
+  .who-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1050px; }
+  .who-note {
+    border-top: 2px solid var(--accent); padding-top: 16px;
+    font-size: clamp(14px, 1.3vw, 17px); line-height: 1.55; color: var(--ink-soft);
+  }
+  .who-note b { color: var(--ink); }
+
+  .road { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 8px; }
+  .road-step {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 28px 26px;
+  }
+  .road-step.now { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .road-step .when {
+    font-size: 12.5px; letter-spacing: .18em; text-transform: uppercase;
+    font-weight: 600; color: var(--accent); margin-bottom: 12px;
+  }
+  .road-step h4 { font-family: var(--serif); font-weight: 500; font-size: clamp(19px, 1.9vw, 25px); margin-bottom: 12px; }
+  .road-step p { font-size: clamp(13.5px, 1.2vw, 15.5px); line-height: 1.55; color: var(--ink-soft); }
+
+  /* ---------- FAQ ---------- */
+  .faq-wrap {
+    columns: 2; column-gap: 18px; max-width: 1200px;
+  }
+  details {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 0; margin-bottom: 14px; break-inside: avoid; overflow: hidden;
+  }
+  details summary {
+    list-style: none; cursor: pointer; padding: 16px 20px;
+    font-size: clamp(14px, 1.25vw, 16.5px); font-weight: 600; line-height: 1.35;
+    display: flex; justify-content: space-between; gap: 14px; align-items: baseline;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after { content: "+"; font-family: var(--serif); color: var(--accent); font-size: 20px; flex-shrink: 0; }
+  details[open] summary::after { content: "–"; }
+  details[open] { border-color: var(--accent); }
+  details .a {
+    padding: 0 20px 18px; font-size: clamp(13px, 1.15vw, 15px);
+    line-height: 1.55; color: var(--ink-soft);
+  }
+  .faq-slide { overflow-y: auto; justify-content: flex-start; padding-top: 9vh; }
+  .faq-slide h2 { margin-bottom: 20px; }
+  .faq-sub { font-size: 15px; color: var(--muted); margin-bottom: 26px; }
+
+  /* small screens: let content scroll rather than clip */
+  @media (max-height: 760px), (max-width: 1100px) {
+    .slide { overflow-y: auto; justify-content: flex-start; padding-top: 9vh; }
+    .pillars, .stack, .diff-grid, .road { grid-template-columns: 1fr 1fr; }
+    .faq-wrap { columns: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="counter">1 / 8</div>
+<div id="navhint">
+  <button id="prev" aria-label="Previous slide">&#8592;</button>
+  <button id="next" aria-label="Next slide">&#8594;</button>
+</div>
+
+<!-- 1 · TITLE / DEMO HOLDING SCREEN -->
+<section class="slide title-slide active">
+  <div class="title-top">FiveStrata</div>
+  <div>
+    <h1>The AI<br>Call Center<span class="accent">.</span></h1>
+    <div class="title-live"><span class="dot"></span>&nbsp;We'll start with a live call — then show you how it works.</div>
+  </div>
+  <div class="lede" style="font-size:15px; color:var(--muted);">August 2026</div>
+</section>
+
+<!-- 2 · WHAT JUST HAPPENED -->
+<section class="slide">
+  <div class="kicker"><span class="idx">01</span>What just happened</div>
+  <h2>That was a real call, end to end.</h2>
+  <div class="timeline">
+    <div class="t-step"><span class="t-num">1</span><span class="t-body"><b>The agent dialed out and spoke first</b> — she identified the call as recorded, and asked permission to continue.</span></div>
+    <div class="t-step"><span class="t-num">2</span><span class="t-body"><b>She listened live.</b> Speech was transcribed as it was spoken; she acknowledged in about half a second, before the sentence even finished.</span></div>
+    <div class="t-step"><span class="t-num">3</span><span class="t-body"><b>A language model chose her every line</b> — from a soundboard of pre-recorded, studio-quality clips, composing a fresh line in her own voice only when nothing on the board fit.</span></div>
+    <div class="t-step"><span class="t-num">4</span><span class="t-body"><b>She handled the answer either way</b> — interest moves toward a transfer; a "no" gets a polite opt-out, honored on the spot.</span></div>
+    <div class="t-step"><span class="t-num">5</span><span class="t-body"><b>By hang-up, the call was already data</b> — every event, every conversational turn, recorded as it happened. A demo call and a production call write the same record.</span></div>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><div class="n">~½ sec</div><div class="l">to acknowledge</div></div>
+    <div class="stat"><div class="n">3 grains</div><div class="l">of data per call</div></div>
+    <div class="stat"><div class="n">~4¢</div><div class="l">per call, all-in</div></div>
+  </div>
+</section>
+
+<!-- 3 · WHAT IS IT -->
+<section class="slide">
+  <div class="kicker"><span class="idx">02</span>What is it</div>
+  <h2>Three things at once.</h2>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="tag">The floor</div>
+      <h3>A flexible outbound dialer</h3>
+      <p>Campaigns, lists, cadences, caller-ID pools, dispositions — the full working vocabulary of a call-center floor, running with no humans on it. Same words the existing floors use, so results compare one-to-one.</p>
+    </div>
+    <div class="pillar">
+      <div class="tag">The agent</div>
+      <h3>An LLM-operated soundboard</h3>
+      <p>It emulates how human soundboard call centers actually work — an operator picking the right pre-recorded line at the right moment. Here the operator is a language model, choosing each clip in real time and speaking in a natural, consistent voice.</p>
+    </div>
+    <div class="pillar">
+      <div class="tag">The loop</div>
+      <h3>A self-learning back end</h3>
+      <p>Every turn of every call is logged: what the agent knew, what she chose, how the prospect responded. Nightly analysis turns her best improvised lines into tomorrow's clips, and measures every change against test batteries.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · HOW -->
+<section class="slide">
+  <div class="kicker"><span class="idx">03</span>How</div>
+  <h2>Four proven platforms, one thin layer of ours.</h2>
+  <div class="stack">
+    <div class="layer">
+      <div class="role">The brain</div>
+      <div class="vendor">Supabase</div>
+      <p>Queue, routing, live call state, and every control switch. The conversation engine itself runs serverless at the edge, co-located next to the carrier — no server of ours in the call path.</p>
+    </div>
+    <div class="layer">
+      <div class="role">The voice</div>
+      <div class="vendor">Telnyx</div>
+      <p>Carrier, phone numbers, call control, live transcription, recording — plus hosted language models and text-to-speech under the same account. One vendor, one bill, one API key.</p>
+    </div>
+    <div class="layer">
+      <div class="role">The controls</div>
+      <div class="vendor">Vercel</div>
+      <p>The configuration console and performance dashboards: programs, pacing knobs, script and clip management, per-call drill-down. Every write is audited; deployed and live today.</p>
+    </div>
+    <div class="layer">
+      <div class="role">The memory</div>
+      <div class="vendor">Snowflake</div>
+      <p>The long-term warehouse — every dial and every turn, retained five years. This is where optimization and machine learning live. The pipe is proven: 242,690 call events synced at full volume.</p>
+    </div>
+  </div>
+  <div class="stack-foot">
+    <b>Anything else?</b>&nbsp; That's the whole stack. Transcription (Deepgram) and the LLMs ride the Telnyx account — no extra AI vendors, no per-seat licensing — and the FiveStrata integration surface (lead push, DNC, pre-auth, disposition write-back) is our own code, already built and live.
+  </div>
+</section>
+
+<!-- 5 · WHAT MAKES IT DIFFERENT -->
+<section class="slide">
+  <div class="kicker"><span class="idx">04</span>What makes it different</div>
+  <h2>Built like a floor, not like a chatbot.</h2>
+  <div class="diff-grid">
+    <div class="diff"><div class="d-num">i</div><h4>Voice packs</h4><p>The agent's voice, greeting, and delivery are swappable per call. A new voice — or an A/B test between two — is configuration, not code.</p></div>
+    <div class="diff"><div class="d-num">ii</div><h4>Campaign &amp; script ingestion</h4><p>Production script workbooks go in; gated scripts and studio-quality clip sets come out. New vertical, new tenant — same pipeline.</p></div>
+    <div class="diff"><div class="d-num">iii</div><h4>Turn-level call data</h4><p>For every turn: what the AI knew → what it chose → how the prospect responded. Strictly richer than anything the human floors report today.</p></div>
+    <div class="diff"><div class="d-num">iv</div><h4>Live TTS on demand</h4><p>When no clip fits, she composes a constrained line in her own voice — capped, guarded, and logged. She is never stuck without an apt answer.</p></div>
+    <div class="diff"><div class="d-num">v</div><h4>Hard requirements, built in</h4><p>Recorded-line disclosure and consent are structural must-hit gates that testing can't remove. Opt-outs and DNC take effect immediately.</p></div>
+    <div class="diff"><div class="d-num">vi</div><h4>Proper DID cycling</h4><p>Numbers bought as scattered singles, screened before first dial, registered, health-monitored with automatic quarantine, retired on schedule.</p></div>
+    <div class="diff"><div class="d-num">vii</div><h4>A synthetic test floor</h4><p>The agent dials herself in character — skeptics, ramblers, price shoppers. Hundreds of test calls battle-test every change before a human ever hears it.</p></div>
+    <div class="diff"><div class="d-num">viii</div><h4>Knows when to hang up</h4><p>A live monitor estimates convert-probability every turn and politely ends dead-end calls — in testing, minutes saved with zero buyers lost.</p></div>
+  </div>
+</section>
+
+<!-- 6 · WHO -->
+<section class="slide">
+  <div class="kicker"><span class="idx">05</span>Who is it for</div>
+  <div class="bigline">Anyone with an outbound dialing campaign<span class="accent">.</span></div>
+  <div class="who-notes">
+    <div class="who-note"><b>Multi-tenant by design.</b> Tenants and programs are first-class: each brings its own scripts, voice, consent scope, pacing, and caller-ID pool — isolated data, shared engine.</div>
+    <div class="who-note"><b>Not just transfers.</b> The same engine runs sales transfers, survey and validation calls, or callback campaigns — the product of a call can be a warm handoff or a set of structured answers.</div>
+    <div class="who-note"><b>FiveStrata verticals first.</b> Windows, flooring, bathrooms, and home warranty scripts are loaded from the production workbooks in use on the floors today.</div>
+    <div class="who-note"><b>Tenant #2 is already queued.</b> AutoWeb has greenlit a lead-quality survey program — proof the platform generalizes beyond its first use case.</div>
+  </div>
+</section>
+
+<!-- 7 · WHEN -->
+<section class="slide">
+  <div class="kicker"><span class="idx">06</span>When</div>
+  <h2>The engine is built. Next: real traffic.</h2>
+  <div class="road">
+    <div class="road-step now">
+      <div class="when">Now</div>
+      <h4>Live &amp; proven</h4>
+      <p>Voice engine live, four vertical scripts loaded, console deployed, warehouse pipe proven at volume. Test batteries run daily.</p>
+    </div>
+    <div class="road-step">
+      <div class="when">Next</div>
+      <h4>LeadConduit integration</h4>
+      <p>Plugging into the same lead-flow plumbing every call center uses — lead push, pre-authorization, disposition write-back. Our side of the APIs is built and live; endpoint verification is in progress now.</p>
+    </div>
+    <div class="road-step">
+      <div class="when">Then</div>
+      <h4>Real campaigns</h4>
+      <p>A controlled slice of live traffic, measured on the floors' own KPIs — same disposition vocabulary, same dashboards, apples to apples from day one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · FAQ -->
+<section class="slide faq-slide">
+  <div class="kicker"><span class="idx">07</span>FAQ</div>
+  <h2>Ask us the hard ones.</h2>
+  <div class="faq-sub">Click a question.</div>
+  <div class="faq-wrap">
+    <details>
+      <summary>What technology is this built on?</summary>
+      <div class="a">Three commodity platforms and our own logic on top. Telnyx carries the calls — carrier, phone numbers, transcription, and hosted AI in one vendor and one bill. Supabase (managed Postgres) is the operational brain: the dial queue, the routing rules, and every event of every call as it happens. Snowflake is the long-term memory for analysis. The agent itself — the thing you talked to — is our own code, and it's small on purpose. Nothing in the stack is exotic or licensed per-seat.</div>
+    </details>
+    <details>
+      <summary>How are you running this right now — what launched that call?</summary>
+      <div class="a">One command, which does exactly one thing: it tells the platform "dial this number." After that the laptop is a spectator — answer detection, the greeting, the listening, the decisions, the hang-up all run in the cloud, next to the carrier. Close the lid mid-call and the agent wouldn't notice. In production nothing launches calls by hand: the queue decides who to call and when, under cadence rules, calling-hours compliance, and pacing caps — the demo command and the queue drop the same call into the same machinery.</div>
+    </details>
+    <details>
+      <summary>How do you hook up to LeadConduit? What if we handed you 10,000 leads right now?</summary>
+      <div class="a">Two doors, both framed. Fresh leads: LeadConduit — we become one more recipient endpoint, exactly like the floors are today; point a percentage of any vertical at us and leads arrive in real time, nothing upstream changes. Revive: batch — ten thousand leads is a query and a batch load into the dial queue, which paces them out by calling hours, time zones, and volume caps. Our side of the APIs is built and live; what remains is endpoint verification with our systems team. The software part of "10,000 leads right now" is measured in hours — the gates are operational by design: a seasoned caller-ID pool and each client's transfer config.</div>
+    </details>
+    <details>
+      <summary>What did we build vs. buy?</summary>
+      <div class="a">We buy dial-tone, transcription, and raw AI inference. We built the conversation engine, the queue, the routing, and the measurement — the parts that are the business. A vendor selling us the conversation layer would keep the per-turn data; that data is the product.</div>
+    </details>
+    <details>
+      <summary>What does a call cost?</summary>
+      <div class="a">Roughly four cents all-in at current scale — carrier, transcription, language model, and speech combined. The soundboard design is why: the expensive part of AI calling is per-minute generated speech, and we engineered that out. Clips are generated once and replay for free; we pay AI prices only for decisions and the occasional composed line.</div>
+    </details>
+    <details>
+      <summary>How do you know it works before real customers hear it?</summary>
+      <div class="a">A synthetic test floor: the agent dials herself in character — buyers, skeptics, ramblers, price shoppers — hundreds of calls per battery. On the current windows script, simulated buyers convert 28 of 28, and the early-hangup monitor has never ended a buyer's call.</div>
+    </details>
+    <details>
+      <summary>What about compliance — TCPA, DNC?</summary>
+      <div class="a">Structural, not scripted. Recorded-line disclosure and consent are must-hit gates the script engine enforces and testing cannot remove. DNC suppression takes effect immediately at dial time, the platform enforces calling hours natively, and every call is recorded and retained five years.</div>
+    </details>
+    <details>
+      <summary>What about spam-labeled caller IDs?</summary>
+      <div class="a">A full number lifecycle is built in: buy scattered singles, screen reputation before the first dial, register during warm-up, monitor health from our own call data with automatic quarantine, retire on schedule and replace. Buying numbers takes minutes — seasoning them is the discipline, and it's a system, not a chore.</div>
+    </details>
+    <details>
+      <summary>Who operates it day-to-day?</summary>
+      <div class="a">The web console: program and pacing controls, script and clip management, lead intake, DNC, and per-call drill-down — every change audited. Daily operation is an ops task, not an engineering task.</div>
+    </details>
+    <details>
+      <summary>When can it take real traffic?</summary>
+      <div class="a">The remaining work is integration verification, not invention — confirming endpoints and authentication with our systems team, then a controlled slice of a real campaign measured on the floors' own KPIs: same disposition vocabulary, same dashboards, apples to apples.</div>
+    </details>
+  </div>
+</section>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('counter');
+  let i = Math.min(parseInt(location.hash.slice(1)) - 1 || 0, slides.length - 1);
+  if (i < 0) i = 0;
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    progress.style.width = ((i + 1) / slides.length * 100) + '%';
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+    location.hash = i + 1;
+  }
+  show(i);
+
+  document.getElementById('next').onclick = () => show(i + 1);
+  document.getElementById('prev').onclick = () => show(i - 1);
+
+  // one FAQ open at a time
+  document.querySelectorAll('details').forEach(d => {
+    d.addEventListener('toggle', () => {
+      if (d.open) document.querySelectorAll('details[open]').forEach(o => { if (o !== d) o.open = false; });
+    });
+  });
+
+  addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+</script>
+</body>
+</html>
