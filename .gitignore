@@ -20,3 +20,6 @@ env.template
 
 .vercel
 .env*
+
+# call recordings never commit (PII posture); demo player reads demo-call.mp3 locally
+docs/demo/*.mp3

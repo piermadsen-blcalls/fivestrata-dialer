@@ -93,10 +93,24 @@
   .title-slide { justify-content: space-between; padding-top: 10vh; padding-bottom: 12vh; }
   .title-top { font-size: 14px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
   .title-live {
-    display: inline-flex; align-items: center; gap: 10px;
+    display: inline-flex; align-items: center; gap: 12px;
     margin-top: 34px; font-size: 15px; color: var(--ink-soft);
     border: 1px solid var(--line); background: var(--card);
-    border-radius: 100px; padding: 10px 20px;
+    border-radius: 100px; padding: 8px 20px 8px 8px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(35,32,27,.05);
+  }
+  .play-btn {
+    width: 34px; height: 34px; border-radius: 50%; border: none;
+    background: var(--accent); color: #fff; cursor: pointer;
+    font-size: 12px; line-height: 34px; text-align: center;
+    padding: 0 0 0 2px; flex-shrink: 0; transition: background .15s ease;
+  }
+  .play-btn:hover { background: var(--accent-deep); }
+  .play-btn.paused-icon { padding: 0; letter-spacing: -1px; }
+  #playprog {
+    position: absolute; left: 0; bottom: 0; height: 2px; width: 0;
+    background: var(--accent); transition: width .3s linear;
   }
   .dot {
     width: 9px; height: 9px; border-radius: 50%; background: var(--accent);
@@ -261,7 +275,7 @@
   <div class="title-top">FiveStrata</div>
   <div>
     <h1>The AI<br>Call Center<span class="accent">.</span></h1>
-    <div class="title-live"><span class="dot"></span>&nbsp;We'll start with a live call — then show you how it works.</div>
+    <div class="title-live"><button class="play-btn" id="playdemo" aria-label="Play a recorded demo call">&#9654;</button><span class="dot" id="livedot" style="display:none"></span><span>We'll start with a live call — then show you how it works.</span><div id="playprog"></div></div>
   </div>
   <div class="lede" style="font-size:15px; color:var(--muted);">August 2026</div>
 </section>
@@ -466,7 +480,32 @@
   let i = Math.min(parseInt(location.hash.slice(1)) - 1 || 0, slides.length - 1);
   if (i < 0) i = 0;
 
+  // demo-call player: looks for demo-call.mp3 next to this file; hides if absent
+  const demoAudio = new Audio('demo-call.mp3');
+  demoAudio.preload = 'metadata';
+  const playBtn = document.getElementById('playdemo');
+  const playProg = document.getElementById('playprog');
+  demoAudio.addEventListener('error', () => {
+    playBtn.style.display = 'none';
+    document.getElementById('livedot').style.display = '';
+  });
+  playBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (demoAudio.paused) demoAudio.play().catch(() => {}); else demoAudio.pause();
+  });
+  const setIcon = () => {
+    playBtn.innerHTML = demoAudio.paused ? '&#9654;' : '&#10074;&#10074;';
+    playBtn.classList.toggle('paused-icon', !demoAudio.paused);
+  };
+  demoAudio.addEventListener('play', setIcon);
+  demoAudio.addEventListener('pause', setIcon);
+  demoAudio.addEventListener('timeupdate', () => {
+    playProg.style.width = (demoAudio.duration ? demoAudio.currentTime / demoAudio.duration * 100 : 0) + '%';
+  });
+  demoAudio.addEventListener('ended', () => { playProg.style.width = '0'; setIcon(); });
+
   function show(n) {
+    if (!demoAudio.paused) demoAudio.pause();
     i = Math.max(0, Math.min(slides.length - 1, n));
     slides.forEach((s, k) => s.classList.toggle('active', k === i));
     progress.style.width = ((i + 1) / slides.length * 100) + '%';
@@ -486,6 +525,7 @@
   });
 
   addEventListener('keydown', e => {
+    if (e.key === ' ' && e.target.closest && e.target.closest('button, summary')) return;
     if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(i + 1); }
     if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); }
     if (e.key === 'Home') show(0);
