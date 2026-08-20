@@ -11,8 +11,8 @@
     --ink: #23201B;
     --ink-soft: #575147;
     --muted: #8A8275;
-    --accent: #C2542B;
-    --accent-deep: #9C3F1D;
+    --accent: #178662;
+    --accent-deep: #0E6148;
     --line: #E6E5E1;
     --card: #FFFFFF;
     --serif: "Charter", "Cambria", Georgia, "Times New Roman", serif;
@@ -167,6 +167,27 @@
   }
   .diff h4 { font-size: clamp(14.5px, 1.3vw, 17px); font-weight: 600; margin-bottom: 8px; line-height: 1.25; }
   .diff p { font-size: clamp(12.5px, 1.05vw, 14.5px); line-height: 1.5; color: var(--ink-soft); }
+
+  /* ---------- personas ---------- */
+  .cast-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .p-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 18px 16px; box-shadow: 0 1px 2px rgba(35,32,27,.05);
+  }
+  .p-name {
+    font-family: var(--serif); font-size: clamp(16px, 1.5vw, 20px);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .p-name .p-age { font-family: var(--sans); font-size: 12px; color: var(--muted); }
+  .p-role {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin: 4px 0 8px;
+  }
+  .p-card p { font-size: clamp(11.5px, 1vw, 13.5px); line-height: 1.45; color: var(--ink-soft); }
+  .cast-note { margin-top: 18px; font-size: clamp(13px, 1.15vw, 15px); color: var(--muted); }
+  @media (max-height: 760px), (max-width: 1100px) {
+    .cast-grid { grid-template-columns: 1fr 1fr; }
+  }
 
   /* ---------- who / when ---------- */
   .bigline {
@@ -333,9 +354,30 @@
   </div>
 </section>
 
-<!-- 6 · WHO -->
+<!-- 6 · THE TEST FLOOR / PERSONAS -->
 <section class="slide">
-  <div class="kicker"><span class="idx">05</span>Who is it for</div>
+  <div class="kicker"><span class="idx">05</span>The test floor</div>
+  <h2>Meet the callers who trained her.</h2>
+  <div class="cast-grid">
+    <div class="p-card"><div class="p-name">Maria <span class="p-age">52</span></div><div class="p-role">The real buyer</div><p>Genuinely needs the work — and grills on price, timeline, and licensing before saying yes. If the agent ever loses Maria, nothing else matters.</p></div>
+    <div class="p-card"><div class="p-name">Butch <span class="p-age">56</span></div><div class="p-role">The purse-holder</div><p>His wife submitted the inquiry; he holds the wallet. Guarded, no-nonsense, pointed questions — persuadable only by straight answers. Built as a trap: he looks like a lost cause and isn't.</p></div>
+    <div class="p-card"><div class="p-name">Frank <span class="p-age">61</span></div><div class="p-role">The curmudgeon</div><p>Grumpy, suspicious, demands to know how you got his number. He tests fast, clean opt-outs — and that the agent never argues.</p></div>
+    <div class="p-card"><div class="p-name">Bill <span class="p-age">58</span></div><div class="p-role">The talker</div><p>Every question earns a story about his nephew, his knee surgery, or the weather in Tucson. He tests knowing when a call is going nowhere.</p></div>
+    <div class="p-card"><div class="p-name">Dana <span class="p-age">45</span></div><div class="p-role">The wishy-washy</div><p>Hedges everything, changes her mind mid-sentence, asks the caller to decide for her. She tests never counting indecision as a yes.</p></div>
+    <div class="p-card"><div class="p-name">Doris <span class="p-age">84</span></div><div class="p-role">The confused elder</div><p>Sweet, mishears, asks "who is this again?" She tests patience and graceful exits — and that confusion is never taken advantage of.</p></div>
+    <div class="p-card"><div class="p-name">Gerald <span class="p-age">55</span></div><div class="p-role">The hobby litigator</div><p>Answers sales calls hoping to catch a legal violation — recording consent, autodialer questions, statute citations. He tests compliance under hostile fire.</p></div>
+    <div class="p-card"><div class="p-name">Tom <span class="p-age">47</span></div><div class="p-role">The brief decliner</div><p>Polite, firm, early: "no thanks, not interested." He tests respecting the no — most real calls are Toms, and they deserve a short one.</p></div>
+    <div class="p-card"><div class="p-name">Renee <span class="p-age">38</span></div><div class="p-role">The busy brush-off</div><p>Answering at work, can't talk, asks for a callback. She tests that "call me later" is heard as a request, not an objection.</p></div>
+    <div class="p-card"><div class="p-name">Gary <span class="p-age">60</span></div><div class="p-role">The wrong person</div><p>Never submitted anything and wants to know how you got this number. He tests the apology, the list removal, and the exit.</p></div>
+    <div class="p-card"><div class="p-name">Linda <span class="p-age">55</span></div><div class="p-role">The price shopper</div><p>Happy to talk numbers all day with no intention of buying. Deflects every commitment ask. She tests transfer precision — clients shouldn't pay for her.</p></div>
+    <div class="p-card"><div class="p-name">Pam <span class="p-age">50</span></div><div class="p-role">The reflexive decliner</div><p>Says "no thanks" on instinct — but one good, polite reason can flip her, and a second push must not. She tests persuasion with manners.</p></div>
+  </div>
+  <div class="cast-note">The bench opened with the first seven; the rest joined when test traffic was recalibrated to street reality — mostly fast declines, brush-offs, and wrong numbers. Each is a scripted personality the agent dials and spars with, hundreds of calls per battery, before any change reaches a human ear — some through a bad-line simulator: lag, fragmented speech, mid-clip interruptions.</div>
+</section>
+
+<!-- 7 · WHO -->
+<section class="slide">
+  <div class="kicker"><span class="idx">06</span>Who is it for</div>
   <div class="bigline">Anyone with an outbound dialing campaign<span class="accent">.</span></div>
   <div class="who-notes">
     <div class="who-note"><b>Multi-tenant by design.</b> Tenants and programs are first-class: each brings its own scripts, voice, consent scope, pacing, and caller-ID pool — isolated data, shared engine.</div>
@@ -345,9 +387,9 @@
   </div>
 </section>
 
-<!-- 7 · WHEN -->
+<!-- 8 · WHEN -->
 <section class="slide">
-  <div class="kicker"><span class="idx">06</span>When</div>
+  <div class="kicker"><span class="idx">07</span>When</div>
   <h2>The engine is built. Next: real traffic.</h2>
   <div class="road">
     <div class="road-step now">
@@ -368,9 +410,9 @@
   </div>
 </section>
 
-<!-- 8 · FAQ -->
+<!-- 9 · FAQ -->
 <section class="slide faq-slide">
-  <div class="kicker"><span class="idx">07</span>FAQ</div>
+  <div class="kicker"><span class="idx">08</span>FAQ</div>
   <h2>Ask us the hard ones.</h2>
   <div class="faq-sub">Click a question.</div>
   <div class="faq-wrap">
