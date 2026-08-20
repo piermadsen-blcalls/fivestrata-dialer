@@ -6,14 +6,14 @@
 <title>AI Call Center — FiveStrata</title>
 <style>
   :root {
-    --paper: #FBF8F2;
-    --paper-deep: #F3EEE4;
+    --paper: #FFFFFF;
+    --paper-deep: #F6F6F4;
     --ink: #23201B;
     --ink-soft: #575147;
     --muted: #8A8275;
     --accent: #C2542B;
     --accent-deep: #9C3F1D;
-    --line: #E2DACB;
+    --line: #E6E5E1;
     --card: #FFFFFF;
     --serif: "Charter", "Cambria", Georgia, "Times New Roman", serif;
     --sans: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
@@ -62,6 +62,8 @@
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: none; }
   }
+
+  .pillar, .layer, .diff, .road-step, details { box-shadow: 0 1px 2px rgba(35,32,27,.05); }
 
   .kicker {
     font-size: 13px; font-weight: 600; letter-spacing: .22em;
@@ -257,7 +259,7 @@
   <div class="stat-row">
     <div class="stat"><div class="n">~½ sec</div><div class="l">to acknowledge</div></div>
     <div class="stat"><div class="n">3 grains</div><div class="l">of data per call</div></div>
-    <div class="stat"><div class="n">~4¢</div><div class="l">per call, all-in</div></div>
+    <div class="stat"><div class="n">0 humans</div><div class="l">in the call path</div></div>
   </div>
 </section>
 
@@ -390,7 +392,7 @@
     </details>
     <details>
       <summary>What does a call cost?</summary>
-      <div class="a">Roughly four cents all-in at current scale — carrier, transcription, language model, and speech combined. The soundboard design is why: the expensive part of AI calling is per-minute generated speech, and we engineered that out. Clips are generated once and replay for free; we pay AI prices only for decisions and the occasional composed line.</div>
+      <div class="a">The expensive part of AI calling is per-minute generated speech, and the soundboard design engineers it out: clips are generated once and replay for free, so we pay AI prices only for decisions and the occasional composed line. Real cost baselines get published with the cost model as live volume ramps.</div>
     </details>
     <details>
       <summary>How do you know it works before real customers hear it?</summary>
