@@ -50,15 +50,20 @@ Content type `application/json`. That's the whole auth story.
 Source-IP allowlisting to the guide §2 IPs is built and off during testing; we flip it on at
 go-live (config change, no deploy).
 
-## What we still need from FiveStrata (the short list)
+## The ask-list — status after Joseph's 2026-08-21 response
 
-1. **Point traffic at the URLs above** (or tell us the delivery mechanism if fresh leads
-   come via LeadConduit recipient delivery rather than direct push — we accept either).
-2. **Pre-auth key** for our pilot vertical (Transfer Client API `key=` value, guide §4.1).
-3. **Basic Auth credentials** for the disposition endpoint (guide §4.2) for the same vertical.
-4. The current **valid `calldispo_fives` values** (guide says Ashley owns these).
-5. Confirm whether "every completed call" includes no-answers (the mapping table suggests
-   yes — we'll post them unless told otherwise).
+1. **Point traffic at the URLs above** — ✅ mechanism confirmed: **fresh leads deliver
+   through LeadConduit** (Joseph 8/21). Remaining: the actual LC recipient wiring to our
+   `/leads` route.
+2. **Pre-auth key** (Transfer Client API `key=`, guide §4.1) — ✅ **RECEIVED 8/21** for all
+   four verticals (BR/HW/SL/WI), stored outside all repos.
+3. **Basic Auth credentials** for the disposition endpoint (guide §4.2) — ✅ **RECEIVED
+   8/21**: username `AI`, per-vertical password (same value as the vertical's pre-auth key).
+4. **Valid `calldispo_fives` values** — ➤ partial (Joseph 8/21): core set is **Qualified /
+   Not Qualified / DNC**; beyond those, anything describing call outcome, legal/compliance
+   status, or scoring-relevant detail is generally valid. **Ashley owes the definitive list.**
+5. No-answers — ✅ answered (Joseph 8/21): **not necessary to send back** if we report on
+   them ourselves. Our per-dial fact stream keeps them; we post contacts/outcomes only.
 
 ## Test it yourself (optional)
 

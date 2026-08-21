@@ -250,9 +250,11 @@ five routes on the guide's own example schemas, migration 0004 (max_attempts, so
 `zcwl_zips` — V1 owns the name `zip_allowlist` — `dnc_numbers`, `inbound_events` audit,
 `zcwl_sync`/`dnc_set`/`phone_digits` functions), x-api-key auth + optional §2 IP
 enforcement, 28-check live battery green incl. 12k-ZIP bulk sync (~1.5s). Joseph handoff
-sheet: `aicc-inbound-onboarding.md`. ➤ The lead-ingestion
-push is presumably how LeadConduit recipient delivery manifests (our decided lead-in path);
-the guide doesn't name LeadConduit — confirm the delivery mechanism with Joseph.
+sheet: `aicc-inbound-onboarding.md`. ✅ Delivery mechanism CONFIRMED 8/21 (Joseph): **fresh
+leads deliver through LeadConduit** — the LC recipient gets wired to our live `/leads`
+endpoint at onboarding. Per-vertical credentials for both outbound APIs (pre-auth `key` +
+dispo Basic Auth, BR/HW/SL/WI under username `AI`) received same day; stored outside all
+repos (`C:\Claude\fivestrata-cc-env.sh`).
 
 **Schema gaps this exposes** (migration TODOs):
 - `max_attempts` per lead — an inbound per-lead cadence directive; the `leads` table needs
@@ -278,9 +280,10 @@ the guide doesn't name LeadConduit — confirm the delivery mechanism with Josep
 - `wtclient_fives` = the pre-auth `transferCode`. Store both on the call row.
 
 **Disposition (Lead Intake) consequences:**
-- The 8/13 open question "should no-contacts post?" is ➤ answered by the guide's own mapping
-  table: **No Answer is a first-class scenario** ("sent after every completed call", one per
-  call) — no-contacts post. Confirm with Joseph that "completed" includes unanswered dials.
+- The 8/13 open question "should no-contacts post?" — **✅ CLOSED 8/21 (Joseph): no-answers
+  are NOT necessary to send back** since the AI dialer reports on them itself. We post
+  contact outcomes only; no-contacts live in our per-dial fact stream. (The guide's mapping
+  table still documents `No Answer` as a valid primary value should we ever need it.)
 - `repid_fives` explicitly admits an **AI agent ID** — Claire posts under her own rep ID.
 - The disposition dictionary (valid `calldispo_fives` values) is owned by **Ashley** — this
   remains the open T6/T9 item; the transport contract itself is now closed.
