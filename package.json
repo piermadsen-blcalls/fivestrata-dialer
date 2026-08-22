@@ -17,7 +17,9 @@
     "snowflake:discover": "tsx scripts/snowflake-discover.ts",
     "inbound:seed": "tsx scripts/inbound-key-seed.ts",
     "inbound:test": "tsx scripts/inbound-test.ts",
-    "inbound:deploy": "tsx scripts/deploy-webhook.ts fivestrata-inbound"
+    "inbound:deploy": "tsx scripts/deploy-webhook.ts fivestrata-inbound",
+    "outbound:test": "tsx scripts/outbound-test.ts",
+    "dispo:drain": "tsx scripts/dispo-drain.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

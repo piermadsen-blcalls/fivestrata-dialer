@@ -297,3 +297,20 @@ repos (`C:\Claude\fivestrata-cc-env.sh`).
 **Housekeeping:** the guide confirms Lead Intake is reachable at `api.fivestrata.com` (the
 audit found it logs to no techss_ table — EOD batch → MDB only). Our per-dial/per-turn fact
 stream remains strictly richer than what we report upstream.
+
+**Outbound half ✅ BUILT 2026-08-21 (mock-tested, live-gated):**
+`src/clients/fivestrataOutbound.ts` (§4.1 pre-auth: fail-closed on error/timeout/redirect/
+falsy-sentinel/deny-ish-result; §4.2 dispo post: per-vertical Basic Auth) +
+`src/services/preAuth.ts` (every ping → `preauth_log` incl. raw response for `result`-
+vocabulary calibration, keys redacted) + `src/services/dispoOutbox.ts` (exactly-once:
+idempotent enqueue by dedupe-key AND call_id, SKIP-LOCKED claim with batch-sized lease,
+fenced finalization, capped backoff, `failed` escalation) — migration 0012 applied;
+43-check mock battery green (`npm run outbound:test`); adversarial review pass applied.
+**Go-live gate (do NOT fire at production until):** ❶ Joseph confirms actual endpoint URLs
+(8/18: some documented URLs wrong; new authed Lead Intake coming) → set
+`FS_TRANSFER_CLIENT_URL`/`FS_LEAD_INTAKE_URL`; ❷ agreed safe pre-auth test ping (the API
+assigns clients round-robin — a casual test pollutes routing state); ❸ ❓ timestamp
+timezone for `timestamp_callcenter_dispositioned_fives` (we default UTC); ❹ ❓ `result`
+value vocabulary (we currently authorize on transferCode+transferPhone presence minus a
+deny-list, and log raw for calibration); ❺ ❓ omit-vs-explicit-null for optional dispo
+fields (we omit by default, can send nulls).
